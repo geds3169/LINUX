@@ -5,7 +5,7 @@ Scripts Debian more or less successful.
 
 #########################################
 #
-# Install_Lamp&Mariadb&phpMyAdmin.sh
+# Auto_Install_Lamp_Mariadb_phpMyAdmin.sh
 #
 #########################################
 
@@ -31,3 +31,12 @@ A menu:
 #########################################
 
 Small script supposed to install an FTP server, allowing the installation of the CMS or other on a Web server. Script not tested at present.
+
+
+#########################################
+#
+# disable_IPv6.sh
+#
+#########################################
+
+This script disables IPv6 on all interfaces
