@@ -50,6 +50,7 @@ else
 	echo "networking service doesn't work"
 	ifup --all
 	ip a
+fi
 
 sleep 0.2
 
