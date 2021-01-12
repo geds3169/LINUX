@@ -29,18 +29,18 @@
     -name: Ajout de la clé GPG de Docker à apt key
     apt_key:
         url: https;//download.docker.com/linux/ubuntu/gpg
-        state: present
+    state: present
     
     -name: Ajout des sources de Docker au fichier sourcelist
      apt-repository:
         repo: deb https://download.docker.com/linux/ubuntu bionic stable
-        state: present
+    state: present
     
     -name: Mise à jour de APT sourcelist et installation de Docker
      apt: update_cache=yes name=docker-ce state=latest
     
     -name: Installation des module Python pour Docker
-    pip:
+        pip:
         name: docker
     
     -name: Récupérer l'image de Docker par défaut
