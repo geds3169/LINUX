@@ -1,0 +1,105 @@
+---
+    -name: Installation de Vim, Htop, Git, Zsh, Docker, Ruby, Puppet, Apache2, Php5, Composer sur les serveurs
+        hosts: servers
+        remote_user: geds
+            
+            tasks:
+    
+        # Vim: éditeur de texte en ligne de commande
+            -name: Mise à jour des sources APT Installation de Vim
+                apt: name=vim update_cache=yes
+            
+        # Htop: à utiliser en ligne de commande. Il permet de superviser les ressources sur un serveur
+            -name: Installation Htop
+                apt: name=Htop
+            
+        # Git: logiciel de gestion de versions décentralisé
+            -name: Installation Git
+                apt: name=Git
+            
+        # Zsh: interpréteur de commandes (shell)
+            -name: Installation de Zsh
+                apt: name= Zsh
+            
+        # Docker: plateforme de containérisation
+            -name: Installation des dépendances de Docker
+                loop: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip, 'virtualenv', 'python3-setuptools']
+            
+            -name: Ajout de la clé GPG de Docker à apt key
+                apt_key:
+                    url: https;//download.docker.com/linux/ubuntu/gpg
+                state: present
+            
+            -name: Ajout des sources de Docker au fichier sourcelist
+            apt-repository:
+                repo: deb https://download.docker.com/linux/ubuntu bionic stable
+                state: present
+            
+            -name: Mise à jour de APT sourcelist et installation de Docker
+                apt: update_cache=yes name=docker-ce state=latest
+            
+            -name: Installation des module Python pour Docker
+                pip:
+                    name: docker
+                
+            -name: Récupérer l'image de Docker par défaut
+            docker_image:
+                name: "{{ default_container_image}}"
+                source: pull
+
+        # Ruby: Langage de programmation
+            -name: Installation de Ruby
+                apt: name= ruby-full
+        
+        # puppet : Orchestrateur système et applicatif
+            -name: Installation de puppetserver
+                apt: name= puppetserver
+        
+        # Apache2:  Serveur web
+            -name: Installation du serveur apache
+                apt: name= apache2
+        
+        # PHP5: Librairie PHP
+            -name: Installation de Php5 et dépendances
+                loop: ['php5.6', 'apt-transport-https', 'php5.6-cli', 'php5.6-common', 'php5.6-curl', 'php5.6-mbstring', 'php5.6-mysqlnd', 'php5.6-xml']
+            
+            #Crée le nombre de conteneurs définis par la variable create_containers, en utilisant les valeurs du fichier vars
+            #-name: Création des containers
+            #   docker_container:
+            #       name: "{{ default_container_name}}{{ item }}"
+            #       image: "{{ default_container_image}}"
+            #       command: "{{ default_container_command }}"
+            #       state: present
+            #   with_sequence: count={{ create_containers}}
+            
+            #-name: Définition d'un contenair Debian à des fin de test
+            #    default_container_name: docker
+            #    default_container_image: debian
+            #    default_container_command: sleep 1d
+            
+        # Composer: Permet gérer et installer des dépendances pour vos projets PHP
+            -name: téléchager composer
+              get_url:
+                url: https://getcomposer.org/installer
+                dest: /tmp/installer
+              tags: composer
+            
+            -name: installer composer
+              shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
+              args:
+                creates: /usr/local/bin/composer
+              tags: composer
+            
+            -name: renommer composer.phar en composer
+              shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
+              args:
+                creates: /usr/local/bin/composer
+              tags: composer
+            
+            -name: rendre composer exécutable
+              file: 
+                path: /usr/local/bin/composer
+                mode: a+x
+                state: file
+              tags: composer        
+---
