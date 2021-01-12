@@ -7,11 +7,11 @@
     
     # Vim: éditeur de texte en ligne de commande
     -name: Mise à jour des sources APT Installation de Vim
-        apt: name=vim update_cache=yes
+    apt: name=vim update_cache=yes
     
     # Htop: à utiliser en ligne de commande. Il permet de superviser les ressources sur un serveur
     -name: Installation Htop
-        apt: name=Htop
+    apt: name=Htop
     
     # Git: logiciel de gestion de versions décentralisé
     -name: Installation Git
@@ -19,45 +19,46 @@
     
     # Zsh: interpréteur de commandes (shell)
     -name: Installation de Zsh
-        apt: name= Zsh
+    apt: name= Zsh
     
     # Docker: plateforme de containérisation
     -name: Installation des dépendances de Docker
-        loop: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip, 'virtualenv', 'python3-setuptools']
+    apt: name={{ item }} state=latest update_cache=yes
+    loop:['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip, 'virtualenv', 'python3-setuptools']
     
     -name: Ajout de la clé GPG de Docker à apt key
-        apt_key:
-            url: https;//download.docker.com/linux/ubuntu/gpg
+    apt_key:
+        url: https;//download.docker.com/linux/ubuntu/gpg
         state: present
     
     -name: Ajout des sources de Docker au fichier sourcelist
-        apt-repository:
-            repo: deb https://download.docker.com/linux/ubuntu bionic stable
+     apt-repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
         state: present
     
     -name: Mise à jour de APT sourcelist et installation de Docker
-        apt: update_cache=yes name=docker-ce state=latest
+     apt: update_cache=yes name=docker-ce state=latest
     
     -name: Installation des module Python pour Docker
-        pip:
+    pip:
         name: docker
     
     -name: Récupérer l'image de Docker par défaut
-        docker_image:
-            name: "{{ default_container_image}}"
+     docker_image:
+        name: "{{ default_container_image}}"
         source: pull
     
     # Ruby: Langage de programmation
     -name: Installation de Ruby
-        apt: name= ruby-full
+     apt: name= ruby-full
     
     # puppet : Orchestrateur système et applicatif
     -name: Installation de puppetserver
-        apt: name= puppetserver
+     apt: name= puppetserver
     
     # Apache2:  Serveur web
     -name: Installation du serveur apache
-        apt: name= apache2
+     apt: name= apache2
     
     # PHP5: Librairie PHP
     -name: Installation de Php5 et dépendances
