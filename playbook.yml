@@ -24,17 +24,16 @@
     # Docker: plateforme de containérisation
     -name: Installation des dépendances de Docker
     apt: name={{ item }} state=latest update_cache=yes
-    loop:['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip, 'virtualenv', 'python3-setuptools']
+    loop: "{{ query['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-properties-common', 'python3-pip, 'virtualenv', 'python3-setuptools']) }}"
     
-    -name: Ajout de la clé GPG de Docker à apt key
-    apt_key:
-        url: https;//download.docker.com/linux/ubuntu/gpg
-    state: present
+  - name: Ajout de la clé Docker GPG
+    apt_key: url=https://download.docker.com/linux/ubuntu/gpg
     
     -name: Ajout des sources de Docker au fichier sourcelist
      apt-repository:
-        repo: deb https://download.docker.com/linux/ubuntu bionic stable
-    state: present
+        repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
+        state: present
+        update_cache: True
     
     -name: Mise à jour de APT sourcelist et installation de Docker
      apt: update_cache=yes name=docker-ce state=latest
