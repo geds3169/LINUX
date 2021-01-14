@@ -25,81 +25,91 @@
     -name: Installation des dépendances de Docker
     apt: name={{ item }} state=latest update_cache=yes
     loop: "{{ query['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-properties-common', 'python3-pip, 'virtualenv', 'python3-setuptools']) }}"
-    
-  - name: Ajout de la clé Docker GPG
-    apt_key: url=https://download.docker.com/linux/ubuntu/gpg
-    
-    -name: Ajout des sources de Docker au fichier sourcelist
-     apt-repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
+
+    -name: Ajout de la clé Docker GPG
+    apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
         state: present
-        update_cache: True
-    
+
+    -name: Ajout des sources de Docker au fichier sourcelist
+    apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
+
     -name: Mise à jour de APT sourcelist et installation de Docker
-     apt: update_cache=yes name=docker-ce state=latest
+    apt: update_cache=yes name=docker-ce state=latest
     
     -name: Installation des module Python pour Docker
-        pip:
+    pip:
         name: docker
     
     -name: Récupérer l'image de Docker par défaut
-     docker_image:
+    docker_image:
         name: "{{ default_container_image}}"
         source: pull
     
     # Ruby: Langage de programmation
     -name: Installation de Ruby
-     apt: name= ruby-full
+    apt: name= ruby-full
     
     # puppet : Orchestrateur système et applicatif
     -name: Installation de puppetserver
-     apt: name= puppetserver
+    apt: name= puppetserver
     
     # Apache2:  Serveur web
     -name: Installation du serveur apache
-     apt: name= apache2
+    apt: name= apache2
     
     # PHP5: Librairie PHP
     -name: Installation de Php5 et dépendances
-        loop: ['php5.6', 'apt-transport-https', 'php5.6-cli', 'php5.6-common', 'php5.6-curl', 'php5.6-mbstring', 'php5.6-mysqlnd', 'php5.6-xml']
-            
-            #Crée le nombre de conteneurs définis par la variable create_containers, en utilisant les valeurs du fichier vars
-            #-name: Création des containers
-            #   docker_container:
-            #       name: "{{ default_container_name}}{{ item }}"
-            #       image: "{{ default_container_image}}"
-            #       command: "{{ default_container_command }}"
-            #       state: present
-            #   with_sequence: count={{ create_containers}}
-            
-            #-name: Définition d'un contenair Debian à des fin de test
-            #    default_container_name: docker
-            #    default_container_image: debian
-            #    default_container_command: sleep 1d
-            
+    apt: name={{ item  }} update_cache=yes state=latest
+    with_items:
+        - mcrypt
+        - php-cli
+        - php5-curl
+        - php5-fpm
+        - php5-intl
+        - php5-json
+        - php5-json
+        - php5-mcrypt
+        -php5-sqlite
+
+    #Crée le nombre de conteneurs définis par la variable create_containers, en utilisant les valeurs du fichier vars
+    -name: Création des containers
+    docker_container:
+    name: "{{ default_container_name}}{{ item }}"
+    image: "{{ default_container_image}}"
+    command: "{{ default_container_command }}"
+    state: present
+    with_sequence: count={{ create_containers}}
+
+    -name: Définition d'un contenair Debian à des fin de test
+    default_container_name: docker
+    default_container_image: debian
+    default_container_command: sleep 1d
+
     # Composer: Permet gérer et installer des dépendances pour vos projets PHP
     -name: téléchager composer
-        get_url:
-            url: https://getcomposer.org/installer
-            dest: /tmp/installer
-        tags: composer
-    
+       get_url:
+               url: https://getcomposer.org/installer
+               dest: /tmp/installer
+               tags: composer
+
     -name: installer composer
-        shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
-            args:
-            creates: /usr/local/bin/composer
-        tags: composer
-    
+       shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
+               args:
+               creates: /usr/local/bin/composer
+               tags: composer
+
     -name: renommer composer.phar en composer
-        shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
-            args:
-            creates: /usr/local/bin/composer
-        tags: composer
-    
+       shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
+               args:
+               creates: /usr/local/bin/composer
+               tags: composer
+
     -name: rendre composer exécutable
-        file:
-        path: /usr/local/bin/composer
-            mode: a+x
-            state: file
-        tags: composer        
+       file:
+       path: /usr/local/bin/composer
+       mode: a+x
+       state: file
+       tags: composer        
 ---
