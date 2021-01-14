@@ -71,7 +71,7 @@
         - php5-json
         - php5-json
         - php5-mcrypt
-        -php5-sqlite
+        - php5-sqlite
 
     #Crée le nombre de conteneurs définis par la variable create_containers, en utilisant les valeurs du fichier vars
     -name: Création des containers
@@ -89,27 +89,28 @@
 
     # Composer: Permet gérer et installer des dépendances pour vos projets PHP
     -name: téléchager composer
-       get_url:
-               url: https://getcomposer.org/installer
-               dest: /tmp/installer
-               tags: composer
+    get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/installer
+    tags: composer
 
     -name: installer composer
-       shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
-               args:
-               creates: /usr/local/bin/composer
-               tags: composer
+    shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
+    args:
+    creates: /usr/local/bin/composer
+    tags: composer
 
     -name: renommer composer.phar en composer
-       shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
-               args:
-               creates: /usr/local/bin/composer
-               tags: composer
+    shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
+    args:
+    creates: /usr/local/bin/composer
+    tags: composer
 
     -name: rendre composer exécutable
-       file:
-       path: /usr/local/bin/composer
-       mode: a+x
-       state: file
-       tags: composer        
+    file:
+    path: /usr/local/bin/composer
+    mode: a+x
+    state: file
+    tags: composer
+
 ---
