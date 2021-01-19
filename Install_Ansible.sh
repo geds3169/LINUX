@@ -15,54 +15,7 @@ if [ $UID -ne 0 ] ; then
 fi
 
 #############################################
-
-# Menu
-
-HEIGHT=15
-WIDTH=40
-CHOICE_HEIGHT=4
-BACKTITLE="Multiple action"
-TITLE="Install Ansible"
-MENU="Choose one of the following options:"
-
-OPTIONS=(1 "Option 1"
-         2 "Option 2"
-         3 "Option 3")
-         4 "Option 4")
-         5 "Option 5")
-         6 "Option 6")
-         
-CHOICE=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "$TITLE" \
-                --menu "$MENU" \
-                $HEIGHT $WIDTH $CHOICE_HEIGHT \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
-
-clear
-case $CHOICE in
-        1)
-            echo "install ansible"
-            ;;
-        2)
-            echo "add an user"
-            ;;
-        3)
-            echo "add an user to sudo"
-            ;;
-        4)
-            echo "add an user to sudo"
-            ;;
-        5)
-            echo "create pair key SSH"
-            ;;
-         6)
-            echo "copy-ssh-id"
-            ;;
-esac
-
-#############################################
+# Function
 
 function install_ansible()
 {
@@ -124,4 +77,78 @@ read server
 ssh-copy-id user@"${SERVER}"
 }
 
+function copy-ssh-to-user()
+{
+echo " Copy ssh key to user :"
+chmod 700 /home/$USER/.ssh
+echo "Copy authorized_keys root to user"
+echo "Write the username :"
+read user
+sudo cp /root/.ssh/authorized_keys /home/$user/.ssh/authorized_keys
+echo "change permission of the user to the folder /home/$user.ssh"
+chown -R $USER:$USER /home/$user/.ssh
+echo "change permission to /home/$user/.ssh/authorized_keys"
+chmod 600 /home/$USER/.ssh/authorized_keys
+ls -al
+echo "Write the the key ID :"
+read id
+echo "Host *
+User $user
+IdentityFile /home/$user/id" > /home/$user/.ssh/config
+}
+
+#############################################
+
+# Menu
+
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Multiple action"
+TITLE="Install Ansible"
+MENU="Choose one of the following options:"
+
+OPTIONS=(1 "Option 1"
+         2 "Option 2"
+         3 "Option 3")
+         4 "Option 4")
+         5 "Option 5")
+         6 "Option 6")
+         
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+        1)
+            echo "Install Ansible"
+            ;;
+            read install_ansible
+        2)
+            echo "Add an user"
+            ;;
+            read addmyuser
+        3)
+            echo "Add an user to SUDO"
+            ;;
+            read add_sudo
+        4)
+            echo "Create pair key SSH"
+            ;;
+            read create_sshKey
+        5)
+            echo "Copy SSH ID to the node"
+            ;;
+            read copy-ssh-id
+        6)
+            echo "copy ssh key to user"
+            ;;
+            read copy-ssh-to-user
+esac
+#############################################
 
