@@ -15,6 +15,64 @@ if [ $UID -ne 0 ] ; then
 fi
 
 #############################################
+
+# Menu
+
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Multiple action"
+TITLE="Install Ansible"
+MENU="Choose one of the following options:"
+
+OPTIONS=(1 "Option 1"
+         2 "Option 2"
+         3 "Option 3")
+         4 "Option 4")
+         5 "Option 5")
+         6 "Option 6")
+         7 "Option 7")
+         
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+        1)
+            echo "Install Ansible"
+            ;;
+            read install_ansible
+        2)
+            echo "Add an user"
+            ;;
+            read addmyuser
+        3)
+            echo "Add an user to SUDO"
+            ;;
+            read add_sudo
+        4)
+            echo "Create pair key SSH"
+            ;;
+            read create_sshKey
+        5)
+            echo "Copy SSH ID to the node"
+            ;;
+        6)
+            echo "copy ssh key to user"
+            ;;
+            read copy-ssh-to-user
+        7)
+            echo "Install openssh client & server"
+            ;;
+            read install-openssh
+esac
+#############################################
+
 # Function
 
 function install_ansible()
@@ -31,7 +89,10 @@ echo "Update package"
 apt update
 
 echo "Install Ansible"
-apt install ansible
+apt update -y
+apt-get upgrade -y
+sudo apt-get install software-properties-common -y
+apt install ansible -y
 echo "end of the installation"
 }
 
@@ -48,7 +109,7 @@ function add_sudo()
 {
 echo "install sudo to the system"
 apt update
-apt install sudo
+apt install sudo -y
 echo "install add user to sudo"
 echo "Enter the name of the user to add to sudo :"
 read username
@@ -97,58 +158,11 @@ User $user
 IdentityFile /home/$user/id" > /home/$user/.ssh/config
 }
 
+function install-openssh()
+{
+apt update
+apt-get ugrade -y
+apt-get install openssh-client openssh-server -y
+}
+
 #############################################
-
-# Menu
-
-HEIGHT=15
-WIDTH=40
-CHOICE_HEIGHT=4
-BACKTITLE="Multiple action"
-TITLE="Install Ansible"
-MENU="Choose one of the following options:"
-
-OPTIONS=(1 "Option 1"
-         2 "Option 2"
-         3 "Option 3")
-         4 "Option 4")
-         5 "Option 5")
-         6 "Option 6")
-         
-CHOICE=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "$TITLE" \
-                --menu "$MENU" \
-                $HEIGHT $WIDTH $CHOICE_HEIGHT \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
-
-clear
-case $CHOICE in
-        1)
-            echo "Install Ansible"
-            ;;
-            read install_ansible
-        2)
-            echo "Add an user"
-            ;;
-            read addmyuser
-        3)
-            echo "Add an user to SUDO"
-            ;;
-            read add_sudo
-        4)
-            echo "Create pair key SSH"
-            ;;
-            read create_sshKey
-        5)
-            echo "Copy SSH ID to the node"
-            ;;
-            read copy-ssh-id
-        6)
-            echo "copy ssh key to user"
-            ;;
-            read copy-ssh-to-user
-esac
-#############################################
-
