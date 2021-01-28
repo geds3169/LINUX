@@ -1,0 +1,12 @@
+---
+- name: Installation de Apache
+  apt: name=apache2 state=present
+
+- name: 2. installation des modules PHP pour Apache
+  apt: name=libapache2-mod-php5 state=present
+
+- name: 3. Démarrage d'Apache
+  service: name=apache2 state=running enabled=yes
+
+- name: 4. installation du script phpinfo
+  copy: src=phpinfo.php dest=/var/www/html/phpinfo.php mode=0664

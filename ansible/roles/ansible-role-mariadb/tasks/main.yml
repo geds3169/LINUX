@@ -1,0 +1,28 @@
+---
+- name: Installation de MariaDB server
+  apt: name=mariadb-server state=present
+
+- name: Démarrage de Mysql
+  service: name=mysql state=started enabled=true
+
+- name: Installation de python Mysql #Semble nécessaire pour effecuter la tâche mysql_db
+  apt: name=python-mysqldb state=present
+
+- name: Création d une nouvelle base de données #Nécessaire pour le TP
+  mysql_db: name=igest01_skeleton state=present collation=utf8_general_ci
+
+- name: Création d un utilisateur #Appel de la variable vault correspondante au mot de passe
+  mysql_user: name=geds password=pass priv=*.*:ALL host=localhost state=present
+
+- name: Copy de la base de donnée dans le dossier tmp #Base de données SQL nécessaire pour le TP
+  copy: src=dump.sql dest=/tmp/dump.sql
+
+- name: Insert sample data #Affichage de la base de donnée du TP (vérification du chargement)
+  shell: cat /tmp/dump.sql | mysql -u geds -p pass
+
+- name: Installation des modules MySQL pour PHP
+  apt: name=php5-mysql state=present
+
+- name: Redémarrage de Apache
+  service: name=apache2 state=restarted
+
