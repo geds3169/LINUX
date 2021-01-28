@@ -1,8 +1,0 @@
----
-
-# Install Lamp stack
-
-- hosts: webserver
-  roles:
-    - apache2
-    - mariadb
