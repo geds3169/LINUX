@@ -1,36 +1,39 @@
-#!/bin/bash
+################################################
+#                                              #
+#          Create vault value.yml              #
+#          For ANSIBLE                         #
+#                                              #
+################################################
 
-## Print only the command name, not the full path.
-## Send the output to stderr, not stdout
-usage(){
-  echo "Usage: ${0##*/} [-f filename ] ... | [ -d dirname ] ..." >&2
-  exit 1
-}
+#!/bin/sh
 
-## Quote $1 or it will fail if an argument contains whitespace
-createDir(){
-  if [ ! -d "$1" ]
-  then
-    mkdir -p "$1" >/dev/null 2>&1 && echo "Directory $1 created." ||  echo "Error: Failed to create $1 directory."
-  else
-    echo "Error: $1 directory exits!"
-  fi
-}
+echo "Where do you want to create the vault (enter the full path + name.yml) :
+read $FULLPATH
 
-## Quote $1 or it will fail if an argument contains whitespace
-createFile(){
-  ## There's no need for an external command (touch)
-  [ -f "$1" ] && echo "Error: $1 file exists!" || > "$1"
-}
+echo "Write your text :"
+read $some_line
 
-while getopts f:d:v option
-do
-  case $option in
-    f) createFile "$OPTARG";;
-    d) createDir "$OPTARG";;
-    *) usage ;;
-  esac
-done
-shift "$(( $OPTIND - 1 ))"
+if [ ! -e $FULLPATH ]; then
+   echo $some_line > $FULLPATH
+then
+   echo "echo "The file doesn't exit and will be created with the text!"
+else
+   echo "The file already exit and we cannot be write it !"
+fi
 
-[ $# -gt 0 ] && usage
+# show result existant file
+ls -l $FULLPATH
+
+echo "Read the file content :"
+cat $FULLPATH
+
+# Encrypt the yaml file containing the username and associated password 
+read -p "Do you want to encrypt this file with the vault command ?  : y/Y/n/N/cancel" CONDITION;
+if [ "$CONDITION" == "y/Y" ]; then
+   # do something here!
+   ansible-vault create $FULLPATH
+fi
+
+# show result
+echo "Echo work done, here is the return :"
+cat $FULLPATH
