@@ -222,7 +222,7 @@ chown -R www-data /var/www/html
 # Download glpi.conf for apache
 ################################
 
-cd /nano /etc/apache2/sites-available/
+cd /etc/apache2/sites-available/
 wget https://raw.githubusercontent.com/geds3169/SCRIPT_Debian/main/glpi.conf
 
 a2ensite glpi.conf
