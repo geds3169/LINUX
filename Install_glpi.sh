@@ -37,7 +37,7 @@ Cyan='\033[0;36m'         # Cyan
 
 echo "$Cyan \n This script must be run as root, it requires root identification and the creation of a user who will use mariadb and phpmyadmin and apache $Color_Off"
 
-echo "$Cyan \n If you dont use a graphical interface on the server, comment before running this script the line 218 and 219 $Color_Off"
+echo "$Cyan \n If you dont use a graphical interface on the server, comment before running this script the line 238 and 239 and 240 $Color_Off"
 
 ###############################
 # Check user running the script
@@ -212,11 +212,20 @@ chown www-data:www-data /var/www/html/phpmyadmin -R
 
 echo "$Cyan \n Downloading GLPI from source and unpackage on the final directory web server $Color_Off"
 wget -P /tmp/ https://github.com/glpi-project/glpi/releases/download/9.5.2/glpi-9.5.2.tgz
-mkdir /var/www/html/phpmyadmin
+mkdir /var/www/html/glpi
 cd /tmp/
 tar xvf glpi-9.5.2.tgz --strip-components=1 -C /var/www/html/glpi
 
 chown -R www-data /var/www/html
+
+################################
+# Download glpi.conf for apache
+################################
+
+cd /nano /etc/apache2/sites-available/
+wget https://raw.githubusercontent.com/geds3169/SCRIPT_Debian/main/glpi.conf
+
+a2ensite glpi.conf
 
 ################################
 # Restart Apache and open links
@@ -226,7 +235,8 @@ echo "$Cyan \n Finally we restart the Apache service $Color_Off"
 systemctl restart apache2
 
 # doesn't work without graphical environment
-xdg-open http://127.0.0.1/
+xdg-open http://127.0.0.1
+xdg-open http://127.0.0.1/glpi
 xdg-open http://127.0.0.1/phpmyadmin
 
 ###########################################
