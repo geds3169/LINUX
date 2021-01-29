@@ -98,7 +98,7 @@ apache2 -v
 ############################
 
 echo "$Cyan \n Installing PHP and dependencies $Color_Off"
-apt instal php-mysqli php-mbstring php-curl php-gd php-simplexml php-intl php-ldap php-apcu php-xmlrpc php-cas php-zip php-bz2 php-ldap php-imap -y
+apt install php-mysqli php-mbstring php-curl php-gd php-simplexml php-intl php-ldap php-apcu php-xmlrpc php-cas php-zip php-bz2 php-ldap php-imap -y
 php --version
 
 ############################
