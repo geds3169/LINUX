@@ -1,1 +1,0 @@
-Contient le phpinfo et la base de donnée .sql
