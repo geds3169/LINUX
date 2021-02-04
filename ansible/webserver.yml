@@ -1,5 +1,0 @@
----
-- hosts: webserver
-  roles:
-    - apache2
-    - mariadb
