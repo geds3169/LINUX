@@ -1,12 +1,26 @@
 ---
-- name: Installation de Apache
-  apt: name=apache2 state=present
+- name: Install module PHP for Apache or Nginx
+  apt: name=libapache2-mod-php state=present
+  
+- name: Install PHP 7.3 Debian 10
+  apt: name=php state=present
 
-- name: 2. installation des modules PHP pour Apache
-  apt: name=libapache2-mod-php5 state=present
+- name: Install dependencies PHP
+  apt: name=php-common state=present
 
-- name: 3. Démarrage d'Apache
-  service: name=apache2 state=running enabled=yes
-
-- name: 4. installation du script phpinfo
-  copy: src=phpinfo.php dest=/var/www/html/phpinfo.php mode=0664
+- name: Install extensions PHP
+  action: >
+    {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+  with_items:
+    - php-cli
+    - php-fpm
+    - php-json
+    - php-pdo
+    - php-mysql
+    - php-zip
+    - php-gd
+    - php-mbstring
+    - php-curl
+    - php-xml
+    - php-pear
+    - php-bcmath
