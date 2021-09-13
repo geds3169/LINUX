@@ -40,7 +40,7 @@ stty -echo
 read -r root_passwd
 
 stty echo
-printf  "Enter the NAME of the user who will use phpmyadmin (not the root user) :"
+echo "Enter the NAME of the user who will use phpmyadmin (not the root user) :"
 stty -echo
 read -r user_name
 
