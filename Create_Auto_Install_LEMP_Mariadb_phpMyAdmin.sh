@@ -16,7 +16,7 @@
 # Check user running the script
 ###############################
 
-cho "This script must be run as root, it requires root identification and the creation of a user."
+echo "This script must be run as root, it requires root identification and the creation of a user."
 
 #######################
 # Adveritssment
@@ -41,13 +41,13 @@ read -r root_passwd
 
 stty echo
 echo "Enter the NAME of the user who will use phpmyadmin (not the root user) :"
-stty -echo
-read -r user_name
+read user_name
 
-stty echo
 echo "Enter the PASSWORD of the user who will use phpmyadmin :"
+stty -echo
 read user_passwd
 
+stty echo
 echo "Enter the name of the desired database CMS, exemple 'wordpress' :"
 read database_name
 
