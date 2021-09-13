@@ -69,7 +69,10 @@ sudo apt-get install nano wget curl gnupg dnsutils openssl tree -y
 # Install nginx
 #####################
 
-echo "Installing Apache and activating the service at startup."
+#fist we need to stop apache services
+sudo apachectl stop
+
+echo "Installing Nginx and activating the service at startup."
 sudo apt install nginx -y
 sudo systemctl status nginx
 sudo systemctl enable nginx
