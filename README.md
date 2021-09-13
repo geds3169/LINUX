@@ -3,6 +3,8 @@ Scripts Debian more or less successful.
 
 !! Scripts intended for advanced users !!
 
+!! Remember install first dos2unix and convert the file: dos2unix name_of_the_script.sh !!
+
 #########################################
 #
 # Auto_Install_Lamp_Mariadb_phpMyAdmin.sh
