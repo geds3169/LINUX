@@ -33,9 +33,9 @@ fi
 # Add line to bashrc
 #######################
 
-echo -e "Default \e[34m \n Add PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games to bashrc "
+echo -e "Default \e[34m \n Add export PATH=$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/game to bashrc "
 
-sed -i -e '$a export PATH="PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"' ~/.bashrc
+sed -i -e '$a export PATH="$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/games"' ~/.bashrc
 
 #update source
 source ~/.bashrc
