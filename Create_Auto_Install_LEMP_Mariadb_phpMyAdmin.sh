@@ -35,12 +35,16 @@ echo "Confirm the NAME of the ROOT (put: root) :"
 read root_name
 
 #Hidden password
-echo -p "Enter the password of the root to update / install / manage user Mariadb :"
-read root_passwd
+echo "Enter the password of the root to update / install / manage user Mariadb :"
+stty -echo
+read -r root_passwd
 
-echo "Enter the NAME of the user who will use phpmyadmin (not the root user) :"
-read user_name
+stty echo
+printf  "Enter the NAME of the user who will use phpmyadmin (not the root user) :"
+stty -echo
+read -r user_name
 
+stty echo
 echo "Enter the PASSWORD of the user who will use phpmyadmin :"
 read user_passwd
 
@@ -69,7 +73,7 @@ echo "Installing Apache and activating the service at startup."
 sudo apt install nginx -y
 sudo systemctl status nginx
 sudo systemctl enable nginx
-if [[ ! "$(systemctl is-active nginx.service )" =~ "active" ]]
+if [[ ! "$(sudo systemctl is-active nginx.service )" =~ "active" ]]
 then
         echo "Houston, we have a problem"
 fi
@@ -127,7 +131,7 @@ fi
 ################################
 
 echo "Change the owner for the directory web directory."
-chown www-data:www-data /var/www/html/ -R
+sudo chown www-data:www-data /var/www/html/ -R
 
 #################
 # Install Mariadb
@@ -141,6 +145,7 @@ then
 fi
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
+
 
 ###############################
 # Bypass secure mysql
