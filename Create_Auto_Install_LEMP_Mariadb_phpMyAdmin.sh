@@ -35,7 +35,7 @@ echo "Confirm the NAME of the ROOT (put: root) :"
 read root_name
 
 #Hidden password
-echo "Enter the password of the root to update / install / manage user Mariadb :"
+echo -p "Enter the password of the root to update / install / manage user Mariadb :"
 read root_passwd
 
 echo "Enter the NAME of the user who will use phpmyadmin (not the root user) :"
