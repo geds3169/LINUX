@@ -35,7 +35,7 @@ fi
 
 echo -e "Default \e[34m \n Add PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games to bashrc "
 
-sed -i -e '$a export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"' ~/.bashrc
+sed -i -e '$a export PATH="PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"' ~/.bashrc
 
 #update source
 source ~/.bashrc
