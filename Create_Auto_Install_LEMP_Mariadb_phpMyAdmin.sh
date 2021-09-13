@@ -74,7 +74,6 @@ sudo apachectl stop
 
 echo "Installing Nginx and activating the service at startup."
 sudo apt install nginx -y
-sudo systemctl status nginx
 sudo systemctl enable nginx
 if [[ ! "$(sudo systemctl is-active nginx.service )" =~ "active" ]]
 then
