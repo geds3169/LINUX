@@ -18,14 +18,14 @@
 # Check user running the script
 ###############################
 
-cho -e "Default \e[41m \n This script must be run as root, it requires root identification and the creation of a user."
+cho "This script must be run as root, it requires root identification and the creation of a user."
 
 #######################
 # Adveritssment
 #######################
 
 if [ "$(whoami)" != 'root' ]; then
-echo -e "Default \e[101m \n You are not root, This script must be run as root."
+echo "You are not root, This script must be run as root."
 exit 1;
 fi
 
@@ -33,13 +33,13 @@ fi
 # Add line to bashrc
 #######################
 
-echo -e "Default \e[34m \n Add export PATH=$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/game to bashrc "
+echo "Add export PATH=$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/game to bashrc "
 
 sed -i -e '$a export PATH="$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/games"' ~/.bashrc
 
 #update source
-source ~/.bashrc
+alias brc='source ~/.bashrc'
 
-echo -e "Default \e[34m \n Work done, have a nice day"
+echo "Work done, have a nice day"
 
 exit 0;
