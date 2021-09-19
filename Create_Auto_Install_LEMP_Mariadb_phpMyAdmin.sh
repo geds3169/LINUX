@@ -235,7 +235,17 @@ echo "End of the script, now you can configure SSL certificate in nginx if you w
 ################################################################################
 # Allows the user time to read the contents of the terminal before cleaning
 #################################################################################
-read -n 1 -r -s -p "Press any key to continue and clean prompt history for the security and quit the script..."
+read -n1 -s -r -p $'Now the script will clean the downloaded and useless folders then the console (security question). Press space to continue...\n' key
+
+if [ "$key" = ' ' ]; then
+    # Space pressed, do something
+    # echo [$key] is empty when SPACE is pressed # uncomment to trace
+else
+    # Anything else pressed, do whatever else.
+    # echo [$key] not empty
+fi
+
+
 
 # this will fire after the key is pressed
 echo Clean up the prompt by security"
