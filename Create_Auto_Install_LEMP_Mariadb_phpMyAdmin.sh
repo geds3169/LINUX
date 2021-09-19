@@ -225,12 +225,12 @@ echo "Redirect target IP the machine which hosts the web server and the chosen p
 ##########################################
 # Clean directory created during the script
 ###########################################
-
 echo "Clean up downloaded files and directories created during installation" 
 cd ..
 rm -R  Downloads
 
 echo "End of the script, now you can configure SSL certificate in nginx if you want, but manually ;)"
+
 
 ################################################################################
 # Allows the user time to read the contents of the terminal before cleaning
@@ -246,12 +246,23 @@ else
 fi
 
 
-
 # this will fire after the key is pressed
 echo Clean up the prompt by security"
 sudo history -c
 sudo history -w
 sudo clear
+
+
+################################################################################
+# Proposes to stop apache if the port chosen during installation is 80 or 443
+#################################################################################
+echo "Be careful if you have chosen to run nginx on port 80/443 you risk having an error at some point in your configuration."
+echo "Would you like to stop the Apache process in order to prevent this error?"
+select yn in "Yes" "No"
+case $yn in
+    Yes ) sudo apachectl stop && echo "Apache service cut :)";;
+    No ) exit;;
+esac
  
 echo "Work done, have a nice day"
 
