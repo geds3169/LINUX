@@ -260,10 +260,15 @@ echo "Be careful if you have chosen to run nginx on port 80/443 you risk having 
 echo "Would you like to stop the Apache process in order to prevent this error?"
 select yn in "Yes" "No"
 case $yn in
+    # Prevent the automatic start of the service
     Yes ) sudo apachectl stop && echo "Apache service cut :)";;
     No ) exit;;
 esac
- 
+
+# To prevent auto-start, again!!
+sudo launchctl unload /System/Library/LaunchDaemons/org.apache.httpd.plist 2>/dev/null
+
+
 echo "Work done, have a nice day"
 
 exit 0;
