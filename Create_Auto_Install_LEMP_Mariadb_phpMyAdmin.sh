@@ -265,8 +265,21 @@ case $yn in
     No ) exit;;
 esac
 
-# To prevent auto-start, again!!
+#################################################################################
+# To prevent auto-start, again by security!!
+#################################################################################
 sudo launchctl unload /System/Library/LaunchDaemons/org.apache.httpd.plist 2>/dev/null
+
+#################################################################################
+# Check if Nginx is running
+service=nginx
+#################################################################################
+if (( $(ps -ef | grep -v grep | grep $service | wc -l) > 0 ))
+then
+echo "$service is running!!!"
+else
+/etc/init.d/$service start
+fi
 
 
 echo "Work done, have a nice day"
