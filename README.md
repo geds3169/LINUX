@@ -49,7 +49,13 @@ GLPI version is 9.5.2
 
 * __cmdnotfound.sh__
 
-The .bashrc file allows the user to customize their shell. But in the present context it is a question of implementing the paths in order to have access to Linux commands, non-functional on a freshly installed distribution, such as adduser
+    The .bashrc file allows the user to customize their shell. But in the present context it is a question of implementing the paths in order to have access to Linux commands, non-functional on a freshly installed distribution, such as adduser
+
+-----------------------------------------------------------------------------------------------------------------
+
+* __disable_IPv6.sh__
+
+    Disable IPv6 definitively
 
 -----------------------------------------------------------------------------------------------------------------
 
