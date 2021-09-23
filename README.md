@@ -2,7 +2,7 @@ I am not a coder by training, if there are errors and there certainly are. Do no
 
 Functional script, however requiring improvement.
 
-##########################################################################################################################
+#################################################################################################################
 
 Hello and welcome, I am glad that you are interested in my work.
 
@@ -10,7 +10,7 @@ If you use my codes for your professional duties, please let me know.
 
 If you are a French company and you appreciate my work, do not hesitate to contact me, even just a thank you, it's nice.
 
-##########################################################################################################################
+#################################################################################################################
 
 SCRIPT_Debian
 
