@@ -19,7 +19,7 @@ __!! Remember install first dos2unix and convert the file: dos2unix name_of_the_
 -----------------------------------------------------------------------------------------------------------------
 
 * __auto_LAMP_stack.sh__
-    
+
     This script allows you to directly install a functional APACHE2-based web solution. Interactive the script asks the user to enter information necessary for the creation of the database. The only thing left at the end of the script is to create a configuration for the VirtualHost or modify the default configuration file.
 
 -----------------------------------------------------------------------------------------------------------------
@@ -36,5 +36,13 @@ __!! Remember install first dos2unix and convert the file: dos2unix name_of_the_
     This script installs VSFTPD a small FTP server to use for the Wordpress CMS.
 
 This will be placed in the / var / www / html
+
+-----------------------------------------------------------------------------------------------------------------
+
+* __auto_GLPI.sh__
+
+    This script is used to install a web server (LAMP) and the ITSM GLPI tool, automatically.
+
+GLPI version is 9.5.2
 
 -----------------------------------------------------------------------------------------------------------------
