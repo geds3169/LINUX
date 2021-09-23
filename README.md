@@ -17,3 +17,5 @@ Script developed for Debian and fully operational.
 __!! Remember install first dos2unix and convert the file: dos2unix name_of_the_script.sh !!__
 
 -----------------------------------------------------------------------------------------------------------------
+
+* auto_LAMP_
