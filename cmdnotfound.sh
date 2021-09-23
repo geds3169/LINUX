@@ -33,9 +33,9 @@ fi
 # Add line to bashrc
 #######################
 
-echo "Add export PATH=$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/game to bashrc "
+echo "Add export PATH=$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/games:/usr/local/sbin:/usr/lib/lightdm/lightdm to bashrc "
 
-sed -i -e '$a export PATH="$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/games"' ~/.bashrc
+sed -i -e '$a export PATH="$PATH:/bin:/sbin:/usr/sbin:usr/local/sbin:/usr/bin:/usr/local/bin:/usr/local/games:/usr/games:/usr/local/sbin:/usr/lib/lightdm/lightdm"' ~/.bashrc
 
 #update source
 alias brc='source ~/.bashrc'
