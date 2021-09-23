@@ -8,7 +8,7 @@ __I am glad that you are interested in my work.__
 
 If you use my codes for your professional tasks, please mention me.
 
-//If you are a French company and you appreciate my work, do not hesitate to contact me, even just a thank you, it's nice.//
+If you are a French company and you appreciate my work, do not hesitate to contact me, even just a thank you, it's nice.
 
 -----------------------------------------------------------------------------------------------------------------
 
