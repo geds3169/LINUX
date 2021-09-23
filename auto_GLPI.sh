@@ -55,16 +55,21 @@ fi
 echo "$Green \n Confirm the NAME of the ROOT :$Color_Off"
 read root_name
 
+#Hidden password
 echo "$Green \n Enter the password of the root to update / install / manage user Mariadb :$Color_Off"
+y -echo
 read root_passwd
 
-echo "$Purple \n Enter the NAME of the user who will use mariadb/phpmyadmin :$Color_Off"
+stty echo
+echo "$Purple \n Enter the NAME of the user who will use phpmyadmin :$Color_Off"
 read user_name
 
-echo "$Purple \n Enter the PASSWORD of the user who will use mariadb/phpmyadmin :$Color_Off"
+echo "$Purple \n Enter the PASSWORD of the user who will use phpmyadmin :$Color_Off"
+stty -echo
 read user_passwd
 
-echo "$Yellow \n Enter the name of the desired database CMS, exemple 'db_glpi' :$Color_Off"
+stty echo
+echo "$Yellow \n Enter the name of the desired database CMS, exemple 'wordpress' :$Color_Off"
 read database_name
 
 id -u $user_name &>/dev/null || useradd $user_name
