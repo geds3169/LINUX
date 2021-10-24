@@ -55,7 +55,7 @@ read root_name
 
 #Hidden password
 echo "$Green \n Enter the password of the root to update / install / manage user Mariadb :$Color_Off"
-y -echo
+stty -echo
 read root_passwd
 
 stty echo
