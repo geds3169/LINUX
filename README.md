@@ -58,4 +58,46 @@ GLPI version is 9.5.2
     Disable IPv6 definitively
 
 -----------------------------------------------------------------------------------------------------------------
+* __VAULT_MANAGER.sh__
 
+      How to use:
+
+        Start the script in executable mode:
+                                                                 chmod + x VAULT_MANAGER.sh
+
+        Select the task to be performed in the menu and answer the questions.
+
+I still recommend the use of the following commands in order to leave no trace in any file or terminal.
+
+            history -c
+            history -w
+
+!! Attention these command delete all your history and command used !!
+
+---
+
+
+To specify the vault password interactively:
+
+                       ansible-playbook site.yml --ask-vault-pass
+
+---
+
+The other method is to create a .txt file, which will then be hidden in a directory:
+~ / .file.txt
+
+However, it will be necessary to assign specific permissions to it in order to secure it.
+
+The password must be a string stored on a single line in the file.
+
+---
+You can also set the environment ANSIBLE_VAULT_PASSWORD_FILEvariable, for example ANSIBLE_VAULT_PASSWORD_FILE = ~ / .vault_pass.txt, and Ansible will automatically look for the password in this file.
+
+This is something you might want to do if you are using Ansible from a continuous integration system like Jenkins.
+
+---
+
+To have a broader example of the use:
+
+https://docs.ansible.com/ansible/2.8/user_guide/playbooks_vault.html
+-----------------------------------------------------------------------------------------------------------------
