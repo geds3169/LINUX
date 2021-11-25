@@ -81,7 +81,7 @@ To specify the vault password interactively:
 
                        ansible-playbook site.yml --ask-vault-pass
 
----
+***
 
 The other method is to create a .txt file, which will then be hidden in a directory:
 ~ / .file.txt
@@ -90,12 +90,12 @@ However, it will be necessary to assign specific permissions to it in order to s
 
 The password must be a string stored on a single line in the file.
 
----
+***
 You can also set the environment ANSIBLE_VAULT_PASSWORD_FILEvariable, for example ANSIBLE_VAULT_PASSWORD_FILE = ~ / .vault_pass.txt, and Ansible will automatically look for the password in this file.
 
 This is something you might want to do if you are using Ansible from a continuous integration system like Jenkins.
 
----
+***
 
 To have a broader example of the use:
 
