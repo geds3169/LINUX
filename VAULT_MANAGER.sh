@@ -67,7 +67,7 @@ while [ $opt != '' ]
             option_picked "Option 1 Picked, Create a vault in specific directory";
             echo "Enter the absolute path where the safe will be created (exemple: /etc/ansible/roles/mariadb/var/) : "
             read path
-            echo "Enter the name of the file (exemple: mysql-users.yml) : "
+            echo "Enter the name of the file (example: mysql-users.yml) : "
             read file
             FullPath = "${path} ${file}"
             sudo ansible-vault create $FullPath
@@ -77,7 +77,7 @@ while [ $opt != '' ]
         2) clear;
             option_picked "Option 2 Picked, Add an account to a vault file";
             echo "Enter the path and name of the vault file where the new account will be added."
-            echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_edit
             sudo ansible-vault edit $vault_edit
             printf "Task performed, the account has been added to the vault $vault_edit ";
@@ -99,7 +99,7 @@ while [ $opt != '' ]
         4) clear;
             option_picked "Option 4 Picked, Retrieve the hash of a specific vault";
             echo "Enter the full path and name of the vault."
-            echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_key
             cat $vault_key
             printf "Task performed";
@@ -108,7 +108,7 @@ while [ $opt != '' ]
         5) clear;
             option_picked "Option 5 Picked, Show contents of the vault";
             echo "Enter the full path and name of the vault."
-            echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_view
             sudo ansible-vault view $vault_view
             printf "Task performed";
@@ -117,7 +117,7 @@ while [ $opt != '' ]
         6) clear;
             option_picked "Option 6 Picked, Change the key vault";
             echo "Enter the full path and name of the vault."
-            echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_rekey
             ansible-vault rekey $vault_rekey
             printf "Task performed, the key of $vault_rekey has been changed";
