@@ -6,7 +6,8 @@
 # For Debian 10 (buster)/ 11 (bullseye)
 #
 # Based on native CMD https://samba.tranquil.it/doc/en/samba_config_server/samba_commands_utils.html
-#
+#               &&
+# https://connect.ed-diamond.com/GNU-Linux-Magazine/glmf-153/a-la-decouverte-de-samba-4
 # Created by geds3169
 #
 # guilhemETkarine@hotmail.fr
