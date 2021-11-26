@@ -17,7 +17,7 @@ MENU="Choose one of the following options:"
 
 OPTIONS=(1 "Create an Ansible vault"
          2 "Add user account to your vault"
-         3 "Encrypt your vault")
+         3 "Encrypt your vault"
          4 "Retrieving the Vault Key"
          5 "Consult the contents of the vault"
          6 "Change key of vault"
