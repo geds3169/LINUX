@@ -8,83 +8,55 @@ echo -n " export EDITOR=nano"
 echo -n " Make sure the config work by typing:"
 echo -n " echo $EDITOR"
 
-HEIGHT=15
-WIDTH=40
-CHOICE_HEIGHT=4
-BACKTITLE="VAULT MANAGER"
-TITLE="Manage your vault in a simplified and efficient way"
-MENU="Choose one of the following options:"
+########################################
+# detournement de control-c grace a trap
+########################################
+trap "echo 'Control-C ne peut être utilisé' ; sleep 1 ; clear ; continue "1 2 3"
 
-OPTIONS=(1 "Option 1"
-         2 "Option 2"
-         3 "Option 3"
-         4 "Option 4"
-         5 "Option 5"
-         6 "Option 6"
-         7 "Option 7")
+#########################################
+# fonctions
+#########################################
+function Create_a_vault{ 
+echo "Your choice is: Create a vault file inside a specific directory"
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
+         echo "Enter the absolute path where the safe will be created (exemple: /etc/ansible/roles/mariadb/var/) : "
+         read path
+         echo "Enter the name of the file (example: mysql-users.yml) : "
+         read file
+         FullPath = "${path} ${file}"
+         sudo ansible-vault create $FullPath
+         echo "Task performed, vault is created: $FullPath"
+else
+  echo "Back to the menu"
+fi
+}
 
-CHOICE=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "$TITLE" \
-                --menu "$MENU" \
-                $HEIGHT $WIDTH $CHOICE_HEIGHT \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
+#-------------------
 
-clear
-case $CHOICE in
-        1)
-            echo "You chose Option 1"
-            ;;
-        2)
-            echo "You chose Option 2"
-            ;;
-        3)
-            echo "You chose Option 3"
-            ;;
-        4)
-            echo "You chose Option 4"
-            ;;
-        5)
-            echo "You chose Option 5"
-            ;;
-        6)
-            echo "You chose Option 6"
-            ;;
-        7)
-            echo "You chose Option 7"
-            ;;
-            
-clear
-show_menu
-while [ opt != '' ]
-    do
-    if [[ $opt = "" ]]; then 
-            exit;
-    else
-        case $opt in
-        1) clear;
-            option_picked "Option 1 Picked, Create a vault in specific directory";
-            echo "Enter the absolute path where the safe will be created (exemple: /etc/ansible/roles/mariadb/var/) : "
-            read path
-            echo "Enter the name of the file (example: mysql-users.yml) : "
-            read file
-            FullPath = "${path} ${file}"
-            sudo ansible-vault create $FullPath
-            printf "Task performed, vault is created in $FullPath";
-            show_menu;
-        ;;
-        2) clear;
-            option_picked "Option 2 Picked, Add an account to a vault file";
+function Add_account{ 
+echo "Your choice is: Add an account to a vault file"
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
             echo "Enter the path and name of the vault file where the new account will be added."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_edit
             sudo ansible-vault edit $vault_edit
-            printf "Task performed, the account has been added to the vault $vault_edit ";
-            show_menu;
-        ;;
-        3) clear;
-            option_picked "Option 3 Picked, Encrypt a new vault file";
+            echo "Task performed, the account has been added to the vault $vault_edit "
+else
+  echo "Back to the menu"
+fi
+}
+
+#-------------------
+
+function Encrypt{ 
+echo "Your choice is: Encrypt a new vault file"
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
             echo "Enter the path and name of the new vault file need to be encrypted."
             echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_no_encrypt
@@ -93,38 +65,70 @@ while [ opt != '' ]
             read password
             stty echo
             sudo ansible-vault encrypt $vault_no_encrypt
-            printf "Task performed, vault $vault_no_encrypt is now encrypted";
-            show_menu;
-        ;;
-        4) clear;
-            option_picked "Option 4 Picked, Retrieve the hash of a specific vault";
+            echo "Task performed, vault $vault_no_encrypt is now encrypted"
+else
+  echo "Back to the menu"
+fi
+}
+
+#-------------------
+
+function Hash{ 
+echo "Your choice is: Retrieve the hash of a specific vault."
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
             echo "Enter the full path and name of the vault."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_key
             cat $vault_key
-            printf "Task performed";
-            show_menu;
-        ;;
-        5) clear;
-            option_picked "Option 5 Picked, Show contents of the vault";
+            printf "Task performed"
+else
+  echo "Back to the menu"
+fi
+}
+
+#-------------------
+
+function Content{ 
+echo "Your choice is: Show contents of the vault."
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
             echo "Enter the full path and name of the vault."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_view
             sudo ansible-vault view $vault_view
-            printf "Task performed";
-            show_menu;
-        ;;
-        6) clear;
-            option_picked "Option 6 Picked, Change the key vault";
+            printf "Task performed"
+else
+  echo "Back to the menu"
+fi
+}
+
+#-------------------
+
+function ChangeKey{ 
+echo "Your choice is: Change the key vault."
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
             echo "Enter the full path and name of the vault."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_rekey
             ansible-vault rekey $vault_rekey
-            printf "Task performed, the key of $vault_rekey has been changed";
-            show_menu;
-        ;;
-        7) clear;
-            option_picked "Option 7 Picked, Add vault to the config Ansible";
+            echo "Task performed, the key of $vault_rekey has been changed"
+else
+  echo "Back to the menu"
+fi
+}
+
+#-------------------
+
+function AddConf{ 
+echo "Your choice is: Add vault to the config Ansible."
+sleep 1
+read -p "Are you alright? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
             echo "The path of the ansible.cfg file must be specified"
             echo "By default, the location is: /etc/ansible/ansible. cfg"
             echo "Enter the full path : "
@@ -134,17 +138,23 @@ while [ opt != '' ]
             read path_vault
             location = ansible_config; sudo sed -o "/^$location/ c#vault_password_file" $ansible_config
             sudo sed -i '$a vault_password_file = $path_vault' $ansible_config
-            printf "Task performed, The configuration file has been modified. The file containing the user identifiers added";
-            show_menu;
-        ;;
-        x)exit;
-        ;;
-        \n)exit;
-        ;;
-        *)clear;
-            option_picked "Pick an option from the menu";
-            show_menu;
-        ;;
-      esac
-    fi
-done
+            echo "Task performed, The configuration file has been modified. The file containing the user identifiers added"
+else
+  echo "Back to the menu"
+fi
+}
+
+#########################################
+# menu
+#.########################################
+PS3="Votre choix : "Choices : "
+
+select item in "- Create a vault inside a specific directory " "- Add an account to a vault file " "- Encrypt a new vault file" "- Retrieve the hash of a specific vault" "- Show contents of the vault" "- Change the key vault" "- Add vault to the config Ansible"
+do
+echo "Your choice is ..."
+#########################################
+# affichage
+#########################################
+
+
+
