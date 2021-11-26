@@ -57,12 +57,12 @@ case $CHOICE in
             
 clear
 show_menu
-while [ $opt != '' ]
+while [ opt != '' ]
     do
-    if [ $opt = '' ]; then
-      exit;
+    if [[ $opt = "" ]]; then 
+            exit;
     else
-      case $opt in
+        case $opt in
         1) clear;
             option_picked "Option 1 Picked, Create a vault in specific directory";
             echo "Enter the absolute path where the safe will be created (exemple: /etc/ansible/roles/mariadb/var/) : "
