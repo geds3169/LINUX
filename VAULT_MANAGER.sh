@@ -33,7 +33,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
          sudo ansible-vault create $FullPath
          echo "Task performed, vault is created: $FullPath"
 else
- (echo "Goodbye!"; exit)
+ (echo "Goodbye!"; menu)
 fi
 }
 
@@ -51,7 +51,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo ansible-vault edit $vault_edit
             echo "Task performed, the account has been added to the vault $vault_edit "
 else
-  (echo "Goodbye!"; exit)
+  (echo "Goodbye!"; menu)
 fi
 }
 
@@ -73,7 +73,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo ansible-vault encrypt $vault_no_encrypt
             echo "Task performed, vault $vault_no_encrypt is now encrypted"
 else
-  (echo "Goodbye!"; exit)
+  (echo "Goodbye!"; menu)
 fi
 }
 
@@ -91,7 +91,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             cat $vault_key
             printf "Task performed"
 else
-  (echo "Goodbye!"; exit)
+  (echo "Goodbye!"; menu)
 fi
 }
 
@@ -109,7 +109,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo ansible-vault view $vault_view
             printf "Task performed"
 else
-  (echo "Goodbye!"; exit)
+  (echo "Goodbye!"; menu)
 fi
 }
 
@@ -127,7 +127,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             ansible-vault rekey $vault_rekey
             echo "Task performed, the key of $vault_rekey has been changed"
 else
-  (echo "Goodbye!"; exit)
+  (echo "Goodbye!"; menu)
 fi
 }
 
@@ -150,7 +150,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo sed -i '$a vault_password_file = $path_vault' $ansible_config
             echo "Task performed, The configuration file has been modified. The file containing the user identifiers added"
 else
-  (echo "Goodbye!"; exit)
+  (echo "Goodbye!"; menu)
 fi
 }
 
@@ -191,3 +191,8 @@ $(ColorBlue 'Choose an option:') "
 			*) echo -e $red"Wrong option."$clear; WrongCommand;;
         esac
 }
+
+#########################################
+# Call the menu function
+#########################################
+menu
