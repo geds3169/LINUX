@@ -158,12 +158,15 @@ fi
 # Advertissment
 #.########################################
 
-echo " Before using this tool it is necessary to modify the file:"
+echo " Before using this tool it is necessary to install Ansible."
+echo "create the base recommended tree (or at least the folder where the vault will be located)."
+echo "To finish if you prefer NANO to VIM, modify the file:"
 echo " ~/.bashrc"
 echo " Add at the end of the file:"
 echo " export EDITOR=nano"
 echo " Make sure the config work by typing:"
 echo " echo VARIABLE EDITOR"
+
 
 #########################################
 # menu
