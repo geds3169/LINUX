@@ -17,7 +17,7 @@ trap "echo 'Control-C ne peut être utilisé' ; sleep 1 ; clear ; continue "1 2 
 #########################################
 # fonctions
 #########################################
-function Create_a_vault{ 
+function Create_a_vault(){ 
 echo "Your choice is: Create a vault file inside a specific directory"
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -31,13 +31,13 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
          sudo ansible-vault create $FullPath
          echo "Task performed, vault is created: $FullPath"
 else
- echo "Goodbye!"; break;;
+ (echo "Goodbye!"; exit)
 fi
 }
 
 #-------------------
 
-function Add_account{ 
+function Add_account(){ 
 echo "Your choice is: Add an account to a vault file"
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -49,13 +49,13 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo ansible-vault edit $vault_edit
             echo "Task performed, the account has been added to the vault $vault_edit "
 else
-  echo "Goodbye!"; break;;
+  (echo "Goodbye!"; exit)
 fi
 }
 
 #-------------------
 
-function Encrypt{ 
+function Encrypt(){ 
 echo "Your choice is: Encrypt a new vault file"
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -64,20 +64,20 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the new vault file need to be encrypted."
             echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_no_encrypt
-            echo "Enter the secret password for this vault file : "
+            echo "Enter the secret password to this vault file : "
             y -echo
             read password
             stty echo
             sudo ansible-vault encrypt $vault_no_encrypt
             echo "Task performed, vault $vault_no_encrypt is now encrypted"
 else
-  echo "Goodbye!"; break;;
+  (echo "Goodbye!"; exit)
 fi
 }
 
 #-------------------
 
-function Hash{ 
+function Hash(){ 
 echo "Your choice is: Retrieve the hash of a specific vault."
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -89,13 +89,13 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             cat $vault_key
             printf "Task performed"
 else
-  echo "Goodbye!"; break;;
+  (echo "Goodbye!"; exit)
 fi
 }
 
 #-------------------
 
-function Content{ 
+function Content(){ 
 echo "Your choice is: Show contents of the vault."
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -107,13 +107,13 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo ansible-vault view $vault_view
             printf "Task performed"
 else
-  echo "Goodbye!"; break;;
+  (echo "Goodbye!"; exit)
 fi
 }
 
 #-------------------
 
-function ChangeKey{ 
+function ChangeKey(){ 
 echo "Your choice is: Change the key vault."
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -125,13 +125,13 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             ansible-vault rekey $vault_rekey
             echo "Task performed, the key of $vault_rekey has been changed"
 else
-  echo "Goodbye!"; break;;
+  (echo "Goodbye!"; exit)
 fi
 }
 
 #-------------------
 
-function AddConf{ 
+function AddConf(){ 
 echo "Your choice is: Add vault to the config Ansible."
 sleep 1
 read -rp "Do you want a demo? [y/n/c] "
@@ -148,7 +148,7 @@ if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             sudo sed -i '$a vault_password_file = $path_vault' $ansible_config
             echo "Task performed, The configuration file has been modified. The file containing the user identifiers added"
 else
-  echo "Goodbye!"; break;;
+  (echo "Goodbye!"; exit)
 fi
 }
 
@@ -160,9 +160,6 @@ PS3="Votre choix : "Choices : "
 select item in "- Create a vault inside a specific directory " "- Add an account to a vault file " "- Encrypt a new vault file" "- Retrieve the hash of a specific vault" "- Show contents of the vault" "- Change the key vault" "- Add vault to the config Ansible"
 do
 echo "Your choice is ..."
-#########################################
-# affichage
-#########################################
 
 
 
