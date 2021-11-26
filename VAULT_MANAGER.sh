@@ -180,13 +180,13 @@ $(ColorGreen '0)') Exit
 $(ColorBlue 'Choose an option:') "
         read a
         case $a in
-	        1) Create a vault file inside a specific directory ; menu ;;
-	        2) Add an account to a vault file ; menu ;;
-	        3) Encrypt a new vault file ; menu ;;
-	        4) Retrieve the hash of a specific vault ; menu ;;
-	        5) Show contents of the vault ; menu ;;
-                 6) Change the key vault ; menu ;;
-                 7) Add vault to the config Ansible ; menu ;;
+	        1) Create_a_vault ; menu ;;
+	        2) Add_account ; menu ;;
+	        3) Encrypt ; menu ;;
+	        4) Hash ; menu ;;
+	        5) Content ; menu ;;
+                 6) ChangeKey ; menu ;;
+                 7) AddConf ; menu ;;
 			0) exit 0 ;;
 			*) echo -e $red"Wrong option."$clear; WrongCommand;;
         esac
