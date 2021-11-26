@@ -1,22 +1,25 @@
 #!/bin/bash
 
-title="Vault Manager"
-
-echo -n " Before using this tool it is necessary to modify the file:"
-echo -n " ~/.bashrc"
-echo -n " Add at the end of the file:"
-echo -n " export EDITOR=nano"
-echo -n " Make sure the config work by typing:"
-echo -n " echo $EDITOR"
-
 ########################################
-# detournement de control-c grace a trap
+# Custosm Color
 ########################################
-trap "echo 'Control-C ne peut être utilisé' ; sleep 1 ; clear ; continue "1 2 3"
+# Color  Variables
+green='\e[32m'
+blue='\e[34m'
+clear='\e[0m'
 
 #########################################
 # fonctions
 #########################################
+ColorGreen(){
+	echo -ne $green$1$clear
+}
+ColorBlue(){
+	echo -ne $blue$1$clear
+}
+
+#-------------------
+
 function Create_a_vault(){ 
 echo "Your choice is: Create a vault file inside a specific directory"
 sleep 1
@@ -152,13 +155,39 @@ fi
 }
 
 #########################################
+# Advertissment
+#.########################################
+
+echo " Before using this tool it is necessary to modify the file:"
+echo " ~/.bashrc"
+echo " Add at the end of the file:"
+echo " export EDITOR=nano"
+echo " Make sure the config work by typing:"
+echo " echo VARIABLE EDITOR"
+
+#########################################
 # menu
 #.########################################
-PS3="Votre choix : "Choices : "
-
-select item in "- Create a vault inside a specific directory " "- Add an account to a vault file " "- Encrypt a new vault file" "- Retrieve the hash of a specific vault" "- Show contents of the vault" "- Change the key vault" "- Add vault to the config Ansible"
-do
-echo "Your choice is ..."
-
-
-
+menu(){
+echo -ne "
+My First Menu
+$(ColorGreen '1)') Memory usage
+$(ColorGreen '2)') CPU load
+$(ColorGreen '3)') Number of TCP connections 
+$(ColorGreen '4)') Kernel version
+$(ColorGreen '5)') Check All
+$(ColorGreen '0)') Exit
+$(ColorBlue 'Choose an option:') "
+        read a
+        case $a in
+	        1) Create a vault file inside a specific directory ; menu ;;
+	        2) Add an account to a vault file ; menu ;;
+	        3) Encrypt a new vault file ; menu ;;
+	        4) Retrieve the hash of a specific vault ; menu ;;
+	        5) Show contents of the vault ; menu ;;
+                 6) Change the key vault ; menu ;;
+                 7) Add vault to the config Ansible ; menu ;;
+			0) exit 0 ;;
+			*) echo -e $red"Wrong option."$clear; WrongCommand;;
+        esac
+}
