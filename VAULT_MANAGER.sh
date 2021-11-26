@@ -1,5 +1,6 @@
 #!/bin/bash
 
+title="Vault Manager"
 
 echo -n " Before using this tool it is necessary to modify the file:"
 echo -n " ~/.bashrc"
@@ -19,8 +20,9 @@ trap "echo 'Control-C ne peut être utilisé' ; sleep 1 ; clear ; continue "1 2 
 function Create_a_vault{ 
 echo "Your choice is: Create a vault file inside a specific directory"
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
          echo "Enter the absolute path where the safe will be created (exemple: /etc/ansible/roles/mariadb/var/) : "
          read path
          echo "Enter the name of the file (example: mysql-users.yml) : "
@@ -29,7 +31,7 @@ if [ "$RESP" = "y" ]; then
          sudo ansible-vault create $FullPath
          echo "Task performed, vault is created: $FullPath"
 else
-  echo "Back to the menu"
+ echo "Goodbye!"; break;;
 fi
 }
 
@@ -38,15 +40,16 @@ fi
 function Add_account{ 
 echo "Your choice is: Add an account to a vault file"
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the vault file where the new account will be added."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_edit
             sudo ansible-vault edit $vault_edit
             echo "Task performed, the account has been added to the vault $vault_edit "
 else
-  echo "Back to the menu"
+  echo "Goodbye!"; break;;
 fi
 }
 
@@ -55,8 +58,9 @@ fi
 function Encrypt{ 
 echo "Your choice is: Encrypt a new vault file"
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the new vault file need to be encrypted."
             echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_no_encrypt
@@ -67,7 +71,7 @@ if [ "$RESP" = "y" ]; then
             sudo ansible-vault encrypt $vault_no_encrypt
             echo "Task performed, vault $vault_no_encrypt is now encrypted"
 else
-  echo "Back to the menu"
+  echo "Goodbye!"; break;;
 fi
 }
 
@@ -76,15 +80,16 @@ fi
 function Hash{ 
 echo "Your choice is: Retrieve the hash of a specific vault."
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_key
             cat $vault_key
             printf "Task performed"
 else
-  echo "Back to the menu"
+  echo "Goodbye!"; break;;
 fi
 }
 
@@ -93,15 +98,16 @@ fi
 function Content{ 
 echo "Your choice is: Show contents of the vault."
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_view
             sudo ansible-vault view $vault_view
             printf "Task performed"
 else
-  echo "Back to the menu"
+  echo "Goodbye!"; break;;
 fi
 }
 
@@ -110,15 +116,16 @@ fi
 function ChangeKey{ 
 echo "Your choice is: Change the key vault."
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
             echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
             read vault_rekey
             ansible-vault rekey $vault_rekey
             echo "Task performed, the key of $vault_rekey has been changed"
 else
-  echo "Back to the menu"
+  echo "Goodbye!"; break;;
 fi
 }
 
@@ -127,8 +134,9 @@ fi
 function AddConf{ 
 echo "Your choice is: Add vault to the config Ansible."
 sleep 1
-read -p "Are you alright? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
+read -rp "Do you want a demo? [y/n/c] "
+[[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
+if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "The path of the ansible.cfg file must be specified"
             echo "By default, the location is: /etc/ansible/ansible. cfg"
             echo "Enter the full path : "
@@ -140,7 +148,7 @@ if [ "$RESP" = "y" ]; then
             sudo sed -i '$a vault_password_file = $path_vault' $ansible_config
             echo "Task performed, The configuration file has been modified. The file containing the user identifiers added"
 else
-  echo "Back to the menu"
+  echo "Goodbye!"; break;;
 fi
 }
 
