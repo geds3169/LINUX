@@ -23,7 +23,7 @@ sleep 1
 read -rp "Do you want a demo? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
-         echo "Enter the absolute path where the safe will be created (exemple: /etc/ansible/roles/mariadb/var/) : "
+         echo "Enter the absolute path where the safe will be created exemple: /etc/ansible/roles/mariadb/var/ : "
          read path
          echo "Enter the name of the file (example: mysql-users.yml) : "
          read file
@@ -44,7 +44,7 @@ read -rp "Do you want a demo? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the vault file where the new account will be added."
-            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like example: /etc/ansible/roles/mariadb/var/mysql-users.yml : "
             read vault_edit
             sudo ansible-vault edit $vault_edit
             echo "Task performed, the account has been added to the vault $vault_edit "
@@ -62,7 +62,7 @@ read -rp "Do you want a demo? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the new vault file need to be encrypted."
-            echo "Like (exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like exemple: /etc/ansible/roles/mariadb/var/mysql-users.yml : "
             read vault_no_encrypt
             echo "Enter the secret password to this vault file : "
             y -echo
@@ -84,7 +84,7 @@ read -rp "Do you want a demo? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
-            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like example: /etc/ansible/roles/mariadb/var/mysql-users.yml : "
             read vault_key
             cat $vault_key
             printf "Task performed"
@@ -102,7 +102,7 @@ read -rp "Do you want a demo? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
-            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like example: /etc/ansible/roles/mariadb/var/mysql-users.yml : "
             read vault_view
             sudo ansible-vault view $vault_view
             printf "Task performed"
@@ -120,7 +120,7 @@ read -rp "Do you want a demo? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
-            echo "Like (example: /etc/ansible/roles/mariadb/var/mysql-users.yml) : "
+            echo "Like example: /etc/ansible/roles/mariadb/var/mysql-users.yml : "
             read vault_rekey
             ansible-vault rekey $vault_rekey
             echo "Task performed, the key of $vault_rekey has been changed"
