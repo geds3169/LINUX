@@ -25,7 +25,6 @@ read -rp "Do you want a demo? [y/n/c] "
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
          echo "Enter the absolute path where the safe will be created exemple: /etc/ansible/roles/mariadb/var/ : "
          read path
-         echo "Enter the name of the file (example: mysql-users.yml) : "
          read file
          FullPath = "${path} ${file}"
          sudo ansible-vault create $FullPath
