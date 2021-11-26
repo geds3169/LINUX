@@ -23,7 +23,7 @@ ColorBlue(){
 function Create_a_vault(){ 
 echo "Your choice is: Create a vault file inside a specific directory"
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
          echo "Enter the absolute path where the safe will be created exemple: /etc/ansible/roles/mariadb/var/ : "
@@ -42,7 +42,7 @@ fi
 function Add_account(){ 
 echo "Your choice is: Add an account to a vault file"
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the vault file where the new account will be added."
@@ -60,7 +60,7 @@ fi
 function Encrypt(){ 
 echo "Your choice is: Encrypt a new vault file"
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the path and name of the new vault file need to be encrypted."
@@ -82,7 +82,7 @@ fi
 function Hash(){ 
 echo "Your choice is: Retrieve the hash of a specific vault."
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
@@ -100,7 +100,7 @@ fi
 function Content(){ 
 echo "Your choice is: Show contents of the vault."
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
@@ -118,7 +118,7 @@ fi
 function ChangeKey(){ 
 echo "Your choice is: Change the key vault."
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "Enter the full path and name of the vault."
@@ -136,7 +136,7 @@ fi
 function AddConf(){ 
 echo "Your choice is: Add vault to the config Ansible."
 sleep 1
-read -rp "Do you want a demo? [y/n/c] "
+read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
             echo "The path of the ansible.cfg file must be specified"
