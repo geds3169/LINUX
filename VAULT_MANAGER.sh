@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-echo "\n Before using this tool it is necessary to modify the file:"
-echo "\n ~/.bashrc"
-echo "\n Add at the end of the file:"
-echo "\n export EDITOR=nano"
-echo "\n Make sure the config work by typing:"
-echo "\n echo $EDITOR"
+echo -n " Before using this tool it is necessary to modify the file:"
+echo -n " ~/.bashrc"
+echo -n " Add at the end of the file:"
+echo -n " export EDITOR=nano"
+echo -n " Make sure the config work by typing:"
+echo -n " echo $EDITOR"
 
 HEIGHT=15
 WIDTH=40
