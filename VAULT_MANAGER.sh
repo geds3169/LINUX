@@ -171,11 +171,13 @@ echo " echo VARIABLE EDITOR"
 menu(){
 echo -ne "
 My First Menu
-$(ColorGreen '1)') Memory usage
-$(ColorGreen '2)') CPU load
-$(ColorGreen '3)') Number of TCP connections 
-$(ColorGreen '4)') Kernel version
-$(ColorGreen '5)') Check All
+$(ColorGreen '1)') Create a vault file inside a specific directory
+$(ColorGreen '2)') Add an account to a vault file
+$(ColorGreen '3)') Encrypt a new vault file 
+$(ColorGreen '4)') Retrieve the hash of a specific vault
+$(ColorGreen '5)') Show contents of the vault
+$(ColorGreen '6)') Change the key vault
+$(ColorGreen '7)') Add vault to the config Ansible
 $(ColorGreen '0)') Exit
 $(ColorBlue 'Choose an option:') "
         read a
