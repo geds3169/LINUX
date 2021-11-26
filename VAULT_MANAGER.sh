@@ -15,13 +15,13 @@ BACKTITLE="VAULT MANAGER"
 TITLE="Manage your vault in a simplified and efficient way"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Create an Ansible vault"
-         2 "Add user account to your vault"
-         3 "Encrypt your vault"
-         4 "Retrieving the Vault Key"
-         5 "Consult the contents of the vault"
-         6 "Change key of vault"
-         7 "Add vault to config")
+OPTIONS=(1 "Option 1"
+         2 "Option 2"
+         3 "Option 3"
+         4 "Option 4"
+         5 "Option 5"
+         6 "Option 6"
+         7 "Option 7")
 
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
