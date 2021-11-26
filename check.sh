@@ -25,7 +25,7 @@ while true; do
     --menu "Please select:" $HEIGHT $WIDTH 4 \
     "1" "Display Disk Space" \
     "2" "Display Memory Usage" \   
-    2>&1 1>&2)
+    1>&2)
   exit_status=$?
   exec 3>&-
   case $exit_status in
@@ -47,7 +47,7 @@ while true; do
       ;;
     2 )
       memory = free -h | grep 'Mem'
-      echo "The value for the memory is: \ $memory
+      echo "The value for the memory is: \ $memory"
       ;;
   esac
 done
