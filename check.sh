@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # while-menu-dialog: a menu driven system information program
 
 DIALOG_CANCEL=1
