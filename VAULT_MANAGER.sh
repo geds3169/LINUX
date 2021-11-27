@@ -6,6 +6,8 @@
 # Color  Variables
 green='\e[32m'
 blue='\e[34m'
+red='\e[31m'
+purple='\e[35m'
 clear='\e[0m'
 
 #########################################
@@ -26,6 +28,8 @@ sleep 1
 read -rp "Do you want continue ? [y/n/c] "
 [[ ${REPLY,,} =~ ^(c|cancel)$ ]] && { echo "Selected Cancel"; exit 1; }
 if [[ ${REPLY,,} =~ ^(y|yes|j|ja|s|si|o|oui)$ ]]; then
+	 echo -e $red "If you have not created the tree structure beforehand, you can use the following script in a new terminal: "$clear
+	 echo -e $green "https://raw.githubusercontent.com/geds3169/ANSIBLE/main/builds_the_role_tree.sh " $clear
          echo "Enter the absolute path where the safe will be created exemple: /etc/ansible/roles/mariadb/var/ : "
          read path
          read file
