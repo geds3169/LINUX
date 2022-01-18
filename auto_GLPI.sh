@@ -171,7 +171,7 @@ EOF
 
 echo "$Cyan \n We see if the user, database exists otherwise we create it $Color_Off"
 set -e
-mysql -u$root_name -p$root_passwd << EOF
+mysql -u $root_name -p $root_passwd << EOF
 CREATE USER IF NOT EXISTS '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
 CREATE DATABASE IF NOT EXISTS $database_name;
 GRANT ALL PRIVILEGES ON *.* TO '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
