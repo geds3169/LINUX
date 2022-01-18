@@ -67,27 +67,26 @@ apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping cor
 ##################################################################################################################
 # Questions en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
 ##################################################################################################################
-echo "Confirmez l'identifiant root : "
+echo "Confirmer le nom d'utilisateur Root (en minuscule)"
 read root_name
 
-stty echo
-echo "Entrez le mot de passe associé au compte root afin de pouvoir installer, manager les compte utilisateurs dans la base de données : "
-stty -echo
+#Hidden password
+echo "Renseignez le mot de passe du compte Root"
+y -echo
 read root_passwd
 
 stty echo
-echo "Entrez le nom du compte qui sera amené à gérer la base de donnée : "
+echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
 read user_name
 
-echo "Renseignez le mot de passe associé au compte $user_name : "
+echo "Entrez le mot de passe associé au compte d'administration de la solution"
 stty -echo
 read user_passwd
 
 stty echo
-echo "Entrer le nom de la base de données à créer (ownclouddb): "
+echo "Entrez le nom souhaité pour la base de donnée (ownclouddb)"
 read database_name
 
-# Création de l'utilisateur si celui-ci n'existe pas et ajout au groupe www-data
 id -u $user_name &>/dev/null || useradd $user_name
 adduser www-data $user_name
 
