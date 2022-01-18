@@ -25,10 +25,12 @@ fi
 ###################################################################################
 # Mise à jour de la distribution et installation des différent services et modules
 ###################################################################################
+echo "Mise à jour du système"
 apt update && apt upgrade -y
 
 # Installation du serveur Web apache2
 ##################################
+echo "Installation du serveur Web"
 apt install apache2 -y
 
 # Mise en place du service dès le démarrage du serveur physique
@@ -43,6 +45,7 @@ apache2 -v
 
 # Installation du serveur de base de données
 #############################################
+echo "Installation du serveur de base de données"
 apt install mariadb-server -y
 
 # Mise en place du service dès le démarrage du serveur physique
@@ -56,8 +59,9 @@ systemctl enable mariadb
 
 # Installe PHP et d'autres modules nécessaires
 ##############################################
+echo "Installation des dépendances"
 apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ladap} -y
-apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick
+apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
 
 
 ##################################################################################################################
