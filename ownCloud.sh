@@ -150,21 +150,23 @@ read port
 echo "Entrez le chemin du répertoire ownCloud ( /var/www/owncloud/, ne pas oublier le / "
 read directory
 
+dir = $directory | sed -e "s/\/[^\/]*$//"
+
 echo "Enter the listened IP for the server (e.g. : * or listen, or local IP, IP loopback):"
 read listen
 
-echo "#### $srv_name.$tld
+echo "#### $srv_name.
 <VirtualHost $listen:$port>
-ServerName $srv_name
+ServerName $srv_name.$tld
 ServerAlias $srv_name.$tld
-DocumentRoot $directory
-<Directory $directory>
+DocumentRoot $dir
+<Directory $dir>
 Options Indexes FollowSymLinks MultiViews
 AllowOverride All
 Order allow,deny
 allow from all
 </Directory>
-</VirtualHost>" > /etc/apache2/sites-available/$srv_name.$tld.conf
+</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 
 if ! echo -e /etc/apache2/sites-available/$srv_name.$tld.conf; then
 echo "Le fichier n'a pas pu être édité!"
