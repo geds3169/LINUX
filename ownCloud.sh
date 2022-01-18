@@ -68,7 +68,6 @@ apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping cor
 # Questions en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
 ##################################################################################################################
 echo "Confirmez l'identifiant root : "
-stty -echo
 read root_name
 
 stty echo
