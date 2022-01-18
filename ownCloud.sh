@@ -168,6 +168,8 @@ allow from all
 </Directory>
 </VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 
+apachectl configtest
+
 if ! echo -e /etc/apache2/sites-available/$srv_name.$tld.conf; then
 echo "Le fichier n'a pas pu être édité!"
 else
