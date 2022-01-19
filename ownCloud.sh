@@ -176,6 +176,7 @@ else
 echo "Le fichier a été créé avec succés !"
 fi
 
+/user/sbin/a2dissite 000-default.conf
 /usr/sbin/a2ensite $srv_name.conf
 
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
