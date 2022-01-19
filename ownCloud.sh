@@ -148,7 +148,7 @@ EOF
 echo "${green}Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org ${clear}"
 wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
 
-echo "${cyan}renseignez le chemin ou sera installé la solution \n (e.g: ${magenta}/var/www/${clear}${yellow}html${clear}/owncloud ou ${magenta}/var/www/${clear}owncloud):"
+echo -e "${cyan}renseignez le chemin ou sera installé la solution \n (e.g: ${magenta}/var/www/${clear}${yellow}html${clear}/owncloud ou ${magenta}/var/www/${clear}owncloud):"
 read dir
 
 # Teste si le dossier existe
