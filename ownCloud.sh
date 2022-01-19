@@ -60,7 +60,7 @@ systemctl enable mariadb
 # Installe PHP et d'autres modules nécessaires
 ##############################################
 echo "Installation des dépendances"
-apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ladap} -y
+apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y
 apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
 
 
