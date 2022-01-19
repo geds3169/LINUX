@@ -57,7 +57,7 @@ sleep 1
 # Installation du serveur de base de données
 #############################################
 echo ""
-echo "${green} Installation du serveur de base de données ${clear}"
+echo "Installation du serveur de base de données "
 sleep 1
 apt install mariadb-server -y
 
