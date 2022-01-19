@@ -72,7 +72,7 @@ read root_name
 
 #Hidden password
 echo "Renseignez le mot de passe du compte Root"
-y -echo
+stty -echo
 read root_passwd
 
 stty echo
