@@ -17,23 +17,6 @@
 ######################################################################
 
 ###################################################################################
-# Customisation, coloration du texte pour plus de clarté
-###################################################################################
-#Couleurs
-green='\033[0;32m'
-red='\033[0;31m'
-yellow='\033[0;33m'
-blue='\033[0;34m'
-magenta='\033[0;35m'
-cyan='\033[0;36m'
-
-# Remise à 0 de la couleur après utilisation
-clear='\033[0m'
-
-# Utilisation
-# echo -e "The color is: ${red}Mon texte en rouge ${clear}!"
-
-###################################################################################
 # Vérification des droits d'execution
 ###################################################################################
 # Vérification des permissions d'execution du script
@@ -45,66 +28,93 @@ fi
 ###################################################################################
 # Mise à jour de la distribution et installation des différent services et modules
 ###################################################################################
-echo "${red} Mise à jour du système ${clear}"
+echo "Mise à jour du système"
+sleep 1
 apt update && apt upgrade -y
 
 # Installation du serveur Web apache2
 ##################################
-echo "${red} Installation du serveur Web ${clear}"
+sleep 1
+echo ""
+echo "Installation du serveur Web"
+sleep 1
 apt install apache2 -y
 
+echo "Redémarrage du service Apache2"
+sleep 1
+echo ""
 # Mise en place du service dès le démarrage du serveur physique
 systemctl start apache2
 systemctl enable apache2
 if [[ ! "$(systemctl is-active apache2.service )" =~ "active" ]]
 then
-        echo "${red} Une erreur est apparue lors de l'opération ${clear}"
+        echo "Une erreur est apparue lors de l'opération"
 		echo $?
 fi
+echo ""
 apache2 -v
-
+sleep 1
 # Installation du serveur de base de données
 #############################################
+echo ""
 echo "${green} Installation du serveur de base de données ${clear}"
+sleep 1
 apt install mariadb-server -y
 
+echo ""
 # Mise en place du service dès le démarrage du serveur physique
 if [[ ! "$(systemctl is-active mariadb.service )" =~ "active" ]]
 then
-        echo "${red} Une erreur est apparue lors de l'opération ${clear}"
+        echo "Une erreur est apparue lors de l'opération"
 		echo $?
 fi
+
+echo "Redémarrage du service MariaDB"
+sleep 1
 systemctl start mariadb
 systemctl enable mariadb
 
+
 # Installe PHP et d'autres modules nécessaires
 ##############################################
-echo "${green} Installation des dépendances ${clear}"
+echo ""
+echo "Installation des dépendances PHP"
+sleep 1
 apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y
 apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
 
+sleep 1
+
+echo ""
+php --version
 
 ##################################################################################################################
 # Questions en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
 ##################################################################################################################
-echo "${cyan} Confirmer le nom d'utilisateur Root ${clear} ${red}(en minuscule) ${clear}"
+sleep 1
+echo ""
+echo "Confirmer le nom d'utilisateur Root (en minuscule)"
 read root_name
 
 #Hidden password
-echo "${cyan}Renseignez le mot de passe du compte Root ${clear} ${red}(Il ne s'affiche pas)${clear}"
+echo ""
+echo "Renseignez le mot de passe du compte Root (Attention, Il ne s'affiche pas)"
 stty -echo
 read root_passwd
 
 stty echo
-echo "${cyan} Entrez le nom de l'utilisateur qui sera amené à administrer la solution ${clear} ${red}(autre que Root, question de sécurité)${clear}"
+echo ""
+echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
 read user_name
 
-echo "${cyan) Entrez le mot de passe du compte administrateur de la solution ${clear} ${red}(il ne s'affiche pas)${clear}"
+echo""
+echo "Entrez le mot de passe du compte administrateur de la solution (Attention, il ne s'affiche pas)"
 stty -echo
 read user_passwd
 
 stty echo
-echo "${cyan} Entrez le nom souhaité pour la base de donnée (e.g: ownclouddb ) ${clear}"
+echo ""
+echo "Entrez le nom souhaité pour la base de donnée (e.g: ownclouddb )"
 read database_name
 
 id -u $user_name &>/dev/null || useradd $user_name
@@ -114,8 +124,9 @@ adduser www-data $user_name
 ################################################
 # Securisation du serveur de base de données
 ################################################
-
-echo "${green}Sécurisation de la base de données, suppression de l'accès root depuis l'extérieur, suppression des comptes anonymes et de la base de données test${clear}"
+echo ""
+sleep 1
+echo "Sécurisation de la base de données, suppression de l'accès root depuis l'extérieur, suppression des comptes anonymes et de la base de données test"
 set -e
 mysql_secure_installation << EOF
 n
@@ -131,8 +142,9 @@ EOF
 #################################################################################
 # Création de l'utilisateur et de la base de donnée associé au cloud privé
 #################################################################################
-
-echo "${green}Si l'utilisateur $user_name n'existe pas dans la base de donnée, il sera alors créé ${clear}"
+sleep 1
+echo ""
+echo "Si l'utilisateur $user_name n'existe pas dans la base de donnée, il sera alors créé"
 set -e
 mysql -u $root_name -p$root_passwd << EOF
 CREATE USER IF NOT EXISTS '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
@@ -145,45 +157,69 @@ EOF
 #################################################################################
 # Téléchargement et installation de ownCloud
 #################################################################################
-echo "${green}Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org ${clear}"
+sleep 1
+echo ""
+echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org, dans le répertoire /tmp/"
 wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
 
-echo -e "${cyan}renseignez le chemin ou sera installé la solution \n (e.g: ${magenta}/var/www/${clear}${yellow}html${clear}/owncloud ou ${magenta}/var/www/${clear}owncloud):"
+sleep 1
+
+echo ""
+echo -e "Renseignez le chemin ou sera installé la solution \n (e.g: /var/www/html/owncloud ou /var/www/owncloud):"
 read dir
+
+sleep 1
+echo ""
 
 # Teste si le dossier existe
 ############################
 if [ -d "$dir" ]; then
-echo "${red}$dir Le répertoire existe déjà ${clear}" ;
+echo "$dir Le répertoire existe déjà" ;
 else
 `mkdir -p $dir`;
-echo "$dir ${green} Le répertoire $dir à été créé ${clear}"
+echo "Le répertoire $dir à été créé"
 fi
+
+echo "Changement de répertoire"
 cd /tmp/
+echo ""
+sleep 0.5
+echo "Extraction des fichiers dans le repertoire final"
 tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
 chown -R www-data $dir
+
+sleep 1
 
 #################################################################################
 # Configuration du virtual host (apache2)
 #################################################################################
-echo "${cyan}Entrez le nom du serveur souhaité ${clear}${red}(sans le www, il peut être identique au nom de la machine) : ${clear}"
+
+echo ""
+echo "Entrez le nom du serveur souhaité (sans le www, il peut être identique au nom de la machine) : "
 read srv_name
 
-echo "${cyan}Entrez le nom de domaine (e.g: exemple.com ) :${clear}"
+echo ""
+echo "Entrez le nom de domaine (e.g: exemple.com ) : "
 read tld 
 
-echo "${cyan}Entrez le port d'écoute du serveur Web (e.g: 80 (http) ou 443 (https) ) : ${clear}"
+echo ""
+echo "Entrez le port d'écoute du serveur Web (e.g: 80 (http) ou 443 (https) ) : "
 read port 
 
-echo "${cyan}Entrez le chemin du répertoire ownCloud ${clear}(e.g: /var/www/owncloud/, ${red}ne pas oublier le${clear}${yellow} /${clear} ) "
+echo ""
+echo "Entrez le chemin du répertoire ownCloud (e.g: /var/www/owncloud/, ne pas oublier le / à la fin ) "
 read directory
 
 dir = $directory | sed -e "s/\/[^\/]*$//"
 
-echo "${cyan}Entrer l'adresse IP d'écoute pour le serveur${clear} (e.g. : ${yellow}*${clear} ou ${yellow}IP locale${clear}, ${yellow}IP loopback${clear}):"
+echo ""
+echo -e "Entrer l'adresse IP d'écoute pour le serveur \n ( e.g. : * (pour toutes les interfaces) ou IP locale, IP loopback ) : "
 read listen
 
-echo "${green} Création du fichier VirtualHost avec les paramêtres renseignés ${clear}"
+sleep 0.5
+
+echo ""
+echo "Création du fichier VirtualHost avec les paramêtres renseignés "
 
 echo "#### $srv_name.
 <VirtualHost $listen:$port>
@@ -198,19 +234,26 @@ allow from all
 </Directory>
 </VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 
-echo "${green} Test de la configuration avant redémarrage du service Apache2${clear}"
+echo ""
+echo "Test de la configuration avant redémarrage du service Apache2"
 sudo apachectl configtest
 
+sleep 0.5
+
+echo""
 if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-echo "${red}Le fichier n'a pas pu être édité!${clear}"
+echo "Le fichier n'a pas pu être édité !"
 else
-echo "${green}Le fichier a été créé avec succés !${clear}"
+echo "Le fichier a été créé avec succés !"
 fi
 
 /user/sbin/a2dissite 000-default.conf
 /usr/sbin/a2ensite $srv_name.conf
 
-echo "${red}Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?${clear}"
+sleep 0.5
+
+echo ""
+echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n] ? "
 read q
 if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
 systemctl restart apache2
@@ -219,13 +262,23 @@ fi
 #################################################################################
 # Conseils & recommandations
 #################################################################################
+echo ""
 
-echo "${cyan}Afin de terminer la configuration, ouvrez un navigateur Web et entrez l'addresse suivante http://127.0.0.1 si vous êtes en local${clear}"
-echo "ou http://<ip-publique-serveur> http://<ip-privé-serveur> si vous effectuer la configuration depuis une autre machine"
-echo "${blue}Renseignez le nom d'administration $user_name, le mot de passe associé, par defaut le répertoire des données est /var/www/owncloud/data ${clear}"
-echo "${magenta}La configuration de l'outil est en soit ergonomique et intuitif ${clear}"
-echo "${yellow}La mise en place de l'authentification avec LDAP est faisable un petit lien \n https://kifarunix.com/configure-owncloud-openldap-authentication/ ${clear}"
-echo "${red}Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé.${clear}"
-echo "${Cyan}J'espère que ce script vous aura été utile :)= ${clear}"
+echo -e "Afin de terminer la configuration, ouvrez un navigateur Web et entrez l'addresse suivante http://127.0.0.1 si vous êtes en local \n ou http://<ip-publique-serveur> http://<ip-privé-serveur> si vous effectuer la configuration depuis une autre machine"
+sleep 0.2
+echo ""
+echo "Renseignez le nom d'administration $user_name, le mot de passe associé, par defaut le répertoire des données est /var/www/owncloud/data "
+sleep 0.2
+echo ""
+echo "La configuration de l'outil est en soit ergonomique et intuitif "
+sleep 0.2
+echo ""
+echo "La mise en place de l'authentification avec LDAP est faisable un petit lien \n https://kifarunix.com/configure-owncloud-openldap-authentication/ "
+sleep 0.2
+echo ""
+echo "Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé. "
+sleep 0.2
+echo ""
+echo "J'espère que ce script vous aura été utile :)= "
 
 exit 0
