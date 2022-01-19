@@ -28,6 +28,8 @@ fi
 ###################################################################################
 # Mise à jour de la distribution et installation des différent services et modules
 ###################################################################################
+echo ""
+echo ""
 echo "Mise à jour du système"
 sleep 1
 apt update && apt upgrade -y
@@ -48,12 +50,12 @@ systemctl start apache2
 systemctl enable apache2
 if [[ ! "$(systemctl is-active apache2.service )" =~ "active" ]]
 then
-        echo "Une erreur est apparue lors de l'opération"
-		echo $?
+        echo "Il y a un soucis avec le serveur Web Apache2"
 fi
-echo ""
 apache2 -v
+echo ""
 sleep 1
+
 # Installation du serveur de base de données
 #############################################
 echo ""
@@ -63,16 +65,12 @@ apt install mariadb-server -y
 
 echo ""
 # Mise en place du service dès le démarrage du serveur physique
-if [[ ! "$(systemctl is-active mariadb.service )" =~ "active" ]]
-then
-        echo "Une erreur est apparue lors de l'opération"
-		echo $?
-fi
-
-echo "Redémarrage du service MariaDB"
-sleep 1
 systemctl start mariadb
 systemctl enable mariadb
+if [[ ! "$(systemctl is-active mariadb.service )" =~ "active" ]]
+then
+        echo "Il y a un soucis avec le serveur de base de donnée MariaDB"
+fi
 
 
 # Installe PHP et d'autres modules nécessaires
