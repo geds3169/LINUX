@@ -176,7 +176,7 @@ else
 echo "Le fichier a été créé avec succés !"
 fi
 
-/usr/sbin/a2ensite $srv_name.$tld.conf
+/usr/sbin/a2ensite $srv_name.conf
 
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
 read q
