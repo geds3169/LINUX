@@ -170,7 +170,7 @@ allow from all
 
 sudo apachectl configtest
 
-if ! echo -e /etc/apache2/sites-available/$srv_name.$tld.conf; then
+if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
 echo "Le fichier n'a pas pu être édité!"
 else
 echo "Le fichier a été créé avec succés !"
