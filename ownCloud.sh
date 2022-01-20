@@ -63,6 +63,7 @@ then
 fi
 apache2 -v
 echo ""
+systemctl status Apache2
 sleep 1
 
 # Installation du serveur de base de données
@@ -80,6 +81,9 @@ if [[ ! "$(systemctl is-active mariadb.service )" =~ "active" ]]
 then
         echo "Il y a un soucis avec le serveur de base de donnée MariaDB"
 fi
+
+echo ""
+systemctl status mariadb-server
 
 ##################################################################################################################
 # Questions en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
@@ -158,7 +162,8 @@ wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220
 sleep 1
 
 echo ""
-echo -e "Renseignez le chemin ou sera installé la solution \n (e.g: /var/www/html/owncloud ou /var/www/owncloud):"
+echo "Renseignez le chemin ou sera installé la solution"
+echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud):"
 read dir
 
 sleep 1
@@ -175,6 +180,7 @@ fi
 
 echo "Changement de répertoire"
 cd /tmp/
+
 echo ""
 sleep 0.5
 echo "Extraction des fichiers dans le repertoire final"
@@ -196,29 +202,35 @@ echo "Entrez le nom de domaine (e.g: exemple.com ) : "
 read tld 
 
 echo ""
-echo "Entrez le port d'écoute du serveur Web (e.g: 80 (http) ou 443 (https) ) : "
+echo "Entrez le port d'écoute du serveur Web (e.g: 80 (http) ou 443 (https)) : "
 read port 
 
 echo ""
-echo "Entrez le chemin du répertoire ownCloud (e.g: /var/www/owncloud/, ne pas oublier le / à la fin ) "
+echo "Entrez le chemin du répertoire ownCloud (e.g: /var/www/owncloud/, ne pas oublier le / à la fin ) :"
 read directory
 
 dir = $directory | sed -e "s/\/[^\/]*$//"
 
 echo ""
-echo -e "Entrer l'adresse IP d'écoute pour le serveur \n ( e.g. : * (pour toutes les interfaces) ou IP locale, IP loopback ) : "
+echo "Entrer l'adresse IP d'écoute pour le serveur ( e.g. : * (pour toutes les interfaces) ou IP locale, IP loopback ) : "
 read listen
 
+echo ""
+echo "Renseignez l'adresse de courriel de l'administrateur"
+red mail
 sleep 0.5
 
 echo ""
-echo "Création du fichier VirtualHost avec les paramêtres renseignés "
+echo "Création du fichier VirtualHost avec les paramêtres renseignés : "
 
 echo "#### $srv_name.
 <VirtualHost $listen:$port>
 ServerName $srv_name.$tld
 ServerAlias $srv_name.$tld
+ServerAdmin $mail
 DocumentRoot $dir
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
 <Directory $dir>
 Options Indexes FollowSymLinks MultiViews
 AllowOverride All
@@ -240,8 +252,9 @@ else
 echo "Le fichier a été créé avec succés !"
 fi
 
-/user/sbin/a2dissite 000-default.conf
-/usr/sbin/a2ensite $srv_name.conf
+echo ""
+echo "Activation du site"
+a2ensite $srv_name.conf
 
 sleep 0.5
 
@@ -257,7 +270,10 @@ fi
 #################################################################################
 echo ""
 
-echo -e "Afin de terminer la configuration, ouvrez un navigateur Web et entrez l'addresse suivante http://127.0.0.1 si vous êtes en local \n ou http://<ip-publique-serveur> http://<ip-privé-serveur> si vous effectuer la configuration depuis une autre machine"
+echo "Afin de terminer la configuration, ouvrez un navigateur Web, "
+echo "entrez l'addresse suivante http://127.0.0.1 si vous êtes en local,"
+echo "http://<ip-publique-serveur> ou encore,"
+echo "http://<ip-privé-serveur> si vous effectuer la configuration depuis une autre machine"
 sleep 0.2
 echo ""
 echo "Renseignez le nom d'administration $user_name, le mot de passe associé, par defaut le répertoire des données est /var/www/owncloud/data "
@@ -266,7 +282,8 @@ echo ""
 echo "La configuration de l'outil est en soit ergonomique et intuitif "
 sleep 0.2
 echo ""
-echo "La mise en place de l'authentification avec LDAP est faisable un petit lien \n https://kifarunix.com/configure-owncloud-openldap-authentication/ "
+echo "La mise en place de l'authentification avec LDAP peut être mis en place "
+echo " suivre le tutoriel https://kifarunix.com/configure-owncloud-openldap-authentication/ "
 sleep 0.2
 echo ""
 echo "Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé. "
