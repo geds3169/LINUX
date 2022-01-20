@@ -53,24 +53,32 @@ then
 		# Determine si le seveur web est fonctionnel
 		if [ $APACHE2_STATUS = $FLAG_STATUS ] 
 		then
-			echo "Apache2 est démarré et opérationnel"
+			echo "Apache2 est démarré"
 		else
 			echo "Apache 2 n'est pas démarré"
-			echo "Voulez-vous démarrer Apache2 et activer le service [y/n] ? "
+			echo "Voulez-vous démarrer Apache2 [y/n] ? "
 			read activeApache2
 			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
 			then
 				systemctl start apache2
-				systemctl enable apache2
-				# Test à nouveau si le service est actif
-				if [ $APACHE2_STATUS = $FLAG_STATUS ] && [ $APACHE2_SERVICE = "enabled" ] 
-				then
-					echo "Apache2 est à présent fonctionnel"
-				else
-					echo "Il semble y avoir un soucis avec Apache2"
-				fi
+				echo "systemctl status apache2.service"
 			fi
 		fi
+
+		if [ $APACHE2_SERVICE == "enabled" ] 
+		then
+			echo "Le service Apache2 est activé"
+		else
+			echo "Le service Apache2 n'est pas activé"
+			echo "Voulez-vous activer le service Apache2 [y/n] ? "
+			read activeApache2
+			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
+			then
+				systemctl enable apache2
+				echo "systemctl status apache2.service"
+			fi
+		fi
+		echo "Apache2 est activé et opérationnel"
 else
 	echo "Apache 2 n'est pas installé"
 	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
@@ -78,6 +86,7 @@ else
 	if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ];
 	then
 		apt install apache2 -y
+		systemctl enable apache2
 	fi
 fi
 
