@@ -58,7 +58,7 @@ then
 			echo "Apache 2 n'est pas démarré"
 			echo "Voulez-vous démarrer Apache2 et activer le service [y/n] ? "
 			read activeApache2
-			if [[ "${activeApache2}" == "yes" ]] || [[ "${activeApache2}" == "y" ]]
+			if [ ("${activeApache2}" == "yes") || ("${activeApache2}" == "y") ]
 			then
 				systemctl start apache2
 				systemctl enable apache2
@@ -75,7 +75,8 @@ else
 	echo "Apache 2 n'est pas installé"
 	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
 	read installApache2
-	if [[ "${installApache2}" == "yes" ]] || [[ "${installApache2}" == "y" ]]; then
+	if [ ("${installApache2}" == "yes") || ("${installApache2}" == "y") ]
+	then
 		apt install apache2 -y
 	fi
 fi
