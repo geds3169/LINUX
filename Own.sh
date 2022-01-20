@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 #####################################################################
-# Ce script à pour but la mise en place d'un cloud privé ownCloud
+# Ce script Ã  pour but la mise en place d'un cloud privÃ© ownCloud
 #
-# testé sur Debian 11
+# testÃ© sur Debian 11
 #
 # Il utilise
 # (Apache2 & Mariadb)
@@ -26,59 +26,60 @@ FLAG_STATUS="active"
 
 
 ###################################################################################
-# Vérification des droits d'execution
+# VÃ©rification des droits d'execution
 ###################################################################################
-# Vérification des permissions d'execution du script
+# VÃ©rification des permissions d'execution du script
 if [ "$(whoami)" != "root" ]; then
-	echo "Les privilèges Root sont requis pour exécuter ce script, essayez de l'exécuter avec sudo..."
+	echo "Les privilÃ¨ges Root sont requis pour exÃ©cuter ce script, essayez de l'exÃ©cuter avec sudo..."
 	exit 2
 fi
 
 ###################################################################################
-# Mise à jour de la distribution et installation des différent services et modules
+# Mise Ã  jour de la distribution et installation des diffÃ©rent services et modules
 ###################################################################################
 echo ""
 echo ""
-echo "Mise à jour du système"
+echo "Mise Ã  jour du systÃ¨me"
 sleep 1
 apt update && apt upgrade -y
 
 ###################################################################################
 # Installation du serveur Web Apache2
 ###################################################################################
-# Determine si le serveur web est installé, démarré
+# Determine si le serveur web est installÃ©, dÃ©marrÃ©
 if [[ ! "$(dpkg --get-selections | grep apache )"~ "install" ]] 
 then
-	echo "Apache2 est déjà installé"
+	echo "Apache2 est dÃ©jÃ  installÃ©"
 		# Determine si le seveur web est fonctionnel
 		if [ $APACHE2_STATUS = $FLAG_STATUS ] 
 		then
-			echo "Apache2 est démarré et opérationnel"
+			echo "Apache2 est dÃ©marrÃ© et opÃ©rationnel"
 		else
-			echo "Apache 2 n'est pas démarré"
-			echo "Voulez-vous démarrer Apache2 et activer le service [y/n] ? "
+			echo "Apache 2 n'est pas dÃ©marrÃ©"
+			echo "Voulez-vous dÃ©marrer Apache2 et activer le service [y/n] ? "
 			read activeApache2
-			if [ ("${activeApache2}" == "yes") || ("${activeApache2}" == "y") ]
+			if [[ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ]
 			then
 				systemctl start apache2
 				systemctl enable apache2
-				# Test à nouveau si le service est actif
+				# Test Ã  nouveau si le service est actif
 				if [ $APACHE2_STATUS = $FLAG_STATUS ] 
 				then
-					echo "Apache2 est à présent fonctionnel"
+					echo "Apache2 est Ã  prÃ©sent fonctionnel"
 				else
 					echo "Il semble y avoir un soucis avec Apache2"
 				fi
 			fi
 		fi
 else
-	echo "Apache 2 n'est pas installé"
-	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
+	echo "Apache 2 n'est pas installÃ©"
+	echo "Le serveur apache2 doit Ãªtre installÃ©, souhaitez-vous procÃ©der [y/n] ? "
 	read installApache2
-	if [ ("${installApache2}" == "yes") || ("${installApache2}" == "y") ]
+	if [[ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ]]
 	then
 		apt install apache2 -y
 	fi
 fi
+
 
 exit 0
