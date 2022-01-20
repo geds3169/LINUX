@@ -20,6 +20,7 @@
 # Variables
 ###################################################################################
 APACHE2_STATUS="$(systemctl is-active apache2.service)"
+APACHE2_SERVICE="$(systemctl is-enabled apache2.service)"
 MYSQL_STATUS="$(systemctl is-active mariadb.service)"
 START_SCRIPT_DEBUG="true"
 FLAG_STATUS="active"
@@ -47,9 +48,8 @@ apt update && apt upgrade -y
 # Installation du serveur Web Apache2
 ###################################################################################
 # Determine si le serveur web est installé, démarré
-if [[ ! "$(dpkg --get-selections | grep apache )"~ "install" ]] 
+if [[ "$(dpkg --get-selections | grep apache )" =~ "install" ]]
 then
-	echo "Apache2 est déjà installé"
 		# Determine si le seveur web est fonctionnel
 		if [ $APACHE2_STATUS = $FLAG_STATUS ] 
 		then
@@ -58,12 +58,12 @@ then
 			echo "Apache 2 n'est pas démarré"
 			echo "Voulez-vous démarrer Apache2 et activer le service [y/n] ? "
 			read activeApache2
-			if [[ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ]
+			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
 			then
 				systemctl start apache2
 				systemctl enable apache2
 				# Test à nouveau si le service est actif
-				if [ $APACHE2_STATUS = $FLAG_STATUS ] 
+				if [ $APACHE2_STATUS = $FLAG_STATUS ] && [ $APACHE2_SERVICE = "enabled" ] 
 				then
 					echo "Apache2 est à présent fonctionnel"
 				else
@@ -75,7 +75,7 @@ else
 	echo "Apache 2 n'est pas installé"
 	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
 	read installApache2
-	if [[ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ]]
+	if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ];
 	then
 		apt install apache2 -y
 	fi
