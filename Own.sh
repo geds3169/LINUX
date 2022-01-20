@@ -50,35 +50,7 @@ apt update && apt upgrade -y
 # Determine si le serveur web est installé, démarré
 if [[ "$(dpkg --get-selections | grep apache )" =~ "install" ]]
 then
-		# Determine si le seveur web est fonctionnel
-		if [ $APACHE2_STATUS = $FLAG_STATUS ] 
-		then
-			echo "Apache2 est démarré"
-		else
-			echo "Apache 2 n'est pas démarré"
-			echo "Voulez-vous démarrer Apache2 [y/n] ? "
-			read activeApache2
-			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
-			then
-				systemctl start apache2
-				systemctl status apache2.service
-			fi
-		fi
-
-		if [ $APACHE2_SERVICE == "enabled" ] 
-		then
-			echo "Le service Apache2 est activé"
-		else
-			echo "Le service Apache2 n'est pas activé"
-			echo "Voulez-vous activer le service Apache2 [y/n] ? "
-			read activeApache2
-			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
-			then
-				systemctl enable apache2
-				systemctl status apache2.service
-			fi
-		fi
-		echo "Apache2 est activé et opérationnel"
+		echo "Apache2 est installé"
 else
 	echo "Apache 2 n'est pas installé"
 	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
@@ -87,8 +59,37 @@ else
 	then
 		apt install apache2 -y
 		systemctl enable apache2
+		systemctl status apache2
 	fi
 fi
 
+# Determine si le seveur web est fonctionnel
+if [ $APACHE2_STATUS = $FLAG_STATUS ] 
+then
+	echo "Apache2 est démarré"
+else
+	echo "Apache 2 n'est pas démarré"
+	echo "Voulez-vous démarrer Apache2 [y/n] ? "
+	read activeApache2
+	if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
+	then
+		systemctl start apache2
+	fi
+fi
+
+if [ $APACHE2_SERVICE == "enabled" ] 
+then
+	echo "Le service Apache2 est activé"
+else
+	echo "Le service Apache2 n'est pas activé"
+	echo "Voulez-vous activer le service Apache2 [y/n] ? "
+	read activeApache2
+	if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
+	then
+		systemctl enable apache2
+	fi
+fi
+systemctl status apache2.service
+echo "Apache2 est activé et opérationnel"
 
 exit 0
