@@ -61,7 +61,7 @@ then
 			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
 			then
 				systemctl start apache2
-				echo "systemctl status apache2.service"
+				systemctl status apache2.service
 			fi
 		fi
 
@@ -75,7 +75,7 @@ then
 			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
 			then
 				systemctl enable apache2
-				echo "systemctl status apache2.service"
+				systemctl status apache2.service
 			fi
 		fi
 		echo "Apache2 est activé et opérationnel"
