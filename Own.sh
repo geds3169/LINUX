@@ -311,7 +311,7 @@ else
 	# Nettoyage des répertoire utilisés durant l'execution du script
 	echo "Nettoyage des fichiers téléchargés" 
 	cd ..
-	rm -R  /root/tmp/	
+	rm -R  /tmp/	
 fi
 
 #################################################################################
