@@ -21,7 +21,10 @@
 ###################################################################################
 APACHE2_STATUS="$(systemctl is-active apache2.service)"
 APACHE2_SERVICE="$(systemctl is-enabled apache2.service)"
-MYSQL_STATUS="$(systemctl is-active mariadb.service)"
+MARIADB_SERVICE="$(systemctl is-enabled mariadb.service)"
+MARIADB_STATUS="$(systemctl is-active mariadb.service)"
+MYSQL_STATUS="$(systemctl is-active mysql.service)"
+MYSQL_SERVICE="$(systemctl is-enabled mysql.service)"
 START_SCRIPT_DEBUG="true"
 FLAG_STATUS="active"
 
@@ -48,7 +51,7 @@ apt update && apt upgrade -y
 # Installation du serveur Web Apache2
 ###################################################################################
 # Determine si le serveur web est installé, démarré
-if [[ "$(dpkg --get-selections | grep apache )" =~ "install" ]]
+if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]
 then
 		echo "Apache2 est installé"
 else
@@ -59,11 +62,10 @@ else
 	then
 		apt install apache2 -y
 		systemctl enable apache2
-		systemctl status apache2
 	fi
 fi
 
-# Determine si le seveur web est fonctionnel
+# Determine si le seveur web est fonctionnel.
 if [ $APACHE2_STATUS = $FLAG_STATUS ] 
 then
 	echo "Apache2 est démarré"
@@ -77,6 +79,7 @@ else
 	fi
 fi
 
+# Determine si le service est actif au démarrage.
 if [ $APACHE2_SERVICE == "enabled" ] 
 then
 	echo "Le service Apache2 est activé"
@@ -90,6 +93,51 @@ else
 	fi
 fi
 systemctl status apache2.service
+
+# Retour d'information sur le processus Apache2 et port utilisé
 echo "Apache2 est activé et opérationnel"
+sleep 0.2
+echo "Le PID du processus est : "
+pgrep apache2
+echo "et le port d'écoute actuel est le :"
+netstat -pat | grep apache2
+
+###################################################################################
+# Installation du serveur de base de données Mysql ou Mariadb
+###################################################################################
+
+# Détermine si le serveur de base de données est installé, démarré.
+#if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-server" )" =~ "install" ]]
+if [[ "$(dpkg --get-selections | grep mysql)" && "$(dpkg --get-selections | grep mariadb)" =~ "install" ]]
+then
+		echo "Un serveur de base de données est déjà installé"
+		dpkg --get-selections | grep mysql && dpkg --get-selections | grep mariadb
+else
+	echo "Aucun serveur de base de données n'est installé"
+	echo "Un serveur de base de données est requis, souhaitez-vous procéder [y/n] ? "
+	read dataServer
+	if [ "${dataServer}" == "yes" ] || [ "${dataServer}" == "y" ];
+	then
+		echo "MySQL-server n'étant plus supporté par Debian, Mariadb sera donc installé'"
+		apt install mariadb-server -y
+		systemctl enable mariadb
+	fi
+fi
+
+# Determine si le seveur de base de données est fonctionnel.
+if [ $MARIADB_STATUS = $FLAG_STATUS || $MARIADB_STATUS = $FLAG_STATUS ] 
+then
+	echo "$MARIADB_STATUS  est démarré"
+	echo "$MYSQL_STATUS  est démarré"
+else
+	echo "$MARIADB_STATUS n'est pas démarré"
+	echo "$MYSQL_STATUS n'est pas démarré"
+	echo "Le serveur de base de données doit être activé, souhaitez-vous procéder [y/n] ? "
+	read activeDataServer
+	if [ "${activeDataServer}" == "yes" ] || [ "${activeDataServer}" == "y" ];
+	then
+		systemctl start mariadb
+	fi
+fi
 
 exit 0
