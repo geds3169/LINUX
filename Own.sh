@@ -22,7 +22,7 @@
 APACHE2_STATUS="$(systemctl is-active apache2.service)"
 APACHE2_SERVICE="$(systemctl is-enabled apache2.service)"
 #
-MARIADB_STATUS="$(systemctl is-active mariadb-service)"
+MARIADB_STATUS="$(systemctl is-active mariadb)"
 MARIADB_SERVICE="$(systemctl is-enabled mariadb.service)"
 
 #
@@ -45,6 +45,7 @@ fi
 echo ""
 echo ""
 echo "Mise à jour du système"
+echo ""
 sleep 1
 apt update && apt upgrade -y
 
@@ -401,7 +402,7 @@ echo "Le fichier a été créé avec succés !"
 fi
 echo ""
 echo "Activation de la configuration"
-/user/sbin/a2dissite 000-default.conf
+/usr/sbin/a2dissite 000-default.conf
 /usr/sbin/a2ensite $srv_name.conf
 echo ""
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
