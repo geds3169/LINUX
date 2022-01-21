@@ -76,7 +76,7 @@ echo ""
 
 sleep 0.5
 # Determine si le seveur web est fonctionnel.
-if [ "${$APACHE2_STATUS}" = "${FLAG_STATUS}" ] 
+if [ "${APACHE2_STATUS}" = "${FLAG_STATUS}" ] 
 then
 	echo "Apache2 est démarré"
 else
