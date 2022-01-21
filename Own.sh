@@ -368,10 +368,10 @@ echo ""
 echo "Entrez le port d'écoute (80 - 443) : "
 read port 
 echo ""
-echo "Entrez le chemin du répertoire ownCloud ( /var/www/owncloud/, ne pas oublier le / "
-read directory
+#echo "Entrez le chemin du répertoire ownCloud ( /var/www/owncloud/, ne pas oublier le / "
+#read directory
 
-dir = $directory | sed -e "s/\/[^\/]*$//"
+#dir = $directory | sed -e "s/\/[^\/]*$//"
 echo ""
 echo "Enter the listened IP for the server (e.g. : * or listen, or local IP, IP loopback):"
 read listen
