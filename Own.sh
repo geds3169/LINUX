@@ -276,35 +276,36 @@ sleep 0.5
 # Check si le fichier n'a pas déjà été téléchargé
 if [ -f /tmp/$file ]; then
 	echo "L'archive existe déjà sur la machine"
+	echo ""
+	echo "renseignez le chemin ou sera installé la solution "
+	echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
+	read dir
+	echo""
+	sleep 0.5
+	# Check si le répertoire existe pour l'extraction de la solution, sinon on le créait
+	if [ -d "$dir" ]; then
+	  echo "Extraction du contenu de l'archive dans ${dir}..."
+	  tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+	else
+		echo "Le répertoire ${dir} n'existe pas il va donc être créé"
+		mkdir $dir
+		echo ""
+		echo "Changement de répertoire"
+		cd /tmp/
+		echo""
+		echo "Extraction de l'archive dans le répertoire ${dir} "
+		tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+	fi
+fi
+
+echo ""
+sleep 1
 else
 	echo "Démarrage du téléchargement de l'archive ownCloud "
 	echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
 	wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2	
 fi;
 
-echo ""
-echo "renseignez le chemin ou sera installé la solution "
-echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
-read dir
-echo""
-
-sleep 0.5
-# Check si le répertoire existe pour l'extraction de la solution, sinon on le créait
-if [ -d "$dir" ]; then
-  echo "Extraction du contenu de l'archive dans ${dir}..."
-else
-	echo "Le répertoire ${dir} n'existe pas il va donc être créé"
-	mkdir $dir
-	echo ""
-	echo "Changement de répertoire"
-	cd /tmp/
-	echo""
-	echo "Extraction de l'archive dans le répertoire ${dir} "
-	tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
-fi
-
-echo ""
-sleep 1
 #################################################################################
 # Sécurisation du répertoire et des fichiers de configuration
 #################################################################################
@@ -439,6 +440,5 @@ echo ""
 echo "La mise en place de l'authentification avec LDAP https://kifarunix.com/configure-owncloud-openldap-authentication/ "
 echo ""
 echo "Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé."
-
 
 exit 0
