@@ -73,7 +73,7 @@ fi
 echo ""
 
 # Determine si le seveur web est fonctionnel.
-if [ $APACHE2_STATUS = $FLAG_STATUS ] 
+if [ "${$APACHE2_STATUS}" = "${FLAG_STATUS}" ] 
 then
 	echo "Apache2 est démarré"
 else
@@ -89,7 +89,7 @@ fi
 echo ""
 
 # Determine si le service est actif au démarrage.
-if [ $APACHE2_SERVICE == "enabled" ] 
+if [ "${APACHE2_SERVICE}" == "enabled" ] 
 then
 	echo "Le service Apache2 est activé"
 else
@@ -137,7 +137,7 @@ fi
 echo ""
 
 # Determine si le seveur de base de données est fonctionnel.
-if [ $MARIADB_STATUS = $FLAG_STATUS ] 
+if [ "${MARIADB_STATUS}" = "${FLAG_STATUS}" ] 
 then
 	echo "Le serveur de base de données est démarré"
 else
@@ -153,7 +153,7 @@ fi
 echo ""
 
 # Determine si le service est actif au démarrage.
-if [ $MARIADB_SERVICE == "enabled" ] 
+if [ "${MARIADB_SERVICE}" == "enabled" ] 
 then
 	echo "Le service MariaDB est activé"
 else
