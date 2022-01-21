@@ -52,6 +52,7 @@ apt-get install net-tools
 
 echo ""
 
+sleep 1
 ###################################################################################
 # Installation du serveur Web Apache2
 ###################################################################################
@@ -72,6 +73,7 @@ fi
 
 echo ""
 
+sleep 0.5
 # Determine si le seveur web est fonctionnel.
 if [ "${$APACHE2_STATUS}" = "${FLAG_STATUS}" ] 
 then
@@ -88,6 +90,7 @@ fi
 
 echo ""
 
+sleep 0.5
 # Determine si le service est actif au démarrage.
 if [ "${APACHE2_SERVICE}" == "enabled" ] 
 then
@@ -104,6 +107,7 @@ fi
 
 echo ""
 
+sleep 0.5
 # Retour d'information sur le processus Apache2 et port utilisé
 echo "Apache2 est activé et opérationnel, le(s) PID du processus est/sont : "
 pgrep -lf apache2
@@ -113,6 +117,7 @@ netstat -pat | grep apache2
 
 echo ""
 
+sleep 1
 ###################################################################################
 # Installation du serveur de base de données Mysql ou Mariadb
 ###################################################################################
@@ -136,6 +141,7 @@ fi
 
 echo ""
 
+sleep 0.5
 # Determine si le seveur de base de données est fonctionnel.
 if [ "${MARIADB_STATUS}" = "${FLAG_STATUS}" ] 
 then
@@ -152,6 +158,7 @@ fi
 
 echo ""
 
+sleep 0.5
 # Determine si le service est actif au démarrage.
 if [ "${MARIADB_SERVICE}" == "enabled" ] 
 then
@@ -168,6 +175,7 @@ fi
 
 echo ""
 
+sleep 0.5
 # Retour d'information sur le processus Apache2 et port utilisé
 echo "MariaDB est activé et opérationnel, le(s) PID du processus est/sont : "
 pgrep -lf mariadb
@@ -177,6 +185,7 @@ netstat -pat | grep mariadb
 
 echo ""
 
+sleep 1
 ###################################################################################
 # Installation de PHP et d'autres modules nécessaires
 ###################################################################################
@@ -186,6 +195,7 @@ apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping cor
 
 echo ""
 
+sleep 1
 ##################################################################################################################################
 # Collecte des informations en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
 ##################################################################################################################################
@@ -214,7 +224,7 @@ id -u $user_name &>/dev/null || useradd $user_name
 adduser www-data $user_name
 
 echo ""
-
+sleep 1
 ################################################
 # Securisation du serveur de base de données
 ################################################
@@ -231,6 +241,7 @@ y
 y
 EOF
 
+sleep 1
 #################################################################################
 # Création de l'utilisateur et de la base de donnée associé au cloud privé
 #################################################################################
@@ -251,7 +262,7 @@ echo "Opération effectué"
 mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
 
 echo ""
-
+sleep 1
 #################################################################################
 # Téléchargement et installation de ownCloud
 #################################################################################
@@ -260,6 +271,7 @@ echo ""
 ############
 file="owncloud-complete-20220112.tar.bz2"
 
+sleep 0.5
 # Check si le fichier n'a pas déjà été téléchargé
 if [ -f /tmp/$file ]; then
 	echo "L'archive existe déjà sur la machine"
@@ -275,6 +287,7 @@ echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
 read dir
 echo""
 
+sleep 0.5
 # Check si le répertoire existe pour l'extraction de la solution, sinon on le créait
 if [ -d "$dir" ]; then
   echo "Extraction du contenu de l'archive dans ${dir}..."
@@ -289,6 +302,8 @@ else
 	tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
 fi
 
+echo ""
+sleep 1
 #################################################################################
 # Sécurisation du répertoire et des fichiers de configuration
 #################################################################################
@@ -321,6 +336,7 @@ chown -R ${htuser}:${htgroup} ${dir}/settings/
 chown -R ${htuser}:${htgroup} ${dir}/updater/
 #chmod +x ${dir}/occ
 echo ""
+sleep 0.5
 echo "modification des droits sur le fichier .htaccess s'il existe"
 echo "Celui-ci permet de renforcer la configuration du serveur web"
 if [ -f ${dir}/.htaccess ]
@@ -334,6 +350,8 @@ if [ -f ${dir}/data/.htaccess ]
   chown ${rootuser}:${htgroup} ${dir}/data/.htaccess
 fi
 
+echo ""
+sleep 1
 #################################################################################
 # Configuration du virtual host (apache2)
 #################################################################################
@@ -357,6 +375,8 @@ echo ""
 echo "Enter the listened IP for the server (e.g. : * or listen, or local IP, IP loopback):"
 read listen
 echo ""
+
+# Creation de la configuration
 echo "#### $srv_name.
 <VirtualHost $listen:$port>
 ServerName $srv_name.$tld
@@ -370,6 +390,8 @@ allow from all
 </Directory>
 </VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 echo ""
+
+# Test de configuration apache
 sudo apachectl configtest
 echo ""
 if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
@@ -391,14 +413,15 @@ echo ""
 echo "Le serveur Cloud est opérationnel !"
 echo ""
 
+sleep 1
 ################################################################
 # Nettoyage des répertoire utilisés durant l'execution du script
 ################################################################
 echo "Nettoyage des fichiers téléchargés et les répertoires créés lors de l'installation" 
 cd ..
 rm -R  /root/tmp/
-sleep 0.2
 
+sleep 1
 #################################################################################
 # Conseils & recommandations
 #################################################################################
