@@ -301,19 +301,25 @@ htgroup='www-data'
 rootuser='root'
 
 echo ""
-echo"Modification des droits d'accès sur le répertoire"
+echo "Modification des droits d'accès sur le répertoire"
 find ${dir}/ -type f -print0 | xargs -0 chmod 0640
 find ${dir}/ -type d -print0 | xargs -0 chmod 0750
 echo""
 echo "Modification des droits utilisateurs/groupes/propriétaire des répertoires et sous répertoire"
 chown -R ${rootuser}:${htgroup} ${dir}/
 chown -R ${htuser}:${htgroup} ${dir}/apps/
-chown -R ${htuser}:${htgroup} ${dir}/assets/
+#chown -R ${htuser}:${htgroup} ${dir}/assets/
 chown -R ${htuser}:${htgroup} ${dir}/config/
-chown -R ${htuser}:${htgroup} ${dir}/data/
-chown -R ${htuser}:${htgroup} ${dir}/themes/
+chown -R ${htuser}:${htgroup} ${dir}/core/
+chown -R ${htuser}:${htgroup} ${dir}/lib/
+chown -R ${htuser}:${htgroup} ${dir}/ocs/
+chown -R ${htuser}:${htgroup} ${dir}/ocs-provider/
+chown -R ${htuser}:${htgroup} ${dir}/resources/
+chown -R ${htuser}:${htgroup} ${dir}/settings/
+#chown -R ${htuser}:${htgroup} ${dir}/data/
+#chown -R ${htuser}:${htgroup} ${dir}/themes/
 chown -R ${htuser}:${htgroup} ${dir}/updater/
-chmod +x ${dir}/occ
+#chmod +x ${dir}/occ
 echo ""
 echo "modification des droits sur le fichier .htaccess s'il existe"
 echo "Celui-ci permet de renforcer la configuration du serveur web"
