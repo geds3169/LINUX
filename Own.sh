@@ -21,10 +21,11 @@
 ###################################################################################
 APACHE2_STATUS="$(systemctl is-active apache2.service)"
 APACHE2_SERVICE="$(systemctl is-enabled apache2.service)"
+#
+MARIADB_STATUS="$(systemctl is-active mariadb-service)"
 MARIADB_SERVICE="$(systemctl is-enabled mariadb.service)"
-MARIADB_STATUS="$(systemctl is-active mariadb.service)"
-MYSQL_STATUS="$(systemctl is-active mysql.service)"
-MYSQL_SERVICE="$(systemctl is-enabled mysql.service)"
+
+#
 START_SCRIPT_DEBUG="true"
 FLAG_STATUS="active"
 
@@ -47,6 +48,10 @@ echo "Mise à jour du système"
 sleep 1
 apt update && apt upgrade -y
 
+apt-get install net-tools
+
+echo ""
+
 ###################################################################################
 # Installation du serveur Web Apache2
 ###################################################################################
@@ -65,6 +70,8 @@ else
 	fi
 fi
 
+echo ""
+
 # Determine si le seveur web est fonctionnel.
 if [ $APACHE2_STATUS = $FLAG_STATUS ] 
 then
@@ -79,6 +86,8 @@ else
 	fi
 fi
 
+echo ""
+
 # Determine si le service est actif au démarrage.
 if [ $APACHE2_SERVICE == "enabled" ] 
 then
@@ -92,31 +101,32 @@ else
 		systemctl enable apache2
 	fi
 fi
-systemctl status apache2.service
+
+echo ""
 
 # Retour d'information sur le processus Apache2 et port utilisé
-echo "Apache2 est activé et opérationnel"
-sleep 0.2
-echo "Le PID du processus est : "
-pgrep apache2
-echo "et le port d'écoute actuel est le :"
+echo "Apache2 est activé et opérationnel, le(s) PID du processus est/sont : "
+pgrep -lf apache2
+echo ""
+echo "et le protocole et le port d'écoute actuel sont :"
 netstat -pat | grep apache2
+
+echo ""
 
 ###################################################################################
 # Installation du serveur de base de données Mysql ou Mariadb
 ###################################################################################
 
 # Détermine si le serveur de base de données est installé, démarré.
-#if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-server" )" =~ "install" ]]
-if [[ "$(dpkg --get-selections | grep mysql)" && "$(dpkg --get-selections | grep mariadb)" =~ "install" ]]
+if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]
 then
-		echo "Un serveur de base de données est déjà installé"
-		dpkg --get-selections | grep mysql && dpkg --get-selections | grep mariadb
+		echo "MariaDB est déjà installé"
+		dpkg --get-selections | grep mariadb
 else
 	echo "Aucun serveur de base de données n'est installé"
 	echo "Un serveur de base de données est requis, souhaitez-vous procéder [y/n] ? "
 	read dataServer
-	if [ "${dataServer}" == "yes" ] || [ "${dataServer}" == "y" ];
+	if [[ "${dataServer}" == "yes" ] || [ "${dataServer}" == "y" ]];
 	then
 		echo "MySQL-server n'étant plus supporté par Debian, Mariadb sera donc installé'"
 		apt install mariadb-server -y
@@ -124,14 +134,14 @@ else
 	fi
 fi
 
+echo ""
+
 # Determine si le seveur de base de données est fonctionnel.
-if [ $MARIADB_STATUS = $FLAG_STATUS || $MARIADB_STATUS = $FLAG_STATUS ] 
+if [ $MARIADB_STATUS = $FLAG_STATUS ] 
 then
-	echo "$MARIADB_STATUS  est démarré"
-	echo "$MYSQL_STATUS  est démarré"
+	echo "Le serveur de base de données est démarré"
 else
-	echo "$MARIADB_STATUS n'est pas démarré"
-	echo "$MYSQL_STATUS n'est pas démarré"
+	echo "Le serveur de base de données n'est pas démarré"
 	echo "Le serveur de base de données doit être activé, souhaitez-vous procéder [y/n] ? "
 	read activeDataServer
 	if [ "${activeDataServer}" == "yes" ] || [ "${activeDataServer}" == "y" ];
@@ -139,5 +149,33 @@ else
 		systemctl start mariadb
 	fi
 fi
+
+echo ""
+
+# Determine si le service est actif au démarrage.
+if [ $MARIADB_SERVICE == "enabled" ] 
+then
+	echo "Le service MariaDB est activé"
+else
+	echo "Le service MariaDB n'est pas activé"
+	echo "Voulez-vous activer le service MariaDB [y/n] ? "
+	read activeMariaDB
+	if [ "${activeMariaDB}" == "yes" ] || [ "${activeMariaDB}" == "y" ];
+	then
+		systemctl enable apache2
+	fi
+fi
+
+echo ""
+
+# Retour d'information sur le processus Apache2 et port utilisé
+echo "MariaDB est activé et opérationnel, le(s) PID du processus est/sont : "
+pgrep -lf mariadb
+echo ""
+echo "et le protocole et le port d'écoute actuel sont :"
+netstat -pat | grep mariadb
+
+echo ""
+
 
 exit 0
