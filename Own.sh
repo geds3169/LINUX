@@ -177,5 +177,237 @@ netstat -pat | grep mariadb
 
 echo ""
 
+###################################################################################
+# Installation de PHP et d'autres modules nécessaires
+###################################################################################
+echo "Installation de PHP et de ses dépendances"
+apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y
+apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
+
+echo ""
+
+##################################################################################################################################
+# Collecte des informations en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
+##################################################################################################################################
+echo "Confirmer le nom d'utilisateur Root (en minuscule)"
+read root_name
+echo ""
+#Hidden password
+echo "Renseignez le mot de passe du compte Root"
+stty -echo
+read root_passwd
+echo ""
+stty echo
+echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
+read user_name
+echo ""
+echo "Entrez le mot de passe associé au compte d'administration de la solution"
+stty -echo
+read user_passwd
+echo ""
+stty echo
+echo "Entrez le nom souhaité pour la base de donnée (e.g: ownclouddb)"
+read database_name
+echo ""
+echo "Ajout de l'utilisateur $user_name au groupe d'administration du serveur Web"
+id -u $user_name &>/dev/null || useradd $user_name
+adduser www-data $user_name
+
+echo ""
+
+################################################
+# Securisation du serveur de base de données
+################################################
+echo "Sécurisation de la base de données, suppression de l'accès root depuis l'extérieur, suppression des comptes anonymes et de la base de données test"
+set -e
+mysql_secure_installation << EOF
+n
+$root_passwd
+$root_passwd
+y
+y
+y
+y
+y
+EOF
+
+#################################################################################
+# Création de l'utilisateur et de la base de donnée associé au cloud privé
+#################################################################################
+echo ""
+echo "Création de la base de donnée $database_name"
+echo "Si l'utilisateur $user_name n'existe pas il sera alors créé avec le mot de passe associé"
+set -e
+mysql -u $root_name -p$root_passwd << EOF
+CREATE USER IF NOT EXISTS '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
+CREATE DATABASE IF NOT EXISTS $database_name;
+GRANT ALL PRIVILEGES ON *.* TO '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
+GRANT ALL PRIVILEGES ON $database_name.* TO '$user_name'@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+sleep 0.5
+echo "Opération effectué"
+mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
+
+echo ""
+
+#################################################################################
+# Téléchargement et installation de ownCloud
+#################################################################################
+############
+# Variables
+############
+file="owncloud-complete-20220112.tar.bz2"
+
+# Check si le fichier n'a pas déjà été téléchargé
+if [ -f /tmp/$file ]; then
+	echo "L'archive existe déjà sur la machine"
+else
+	echo "Démarrage du téléchargement de l'archive ownCloud "
+	echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
+	wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2	
+fi;
+
+echo ""
+echo "renseignez le chemin ou sera installé la solution "
+echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
+read dir
+echo""
+
+# Check si le répertoire existe pour l'extraction de la solution, sinon on le créait
+if [ -d "$dir" ]; then
+  echo "Extraction du contenu de l'archive dans ${dir}..."
+else
+	echo "Le répertoire ${dir} n'existe pas il va donc être créé"
+	mkdir $dir
+	echo ""
+	echo "Changement de répertoire"
+	cd /tmp/
+	echo""
+	echo "Extraction de l'archive dans le répertoire ${dir} "
+	tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+fi
+
+#################################################################################
+# Sécurisation du répertoire et des fichiers de configuration
+#################################################################################
+
+############
+# Variables
+############
+htuser='www-data'
+htgroup='www-data'
+rootuser='root'
+
+echo ""
+echo"Modification des droits d'accès sur le répertoire"
+find ${dir}/ -type f -print0 | xargs -0 chmod 0640
+find ${dir}/ -type d -print0 | xargs -0 chmod 0750
+echo""
+echo "Modification des droits utilisateurs/groupes/propriétaire des répertoires et sous répertoire"
+chown -R ${rootuser}:${htgroup} ${dir}/
+chown -R ${htuser}:${htgroup} ${dir}/apps/
+chown -R ${htuser}:${htgroup} ${dir}/assets/
+chown -R ${htuser}:${htgroup} ${dir}/config/
+chown -R ${htuser}:${htgroup} ${dir}/data/
+chown -R ${htuser}:${htgroup} ${dir}/themes/
+chown -R ${htuser}:${htgroup} ${dir}/updater/
+chmod +x ${dir}/occ
+echo ""
+echo "modification des droits sur le fichier .htaccess s'il existe"
+echo "Celui-ci permet de renforcer la configuration du serveur web"
+if [ -f ${dir}/.htaccess ]
+ then
+  chmod 0644 ${dir}/.htaccess
+  chown ${rootuser}:${htgroup} ${dir}/.htaccess
+fi
+if [ -f ${dir}/data/.htaccess ]
+ then
+  chmod 0644 ${dir}/data/.htaccess
+  chown ${rootuser}:${htgroup} ${dir}/data/.htaccess
+fi
+
+#################################################################################
+# Configuration du virtual host (apache2)
+#################################################################################
+echo "Configuration du VirtualHost"
+echo ""
+sleep 0.5
+echo "Entrez le nom du serveur souhaité (sans le www) : "
+read srv_name
+echo ""
+echo "Entrez le nom de domaine : "
+read tld 
+echo ""
+echo "Entrez le port d'écoute (80 - 443) : "
+read port 
+echo ""
+echo "Entrez le chemin du répertoire ownCloud ( /var/www/owncloud/, ne pas oublier le / "
+read directory
+
+dir = $directory | sed -e "s/\/[^\/]*$//"
+echo ""
+echo "Enter the listened IP for the server (e.g. : * or listen, or local IP, IP loopback):"
+read listen
+echo ""
+echo "#### $srv_name.
+<VirtualHost $listen:$port>
+ServerName $srv_name.$tld
+ServerAlias $srv_name.$tld
+DocumentRoot $dir
+<Directory $dir>
+Options Indexes FollowSymLinks MultiViews
+AllowOverride All
+Order allow,deny
+allow from all
+</Directory>
+</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
+echo ""
+sudo apachectl configtest
+echo ""
+if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
+echo "Le fichier n'a pas pu être édité!"
+else
+echo "Le fichier a été créé avec succés !"
+fi
+echo ""
+echo "Activation de la configuration"
+/user/sbin/a2dissite 000-default.conf
+/usr/sbin/a2ensite $srv_name.conf
+echo ""
+echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
+read q
+if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
+systemctl restart apache2
+fi
+echo ""
+echo "Le serveur Cloud est opérationnel !"
+echo ""
+
+################################################################
+# Nettoyage des répertoire utilisés durant l'execution du script
+################################################################
+echo "Nettoyage des fichiers téléchargés et les répertoires créés lors de l'installation" 
+cd ..
+rm -R  /root/tmp/
+sleep 0.2
+
+#################################################################################
+# Conseils & recommandations
+#################################################################################
+echo ""
+echo ""
+echo "Afin de terminer la configuration, ouvrez un navigateur Web et entrez l'addresse suivante http://127.0.0.1 si vous êtes en local"
+echo""
+echo "ou http://<ip-publique-serveur> http://<ip-privé-serveur> si vous effectuer la configuration depuis une autre machine"
+echo ""
+echo "Renseignez le nom d'administration $user_name, le mot de passe associé, par defaut le répertoire des données est /var/www/owncloud/data "
+echo ""
+echo "La configuration de l'outil est en soit ergonomique et intuitif "
+echo ""
+echo "La mise en place de l'authentification avec LDAP https://kifarunix.com/configure-owncloud-openldap-authentication/ "
+echo ""
+echo "Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé."
 
 exit 0
