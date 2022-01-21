@@ -95,8 +95,8 @@ then
 else
 	echo "Le service Apache2 n'est pas activé"
 	echo "Voulez-vous activer le service Apache2 [y/n] ? "
-	read activeApache2
-	if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
+	read enableApache2
+	if [ "${enableApache2}" == "yes" ] || [ "${enableApache2}" == "y" ];
 	then
 		systemctl enable apache2
 	fi
@@ -125,8 +125,8 @@ then
 else
 	echo "Aucun serveur de base de données n'est installé"
 	echo "Un serveur de base de données est requis, souhaitez-vous procéder [y/n] ? "
-	read dataServer
-	if [[ "${dataServer}" == "yes" ] || [ "${dataServer}" == "y" ]];
+	read installMariaDB
+	if [ "${installMariaDB}" == "yes" ] || [ "${installMariaDB}" == "y" ];
 	then
 		echo "MySQL-server n'étant plus supporté par Debian, Mariadb sera donc installé'"
 		apt install mariadb-server -y
@@ -143,8 +143,8 @@ then
 else
 	echo "Le serveur de base de données n'est pas démarré"
 	echo "Le serveur de base de données doit être activé, souhaitez-vous procéder [y/n] ? "
-	read activeDataServer
-	if [ "${activeDataServer}" == "yes" ] || [ "${activeDataServer}" == "y" ];
+	read activeMariaDB
+	if [ "${activeMariaDB}" == "yes" ] || [ "${activeMariaDB}" == "y" ];
 	then
 		systemctl start mariadb
 	fi
@@ -159,8 +159,8 @@ then
 else
 	echo "Le service MariaDB n'est pas activé"
 	echo "Voulez-vous activer le service MariaDB [y/n] ? "
-	read activeMariaDB
-	if [ "${activeMariaDB}" == "yes" ] || [ "${activeMariaDB}" == "y" ];
+	read enableMariaDB
+	if [ "${enableMariaDB}" == "yes" ] || [ "${enableMariaDB}" == "y" ];
 	then
 		systemctl enable apache2
 	fi
