@@ -118,7 +118,7 @@ echo ""
 ###################################################################################
 
 # Détermine si le serveur de base de données est installé, démarré.
-if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]
+if [[ "$(dpkg --get-selections | grep mariadb )" =~ "install" ]]
 then
 		echo "MariaDB est déjà installé"
 		dpkg --get-selections | grep mariadb
