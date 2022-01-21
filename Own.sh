@@ -272,39 +272,47 @@ sleep 1
 ############
 file="owncloud-complete-20220112.tar.bz2"
 
-sleep 0.5
-# Check si le fichier n'a pas déjà été téléchargé
-if [ -f /tmp/$file ]; then
-	echo "L'archive existe déjà sur la machine"
-	echo ""
-	echo "renseignez le chemin ou sera installé la solution "
-	echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
-	read dir
-	echo""
-	sleep 0.5
-	# Check si le répertoire existe pour l'extraction de la solution, sinon on le créait
-	if [ -d "$dir" ]; then
-	  echo "Extraction du contenu de l'archive dans ${dir}..."
-	  tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+echo "renseignez le chemin ou sera installé la solution "
+echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
+read dir
+echo""
+if [ -d "$dir" ]; then
+	echo "le répertoire $dir existe déjà"
+	if [ -f /root/tmp/$file ]; then
+		echo "l'archive est déjà présente sur la machine et va donc être utilisé"
 	else
-		echo "Le répertoire ${dir} n'existe pas il va donc être créé"
-		mkdir $dir
+		echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
+		wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
 		echo ""
 		echo "Changement de répertoire"
 		cd /tmp/
 		echo""
 		echo "Extraction de l'archive dans le répertoire ${dir} "
 		tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+		sleep 1
+		# Nettoyage des répertoire utilisés durant l'execution du script
+		echo "Nettoyage des fichiers téléchargés" 
+		cd ..
+		rm -R  /root/tmp/
 	fi
-fi
-
-echo ""
-sleep 1
 else
-	echo "Démarrage du téléchargement de l'archive ownCloud "
-	echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
-	wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2	
-fi;
+	echo "le répertoire $dir n'existe pas et va donc être créé"
+	mkdir $dir
+	echo "le répertoire a été créé"
+	echo ""
+	ls $dir
+	echo ""
+	echo "Changement de répertoire"
+	cd /tmp/
+	echo""
+	echo "Extraction de l'archive dans le répertoire ${dir} "
+	tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+	sleep 1
+	# Nettoyage des répertoire utilisés durant l'execution du script
+	echo "Nettoyage des fichiers téléchargés" 
+	cd ..
+	rm -R  /root/tmp/	
+fi
 
 #################################################################################
 # Sécurisation du répertoire et des fichiers de configuration
@@ -414,14 +422,6 @@ fi
 echo ""
 echo "Le serveur Cloud est opérationnel !"
 echo ""
-
-sleep 1
-################################################################
-# Nettoyage des répertoire utilisés durant l'execution du script
-################################################################
-echo "Nettoyage des fichiers téléchargés et les répertoires créés lors de l'installation" 
-cd ..
-rm -R  /root/tmp/
 
 sleep 1
 #################################################################################
