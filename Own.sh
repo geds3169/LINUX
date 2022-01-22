@@ -113,7 +113,7 @@ sleep 0.5
 echo "Apache2 est activé et opérationnel, le(s) PID du processus est/sont : "
 pgrep -lf apache2
 echo ""
-echo "et le protocole et le port d'écoute actuel sont :"
+echo "et le protocole et le(s) port(s) d'écoute actuel est/sont :"
 netstat -pat | grep apache2
 
 echo ""
@@ -222,7 +222,7 @@ read database_name
 echo ""
 echo "Ajout de l'utilisateur $user_name au groupe d'administration du serveur Web"
 id -u $user_name &>/dev/null || useradd $user_name
-adduser www-data $user_name
+/usr/sbin/adduser www-data $user_name
 
 echo ""
 sleep 1
@@ -264,54 +264,71 @@ mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | gr
 
 echo ""
 sleep 1
+
 #################################################################################
 # Téléchargement et installation de ownCloud
 #################################################################################
-############
-# Variables
-############
-file="owncloud-complete-20220112.tar.bz2"
-
 echo "renseignez le chemin ou sera installé la solution "
 echo "(e.g: /var/www/html/owncloud ou /var/www/owncloud ):"
 read dir
 echo""
-if [ -d "$dir" ]; then
-	echo "le répertoire $dir existe déjà"
-	if [ -f /root/tmp/$file ]; then
-		echo "l'archive est déjà présente sur la machine et va donc être utilisé"
-	else
-		echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
-		wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
-		echo ""
-		echo "Changement de répertoire"
-		cd /tmp/
-		echo""
-		echo "Extraction de l'archive dans le répertoire ${dir} "
-		tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
-		sleep 1
-		# Nettoyage des répertoire utilisés durant l'execution du script
-		echo "Nettoyage des fichiers téléchargés" 
-		cd ..
-		rm -R  /root/tmp/
-	fi
+
+# Création du dossier contenant la solution (/var/www)
+if [ - d "dir" ]; then
+	echo "Le répertoire $dir existe déjà"
 else
-	echo "le répertoire $dir n'existe pas et va donc être créé"
+	echo "Le répertoire ${dir} n'existe pas et va donc être créé"
 	mkdir $dir
 	echo "le répertoire a été créé"
 	echo ""
 	ls $dir
 	echo ""
-	echo "Changement de répertoire"
-	cd /tmp/
-	echo""
-	echo "Extraction de l'archive dans le répertoire ${dir} "
+fi
+
+sleep 1
+
+# Téléchargement de la solution et extraction
+	
+############
+# Variables
+############
+file="owncloud-complete-20220112.tar.bz2"
+
+echo ""
+echo "Changement de répertoire"
+cd /tmp/
+echo ""
+
+# check si l'archive existe ou télecharge
+if [ -f /root/tmp/$file ]; then
+	echo "L'archive existe déja et va être décompréssé dans ${dir}"
+	echo ""
+	echo "Extraction de la solution dans le dossier ${dir}"
+	echo ""
 	tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+	echo ""
+	echo "Extraction de la solution a été effectué"
+	ls -al $dir
 	sleep 1
 	# Nettoyage des répertoire utilisés durant l'execution du script
-	echo "Nettoyage des fichiers téléchargés" 
-	cd ..
-	rm -R  /tmp/	
+	echo "Nettoyage des fichiers téléchargés"
+	rm -R /tmp/owncloud-complete-*
+	ls /tmp/
+else
+	echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
+	wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
+	echo ""
+	echo "Extraction de la solution dans le dossier ${dir}"
+	echo ""
+	tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+	echo ""
+	echo "Extraction de la solution a été effectué"
+	ls -al $dir
+	sleep 1
+	# Nettoyage des répertoire utilisés durant l'execution du script
+	echo "Nettoyage des fichiers téléchargés"
+	rm -R /tmp/owncloud-complete-*
+	ls /tmp/
 fi
 
 #################################################################################
