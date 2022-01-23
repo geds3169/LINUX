@@ -399,27 +399,43 @@ echo ""
 
 #dir = $directory | sed -e "s/\/[^\/]*$//"
 echo ""
-echo "Enter the listened IP for the server (e.g. : * or listen, or local IP, IP loopback):"
+echo "Entrer l'adresse  d'écoute du serveur web (e.g. : * or listen, or local IP, IP loopback): "
 read listen
 echo ""
+
+echo "Renseignez l'adresse de contact de l'administrateur de la solution : "
+read mailto
 
 # Creation de la configuration
 echo "#### $srv_name.
 <VirtualHost $listen:$port>
+ServerAdmin $mailto
 ServerName $srv_name.$tld
 ServerAlias $srv_name.$tld
 DocumentRoot $dir
+DirectoryIndex index.php
+LogLevel warn
+ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
+CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
 <Directory $dir>
 Options Indexes FollowSymLinks MultiViews
 AllowOverride All
-Order allow,deny
-allow from all
+Require all granted
 </Directory>
 </VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 echo ""
 
 # Test de configuration apache
 sudo apachectl configtest
+echo ""
+/usr/sbin/apache2ctl -t
+echo ""
+/usr/sbin/apache2ctl -S
+echo ""
+
+sleep 1
+
+echo "activation de la configuration"
 echo ""
 if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
 echo "Le fichier n'a pas pu être édité!"
@@ -428,8 +444,14 @@ echo "Le fichier a été créé avec succés !"
 fi
 echo ""
 echo "Activation de la configuration"
-/usr/sbin/a2dissite 000-default.conf
 /usr/sbin/a2ensite $srv_name.conf
+/usr/sbin/a2enmod rewrite
+/usr/sbin/a2enmod headers
+/usr/sbin/a2enmod env
+/usr/sbin/a2enmod dir
+/usr/sbin/a2enmod mime
+/usr/sbin/a2dissite 000-default.conf
+
 echo ""
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
 read q
