@@ -391,7 +391,12 @@ echo ""
 echo "Entrez le nom de domaine : "
 read tld 
 echo ""
-echo "Entrez le port d'écoute (80 - 443) : "
+echo "!!! AVERTISSEMENT !!!"
+echo "Vous allez à présent entrez le port d'écoute (80 HTTP - 443 HTTPS ),"
+echo "si votre serveur doit être utilisé dans un environnement de production,"
+echo "il est recommandé d'utiliser un certificat signé par une autorité de certification,"
+echo "il n'est pas recommandé d'utiliser un certificat auto-signé."
+echo "Dans le doute utilisez le port 80, renseignez-vous ensuite pour l'obtention d'un certificat et modification de la configuration du site dans apache2. :"
 read port 
 echo ""
 #echo "Entrez le chemin du répertoire ownCloud ( /var/www/owncloud/, ne pas oublier le / "
@@ -461,6 +466,28 @@ fi
 echo ""
 echo "Le serveur Cloud est opérationnel !"
 echo ""
+
+#################################################################################
+# Configuration du firewall de la machine
+#################################################################################
+
+echo "Recherche d''un pare-feu est création des règles de flux sur le $port défini dans la configuration du serveur Web"
+/usr/sbin/iptables status >/dev/null 2>&1
+if [ $? = 0 ]; then
+        echo "Le pare-feu Iptable est en cours d'exécution, nous pouvons créer les règles entrantes pour les protocoles HTTP (80) et HTTPS (443)"
+        iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+        iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+else
+        echo "Le pare-feu Iptable ne fonctionne pas ou n'est pas installé"
+fi
+
+if systemctl status ufw.service >/dev/null; then
+        echo "le pare-feu ufw est en cours d'exécution, nous pouvons créer la règle entrante pour les protocoles HTTP (80) et HTTPS (443)"
+        ufw allow http
+        ufw allow https
+else
+        echo "Le pare-feu  ufw ne fonctionne pas ou n'est pas installé"
+fi
 
 sleep 1
 #################################################################################
