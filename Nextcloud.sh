@@ -427,15 +427,14 @@ read mailto
 echo "Création d'un répertoire dédié aux logs apache2 pour la solution ${srv_name} "
 echo ""
 if [ - d "srv_name" ]; then
-	echo "Le répertoire ${srv_name} existe déjà dans le répertoire des logs apache2"
+	echo "Le répertoire $rv_name existe déjà dans le répertoire des logs apache2"
 else
 	echo "Le répertoire ${srv_name} n'existe pas et va donc être créé dans le répertoire des logs apache2"
-	mkdir $dir
+	mkdir $srv_name
 	echo "le répertoire dédié au log apache pour la solution a été créé"
 	echo ""
 	ls /var/log/apache2/$srv_name
 	echo ""
-fi
 
 # Creation de la configuration
 echo "#### $srv_name.
