@@ -466,7 +466,7 @@ echo ""
 echo "Activation de la configuration"
 /usr/sbin/a2enmod proxy_fcgi
 /usr/sbin/a2enmod setenvif
-/usr/sbin/a2dismod mpm_prefork
+/usr/sbin/a2dismod php8.0 mpm_prefork
 /usr/sbin/a2enmod mpm_event
 /usr/sbin/a2ensite $srv_name.conf
 /usr/sbin/a2enmod rewrite
