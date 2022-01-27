@@ -190,8 +190,18 @@ sleep 1
 ###################################################################################
 # Installation de PHP et d'autres modules nécessaires
 ###################################################################################
+
+echo "Installation du dépôt php8.0 et de la clé GPG associé"
+echo ""
+apt-get install apt-transport-https lsb-release ca-certificates
+wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/php.list
+echo ""
+echo "Mise à jour des nouveaux packets depuis les dépôts et téléchargement"
+apt-get update
+echo ""
 echo "Installation de PHP et de ses dépendances"
-apt install php8.0 libapache2-mod-php php8.0-{xml,cli,fpm,cgi,mysql,mbstring,gd,curl,zip} -y
+apt install php8.0 libapache2-mod-php8.0 php8.0-{xml,cli,fpm,cgi,mysql,mbstring,gd,curl,zip} -y
 apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
 
 echo ""
@@ -359,18 +369,15 @@ echo""
 echo "Modification des droits utilisateurs/groupes/propriétaire des répertoires et sous répertoire"
 chown -R ${rootuser}:${htgroup} ${dir}/
 chown -R ${htuser}:${htgroup} ${dir}/apps/
-#chown -R ${htuser}:${htgroup} ${dir}/assets/
 chown -R ${htuser}:${htgroup} ${dir}/config/
 chown -R ${htuser}:${htgroup} ${dir}/core/
 chown -R ${htuser}:${htgroup} ${dir}/lib/
 chown -R ${htuser}:${htgroup} ${dir}/ocs/
 chown -R ${htuser}:${htgroup} ${dir}/ocs-provider/
 chown -R ${htuser}:${htgroup} ${dir}/resources/
-chown -R ${htuser}:${htgroup} ${dir}/settings/
-#chown -R ${htuser}:${htgroup} ${dir}/data/
-#chown -R ${htuser}:${htgroup} ${dir}/themes/
+chown -R ${htuser}:${htgroup} ${dir}/themes/
 chown -R ${htuser}:${htgroup} ${dir}/updater/
-#chmod +x ${dir}/occ
+chmod +x ${dir}/occ
 echo ""
 sleep 0.5
 echo "modification des droits sur le fichier .htaccess s'il existe"
@@ -506,6 +513,12 @@ else
 fi
 
 sleep 1
+
+#################################################################################
+# Sécurisation de la faille pwnkit 
+#################################################################################
+chmod 0755 /usr/bin/pkexec
+
 #################################################################################
 # Conseils & recommandations
 #################################################################################
