@@ -193,7 +193,7 @@ sleep 1
 
 echo "Installation du dépôt php8.0 et de la clé GPG associé"
 echo ""
-apt-get install apt-transport-https lsb-release ca-certificates
+apt-get install apt-transport-https lsb-release ca-certificates -y
 wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/php.list
 echo ""
@@ -406,6 +406,9 @@ echo "si votre serveur doit être utilisé dans un environnement de production,"
 echo "il est recommandé d'utiliser un certificat signé par une autorité de certification,"
 echo "il n'est pas recommandé d'utiliser un certificat auto-signé."
 echo "Dans le doute utilisez le port 80, renseignez-vous ensuite pour l'obtention d'un certificat et modification de la configuration du site dans apache2. :"
+sleep 0.1
+echo ""
+echo "Renseignez le port d'écoute du server Web:"
 read port 
 echo ""
 #echo "Entrez le chemin du répertoire Nextcloud ( /var/www/nextcloud/, ne pas oublier le / "
