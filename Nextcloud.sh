@@ -285,7 +285,7 @@ echo""
 
 # Création du dossier contenant la solution (/var/www)
 if [ - d "dir" ]; then
-	echo "Le répertoire $dir existe déjà"
+	echo "Le répertoire ${dir} existe déjà"
 else
 	echo "Le répertoire ${dir} n'existe pas et va donc être créé"
 	mkdir $dir
@@ -426,7 +426,7 @@ read mailto
 # Création du répertoire (des logs apache2) répondant au nom du dossier créé (/var/log/apache2/nextcloud/)
 echo "Création d'un répertoire dédié aux logs apache2 pour la solution ${srv_name} "
 echo ""
-if [ - d "srv_name" ]; then
+if [ - d "/var/log/apache2/${srv_name}" ]; then
 	echo "Le répertoire $srv_name existe déjà dans le répertoire des logs apache2"
 else
 	echo "Le répertoire ${srv_name} n'existe pas et va donc être créé dans le répertoire des logs apache2"
