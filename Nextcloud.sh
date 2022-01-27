@@ -423,19 +423,7 @@ echo ""
 echo "Renseignez l'adresse de contact de l'administrateur de la solution : "
 read mailto
 
-# Création du répertoire (des logs apache2) répondant au nom du dossier créé (/var/log/apache2/nextcloud/)
-echo "Création d'un répertoire dédié aux logs apache2 pour la solution ${srv_name} "
 echo ""
-if [ - d "/var/log/apache2/${srv_name}" ]; then
-	echo "Le répertoire $srv_name existe déjà dans le répertoire des logs apache2"
-else
-	echo "Le répertoire ${srv_name} n'existe pas et va donc être créé dans le répertoire des logs apache2"
-	mkdir $srv_name
-	echo "le répertoire dédié au log apache pour la solution a été créé"
-	echo ""
-	ls /var/log/apache2/$srv_name
-fi
-	echo ""
 
 # Creation de la configuration
 echo "#### $srv_name.
@@ -458,8 +446,8 @@ Dav off
 SetEnv HOME $dir/
 SetEnv HTTP_HOME $dir/
 </Directory>
-ErrorLog ${APACHE_LOG_DIR}/$srv_name/error.log
-CustomLog ${APACHE_LOG_DIR}/$srv_name/access.log combined
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
 LogLevel warn
 ServerSignature Off
 RewriteEngine on
