@@ -471,6 +471,7 @@ echo "Le fichier a été créé avec succés !"
 fi
 echo ""
 echo "Activation de la configuration"
+/usr/sbin/a2dismod mpm_prefork
 /usr/sbin/a2ensite $srv_name.conf
 /usr/sbin/a2enmod rewrite
 /usr/sbin/a2enmod headers
@@ -478,7 +479,6 @@ echo "Activation de la configuration"
 /usr/sbin/a2enmod dir
 /usr/sbin/a2enmod mime
 /usr/sbin/a2dissite 000-default.conf
-/usr/sbin/a2dismod mpm_prefork
 
 echo ""
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
@@ -535,5 +535,6 @@ echo ""
 echo "La mise en place de l'authentification avec LDAP https://docs.nextcloud.com/server/latest/admin_manual/configuration_user/user_auth_ldap.html "
 echo ""
 echo "Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé."
+
 
 exit 0
