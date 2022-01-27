@@ -191,8 +191,15 @@ sleep 1
 # Installation de PHP et d'autres modules nécessaires
 ###################################################################################
 echo "Installation de PHP et de ses dépendances"
-apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y
+apt install php8.0 libapache2-mod-php php8.0-{xml,cli,fpm,cgi,mysql,mbstring,gd,curl,zip} -y
 apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
+
+echo ""
+
+echo "Installation du support FPM et redémarrage du service Apache2 "
+/usr/sbin/a2enmod proxy_fcgi setenvif
+/usr/sbin/a2enconf php8.0-fpm
+systemctl restart apache2
 
 echo ""
 
@@ -346,6 +353,8 @@ echo ""
 echo "Modification des droits d'accès sur le répertoire"
 find ${dir}/ -type f -print0 | xargs -0 chmod 0640
 find ${dir}/ -type d -print0 | xargs -0 chmod 0750
+
+
 echo""
 echo "Modification des droits utilisateurs/groupes/propriétaire des répertoires et sous répertoire"
 chown -R ${rootuser}:${htgroup} ${dir}/
@@ -427,6 +436,12 @@ Options Indexes FollowSymLinks MultiViews
 AllowOverride All
 Require all granted
 </Directory>
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+RewriteEngine on
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*) index.php [PT,L]
 </VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 echo ""
 
@@ -456,6 +471,7 @@ echo "Activation de la configuration"
 /usr/sbin/a2enmod dir
 /usr/sbin/a2enmod mime
 /usr/sbin/a2dissite 000-default.conf
+/usr/sbin/a2dismod mpm_prefork
 
 echo ""
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
@@ -490,6 +506,12 @@ else
 fi
 
 sleep 1
+
+#################################################################################
+# Sécurisation de la faille pwnkit 
+#################################################################################
+chmod 0755 /usr/bin/pkexec
+
 #################################################################################
 # Conseils & recommandations
 #################################################################################
