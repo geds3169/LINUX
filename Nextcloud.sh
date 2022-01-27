@@ -434,6 +434,7 @@ else
 	echo "le répertoire dédié au log apache pour la solution a été créé"
 	echo ""
 	ls /var/log/apache2/$srv_name
+fi
 	echo ""
 
 # Creation de la configuration
