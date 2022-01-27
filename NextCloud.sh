@@ -190,8 +190,18 @@ sleep 1
 ###################################################################################
 # Installation de PHP et d'autres modules nécessaires
 ###################################################################################
+
+echo "Installation du dépôt php8.0 et de la clé GPG associé"
+echo ""
+apt-get install apt-transport-https lsb-release ca-certificates
+wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/php.list
+echo ""
+echo "Mise à jour des nouveaux packets depuis les dépôts et téléchargement"
+apt-get update
+echo ""
 echo "Installation de PHP et de ses dépendances"
-apt install php8.0 libapache2-mod-php php8.0-{xml,cli,fpm,cgi,mysql,mbstring,gd,curl,zip} -y
+apt install php8.0 libapache2-mod-php8.0 php8.0-{xml,cli,fpm,cgi,mysql,mbstring,gd,curl,zip} -y
 apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
 
 echo ""
