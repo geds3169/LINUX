@@ -443,11 +443,9 @@ Require all granted
 <IfModule mod_dav.c>
 Dav off
 </IfModule>
-SetEnv HOME $dir/
-SetEnv HTTP_HOME $dir/
 </Directory>
-ErrorLog ${APACHE_LOG_DIR}/error.log
-CustomLog ${APACHE_LOG_DIR}/access.log combined
+ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
+CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
 LogLevel warn
 ServerSignature Off
 RewriteEngine on
