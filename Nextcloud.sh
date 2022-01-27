@@ -206,13 +206,6 @@ apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping cor
 
 echo ""
 
-echo "Installation du support FPM et redémarrage du service Apache2 "
-/usr/sbin/a2enmod proxy_fcgi setenvif
-/usr/sbin/a2enconf php8.0-fpm
-systemctl restart apache2
-
-echo ""
-
 sleep 1
 ##################################################################################################################################
 # Collecte des informations en vue de sécurisation de la base de données et la création du comptes d'administration du cloud privé
@@ -471,14 +464,22 @@ echo "Le fichier a été créé avec succés !"
 fi
 echo ""
 echo "Activation de la configuration"
+/usr/sbin/a2enmod proxy_fcgi
+/usr/sbin/a2enmod setenvif
 /usr/sbin/a2dismod mpm_prefork
+/usr/sbin/a2enmod mpm_event
 /usr/sbin/a2ensite $srv_name.conf
 /usr/sbin/a2enmod rewrite
 /usr/sbin/a2enmod headers
 /usr/sbin/a2enmod env
 /usr/sbin/a2enmod dir
 /usr/sbin/a2enmod mime
+/usr/sbin/a2enmod ssl
+/usr/sbin/a2enmod http2
 /usr/sbin/a2dissite 000-default.conf
+
+
+/usr/sbin/a2enconf php8.0-fpm
 
 echo ""
 echo "Le serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
