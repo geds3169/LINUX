@@ -213,7 +213,7 @@ echo "Confirmer le nom d'utilisateur Root (en minuscule)"
 read root_name
 echo ""
 #Hidden password
-echo "Renseignez le mot de passe du compte Root"
+echo "Renseignez le mot de passe du compte ${root}"
 stty -echo
 read root_passwd
 echo ""
@@ -221,7 +221,7 @@ stty echo
 echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
 read user_name
 echo ""
-echo "Entrez le mot de passe associé au compte d'administration de la solution"
+echo "Entrez le mot de passe associé au compte ${user_name}"
 stty -echo
 read user_passwd
 echo ""
@@ -486,8 +486,8 @@ else
 echo "Le fichier a été créé avec succés et va être activé !"
 /usr/sbin/a2dissite 000-default.conf
 /usr/sbin/a2ensite $srv_name.conf
-echo ""
-ls /etc/apache2/site-enabled/
+
+# Module on/off
 fi
 echo ""
 sleep 1.0
