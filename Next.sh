@@ -519,8 +519,7 @@ sleep 1.0
 #################################################################################
 # Configuration du firewall de la machine
 #################################################################################
-echo "Recherche d''un pare-feu est création des règles de flux sur le $port défini dans la configuration du serveur Web pourt Iptables et UFW"
-echo ""
+echo "Recherche d''un pare-feu est création des règles de flux sur le ${port} défini dans la configuration du serveur Web"
 /usr/sbin/iptables status >/dev/null 2>&1
 if [ $? = 0 ]; then
         echo "Le pare-feu Iptable est en cours d'exécution, nous pouvons créer les règles entrantes pour les protocoles HTTP (80) et HTTPS (443)"
@@ -529,8 +528,6 @@ if [ $? = 0 ]; then
 else
         echo "Le pare-feu Iptable ne fonctionne pas ou n'est pas installé"
 fi
-
-echo ""
 
 if systemctl status ufw.service >/dev/null; then
         echo "le pare-feu ufw est en cours d'exécution, nous pouvons créer la règle entrante pour les protocoles HTTP (80) et HTTPS (443)"
