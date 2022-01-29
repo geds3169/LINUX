@@ -213,7 +213,7 @@ echo "Confirmer le nom d'utilisateur Root (en minuscule)"
 read root_name
 echo ""
 #Hidden password
-echo "Renseignez le mot de passe du compte ${root}"
+echo "Renseignez le mot de passe du compte $root"
 stty -echo
 read root_passwd
 echo ""
@@ -221,7 +221,7 @@ stty echo
 echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
 read user_name
 echo ""
-echo "Entrez le mot de passe associé au compte ${user_name}"
+echo "Entrez le mot de passe associé au compte $user_name"
 stty -echo
 read user_passwd
 echo ""
@@ -546,7 +546,7 @@ echo "Afin de terminer la configuration, ouvrez un navigateur Web et entrez l'ad
 echo""
 echo "ou http://<ip-publique-serveur> http://<ip-privé-serveur> si vous effectuer la configuration depuis une autre machine"
 echo ""
-echo "Renseignez le nom d'administration $user_name, le mot de passe associé, par defaut le répertoire des données est /var/www/nextcloud/data "
+echo "Renseignez le nom d'administration $user_name, le mot de passe associé, par defaut le répertoire des données est $dir/data "
 echo ""
 echo "La configuration de l'outil est en soit ergonomique et intuitif "
 echo ""
