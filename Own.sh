@@ -396,7 +396,9 @@ echo "Vous allez à présent entrez le port d'écoute (80 HTTP - 443 HTTPS ),"
 echo "si votre serveur doit être utilisé dans un environnement de production,"
 echo "il est recommandé d'utiliser un certificat signé par une autorité de certification,"
 echo "il n'est pas recommandé d'utiliser un certificat auto-signé."
-echo "Dans le doute utilisez le port 80, renseignez-vous ensuite pour l'obtention d'un certificat et modification de la configuration du site dans apache2. :"
+echo ""
+echo "Dans le doute utilisez le port 80, renseignez-vous ensuite pour l'obtention d'un certificat et modification de la configuration du site dans apache2.
+echo "Renseignez à présent le port d'écoute du service Apache2 (e.g: 80 ou 443) : "
 read port 
 echo ""
 #echo "Entrez le chemin du répertoire ownCloud ( /var/www/owncloud/, ne pas oublier le / "
