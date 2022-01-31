@@ -209,4 +209,5 @@ echo ""
 # locate -i -e  "php.*"  puis sudo update-alternatives --config php et enfin sudo update-alternatives --set php /usr/bin/php8 si existant
 #https://stackoverflow.com/questions/42619312/switch-php-versions-on-commandline-ubuntu-16-04
 
+
 exit 2
