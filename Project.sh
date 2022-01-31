@@ -12,8 +12,8 @@ file="owncloud-complete-20220112.tar.bz2"
 
 cd /tmp/
 # check si l'archive de la solution existe dans /tmp/
-if [ -f /root/tmp/$file ]; then
-	echo "L'archive existe déja et va être décompréssé dans ${dir}"
+if [ -f /tmp/$file ]; then
+	echo "L'archive existe déja et pourra être décompréssé dans ${dir}"
 else
 	echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
 	wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
@@ -24,7 +24,7 @@ read srv_name
 
 # Teste si le répertoire existe
 echo "Renseignez le chemin du répertoire d'installation de la solution :"
-echo "Celui-ci peut dans /var/www/$srv_name ou /var/www/html/$srv_name"
+echo "Celui-ci peut être dans /var/www/$srv_name ou /var/www/html/$srv_name"
 read dir
 if [ - d "dir" ]; then
 	echo "Le répertoire $dir existe déjà"
@@ -48,8 +48,10 @@ if [ - d "dir" ]; then
 fi
 
 # Nettoyage des répertoire utilisés durant l'execution du script
-echo "Nettoyage des fichiers téléchargés"
+echo "Voulez-vous nettoyez le fichier téléchargés ?"
+read Clean
+if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
 rm -R /tmp/owncloud-complete-*
-ls /tmp/
+sudo ls /tmp/
 
 exit 0
