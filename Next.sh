@@ -553,4 +553,6 @@ echo ""
 echo "La mise en place de l'authentification avec LDAP https://docs.nextcloud.com/server/latest/admin_manual/configuration_user/user_auth_ldap.html "
 echo ""
 echo "Dans la cas de l'utilisation du port 443, la mise en place d'un certificat SSL est plus que recommandé."
+
+
 exit 0
