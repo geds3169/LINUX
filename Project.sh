@@ -26,24 +26,28 @@ read srv_name
 echo "Renseignez le chemin du répertoire d'installation de la solution :"
 echo "Celui-ci peut être dans /var/www/$srv_name ou /var/www/html/$srv_name"
 read dir
+
 if [ - d "dir" ]; then
 	echo "Le répertoire $dir existe déjà"
-	ls > [ -s $dir ]
-	if [ -s $dir ]; then
+	if sudo ls > [ -s $dir ]; then
 		echo "Le répertoire n'est pas vide"
 		echo "Voulez vous supprimer le contenu et décompresser l'archive dans le répertoire $dir ?"
 		read DelInstall
 		if [ "${DelInstall}" == "yes" ] || [ "${DelInstall}" == "y" ]; then
 			sudo rm -r $dir/*
 			sudo tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
-		elif 
-			echo "est vide, voulez-vous décompresser l'archive dans le répertoire $dir ?"
-			read Install
-			if [ "${Install}" == "yes" ] || [ "${Install}" == "y" ]; then
-			sudo tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
-		else 
-			echo "Vous avez choisi d'utiliser le répertoire existant"
+		elif
+			echo "Vous avez choisi de conserver le répertoire existant et son contenu"
+		else
+			echo "Le répertoire $dir va être créé"
+			sudo mkdir $dir
+			sudo ls $dir
 		fi
+	else
+		echo "est vide, voulez-vous décompresser l'archive dans le répertoire $dir ?"
+		read Install
+		if [ "${Install}" == "yes" ] || [ "${Install}" == "y" ]; then
+		sudo tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
 	fi
 fi
 
@@ -54,4 +58,5 @@ if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
 rm -R /tmp/owncloud-complete-*
 sudo ls /tmp/
 
+return $?
 exit 0
