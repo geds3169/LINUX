@@ -51,3 +51,5 @@ fi
 echo "Nettoyage des fichiers téléchargés"
 rm -R /tmp/owncloud-complete-*
 ls /tmp/
+
+exit 0
