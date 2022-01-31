@@ -21,7 +21,8 @@ FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
 #
 file="owncloud-complete-20220112.tar.bz2"
-
+mytitle="Installation simplifié d'un solution cloud ownCloud"
+clear
 ######################################
 # Vérification des droits d'execution
 ######################################
@@ -31,19 +32,46 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 ######################################
+# Titre
+######################################
+mytitle="Some title"
+echo -e '\033k'$mytitle'\033\\'
+sleep 5
+
+######################################
 # Mise à jour systeme et packets
 ######################################
 echo "Mise à jour du systeme et des packets"
-sudo apt update && apt upgrade -y -q
+sudo apt update && apt upgrade -y
+sleep 5
+clear
+echo "Installation d'outils réseau"
 echo ""
-echo "Installation d'outils"
-sudo apt install net-tools -y -q
-sudo apt install locate -y -q
+echo "net-tools: qui contient des outils: arp, ifconfig, netstat, rarp, nameif et route"
+echo "dnsutils: implémente un serveur de noms de domaines Internet: dig, nslookup, nsupdate"
+echo "ifupdown2: permet de configurer les interfaces réseau: iproute2, bridge-utils, ethtool ..."
+sleep 5
+echo ""
+sudo apt install net-tools -y
+sudo apt install dnsutils -y
+sudo apt install ifupdown2 -y
+sleep 5
+echo "Installation d'outil dédié à la recherche de fichiers"
+echo "locate: permet de rechercher un fichier: locate fichier.txt | less | more"
+echo "Pensez à passer la commande: updatedb avant la recherche "
+sudo apt install locate -y
+# /usr/bin/find: '/run/user/1000/gvfs': Permission denied --> erreur normale
 sudo updatedb
-
+echo "Il ne s'agit pas d'une erreur updatedb s'est terminé avec succés, \n mais n'a pas pu lire cet emplacement voir: \n https://dev.getsol.us/T5545"
+sleep 5
 echo ""
-echo "installation d'Apache2"
+echo "Outil de visualisation de l'arborescence, architecture, imbrication des répertoire, dossier, fichier"
+echo "tree: tree -a  ou -f ou encore -dfp"
 
+sleep 5
+clear
+echo "Mise en place du serveur Web"
+echo ""
 # Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]
 then
@@ -51,7 +79,6 @@ then
 		# Determine si le seveur web est fonctionnel.
 		if [ ! "${APACHE2_STATUS}" = "${FLAG_STATUS}" ]; then
 			echo "Apache2 est démarré"
-
 		else
 			echo "Apache 2 n'est pas démarré"
 			echo "Voulez-vous démarrer Apache2 [y/n] ? "
@@ -83,22 +110,36 @@ else
 		sudo systemctl enable apache2
 	fi
 fi
-echo ""
-echo "On vérifie si tar existe dans le répertoire courant et on créé le répertoire dans /var/www"
+
+sleep 5
+clear
+echo "Création du répertoire de la solution Web"
 echo ""
 cd /tmp/
 # check si l'archive tar de la solution existe dans /tmp/
-if [ -f /tmp/"${file}" ]; then
-	echo "L'archive existe déja et pourra être décompréssé dans ${dir}"
+if [ ! -f /tmp/$file ]; then
+	echo "L'archive est déja présente dans le répertoire courant et pourra être décompréssé dans ${dir}"
+	sudo ls -al /tmp/
 else
-	echo "Téléchargement de l'archive depuis le dépot officiel https://download.owncloud.org "
+	echo "Téléchargement en cours de l'archive depuis le dépot officiel https://download.owncloud.org "
 	wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
+	sudo ls -al /tmp/
 fi
 
-echo "Entrez le nom du serveur souhaité (sans le www) : "
+sleep 5
+clear
+echo "Collecte d'informations (répertoires/comptes/nom du site...)"
+echo ""
+echo "Entrez le nom du serveur/alias souhaité (sans le www) : "
 read srv_name
+echo ""
+
 
 # Teste si le répertoire existe
+sleep 5
+clear
+echo "Création du répertoire dédié à la solution"
+
 echo "Renseignez le chemin du répertoire d'installation de la solution :"
 echo "Celui-ci peut être dans /var/www/$srv_name ou /var/www/html/$srv_name"
 read dir
@@ -137,11 +178,14 @@ else
 fi
 
 # Nettoyage des répertoire utilisés durant l'execution du script
+sleep 5
+clear
 echo "Voulez-vous nettoyez le fichier téléchargés [y/n] ?"
 read Clean
 if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
-rm -R /tmp/owncloud-complete-*
-sudo ls /tmp/
+	rm -R /tmp/owncloud-complete-*
+	sudo ls /tmp/
+fi
 
 return $?
 exit 0
