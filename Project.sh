@@ -2,16 +2,16 @@
 ###################################################################################
 #
 #
-# Script en cours de réalisation
+# Script en cours de rÃ©alisation
 # Remaniement complet du code initial Next.sh
 # 
 ###################################################################################
 # 
 #####################################
-# Vérification des droits d'execution
+# VÃ©rification des droits d'execution
 #####################################
 if [ "$(whoami)" != "root" ]; then
-	echo "Les privilèges Root sont requis pour exécuter ce script, essayez de l'exécuter avec sudo..."
+	echo "Les privilÃ¨ges Root sont requis pour exÃ©cuter ce script, essayez de l'exÃ©cuter avec sudo..."
 	exit 2
 fi
 
@@ -38,14 +38,14 @@ FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
 
 #######################################
-# Mise à jour du système et des packets
+# Mise Ã  jour du systÃ¨me et des packets
 #######################################
-echo "Mise à jour du système et des sources logicielles"
+echo "Mise Ã  jour du systÃ¨me et des sources logicielles"
 sudo apt update && apt upgrade -y
 echo ""
-echo "Installation d'outils dédié au réseau"
+echo "Installation d'outils dÃ©diÃ© au rÃ©seau"
 sudo apt-get install net-tools -y
-echo "le systeme est a présent à jour"
+echo "le systeme est a prÃ©sent Ã  jour"
 echo ""
 echo "Installation d'outil de recherche dans le systeme (locate)"
 sudo apt-get install locate -y
@@ -55,19 +55,19 @@ sleep 2
 #######################################
 # Phase de test
 #######################################
-echo "Phase de test des prérequis à la solution Nextcloud"
-echo "test des différents services"
+echo "Phase de test des prÃ©requis Ã  la solution Nextcloud"
+echo "test des diffÃ©rents services"
 sleep 2
 
 #######################################
-# Teste la présence de Apache2 & MariaDB
+# Teste la prÃ©sence de Apache2 & MariaDB
 #######################################
 if [[ "${APACHE2_SERVICE}" =~ "install" ]]
 then
-		echo "Apache2 est installé"
+		echo "Apache2 est installÃ©"
 else
-	echo "Apache 2 n'est pas installé"
-	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
+	echo "Apache 2 n'est pas installÃ©"
+	echo "Le serveur apache2 doit Ãªtre installÃ©, souhaitez-vous procÃ©der [y/n] ? "
 	read installApache2
 	if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ];
 	then
@@ -81,10 +81,10 @@ sleep 5
 
 if [[ "${MARIADB_INSTALL}" =~ "install" ]]
 then
-		echo "MariaDB est installé"
+		echo "MariaDB est installÃ©"
 else
-	echo "MariaDB n'est pas installé"
-	echo "MariaDB doit être installé, souhaitez-vous procéder [y/n] ? "
+	echo "MariaDB n'est pas installÃ©"
+	echo "MariaDB doit Ãªtre installÃ©, souhaitez-vous procÃ©der [y/n] ? "
 	read installMariaDB
 	if [ "${installMariaDB}" == "yes" ] || [ "${installMariaDB}" == "y" ];
 	then
@@ -100,10 +100,10 @@ sleep 5
 #############################################
 if [ "${APACHE2_STATUS}" = "${FLAG_ACTIVE}" ] 
 then
-	echo "Apache2 est démarré"
+	echo "Apache2 est dÃ©marrÃ©"
 else
-	echo "Apache 2 n'est pas démarré"
-	echo "Voulez-vous démarrer Apache2 [y/n] ? "
+	echo "Apache 2 n'est pas dÃ©marrÃ©"
+	echo "Voulez-vous dÃ©marrer Apache2 [y/n] ? "
 	read activeApache2
 	if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
 	then
@@ -118,10 +118,10 @@ sleep 5
 #############################################
 if [ "${MARIADB_STATUS}" = "${FLAG_ACTIVE}" ] 
 then
-	echo "MariaDB est démarré"
+	echo "MariaDB est dÃ©marrÃ©"
 else
-	echo "MariaDB n'est pas démarré"
-	echo "Voulez-vous démarrer MariaDB [y/n] ? "
+	echo "MariaDB n'est pas dÃ©marrÃ©"
+	echo "Voulez-vous dÃ©marrer MariaDB [y/n] ? "
 	read activeApache2
 	if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ];
 	then
@@ -132,13 +132,13 @@ fi
 sleep 5
 
 #########################################################
-# Determine si le service Apache2 est actif au démarrage.
+# Determine si le service Apache2 est actif au dÃ©marrage.
 #########################################################
 if [ "${APACHE2_SERVICE}" == "enabled" ] 
 then
-	echo "Le service Apache2 est activé"
+	echo "Le service Apache2 est activÃ©"
 else
-	echo "Le service Apache2 n'est pas activé"
+	echo "Le service Apache2 n'est pas activÃ©"
 	echo "Voulez-vous activer le service Apache2 [y/n] ? "
 	read enableApache2
 	if [ "${enableApache2}" == "yes" ] || [ "${enableApache2}" == "y" ];
@@ -149,13 +149,13 @@ fi
 sleep 5
 
 #########################################################
-# Determine si le service MariaDB est actif au démarrage.
+# Determine si le service MariaDB est actif au dÃ©marrage.
 #########################################################
 if [ "${APACHE2_SERVICE}" == "enabled" ] 
 then
-	echo "Le service Apache2 est activé"
+	echo "Le service Apache2 est activÃ©"
 else
-	echo "Le service Apache2 n'est pas activé"
+	echo "Le service Apache2 n'est pas activÃ©"
 	echo "Voulez-vous activer le service Apache2 [y/n] ? "
 	read enableMariaDB
 	if [ "${enableMariaDB}" == "yes" ] || [ "${enableMariaDB}" == "y" ];
@@ -166,22 +166,22 @@ fi
 sleep 5
 
 #########################################################
-# Determine si PHP 8 est installé
+# Determine si PHP 8 est installÃ©
 #########################################################
 :'
 if [ $(dpkg -l | grep php) -eq 0 ] || [ ${PHPVERSION} >= 7.0 ] ;
 then
 	# Installation des packets
-	echo "Installation du dépôt php8.0 et de la clé GPG associé"
+	echo "Installation du dÃ©pÃ´t php8.0 et de la clÃ© GPG associÃ©"
 	echo ""
 	apt-get install apt-transport-https lsb-release ca-certificates -y
 	wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/php.list
 	echo ""
-	echo "Mise à jour des nouveaux packets depuis les dépôts et téléchargement"
+	echo "Mise Ã  jour des nouveaux packets depuis les dÃ©pÃ´ts et tÃ©lÃ©chargement"
 	apt-get update
 	echo ""
-	echo "Installation de PHP et de ses dépendances requises"
+	echo "Installation de PHP et de ses dÃ©pendances requises"
 	apt install php8.0 libapache2-mod-php8.0 php8.0-{xml,cli,fpm,cgi,mysql,mbstring,gd,curl,zip} -y
 	apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
 	echo ""
@@ -197,14 +197,16 @@ fi
 echo ""
 
 sleep 1.0
-# Retour d'information sur le processus Apache2, MariaDB et ports utilisés
+# Retour d'information sur le processus Apache2, MariaDB et ports utilisÃ©s
 pgrep -lf apache2
 pgrep -lf mariadb
 echo ""
-echo "Protocole et ports d'écoute sont :"
+echo "Protocole et ports d'Ã©coute sont :"
 netstat -pat | grep apache2|grep mariadb
 echo ""
 
-# !!!!!!!!!!!!!! voir à implémenter la désactivation des versions antérieures e.g: sudo a2dismod php5 / sudo a2enmod php8.1 / systemctl restart apache2 et voir a combiner avec la mise en fonction des versions installé localement mais non actives
+# !!!!!!!!!!!!!! voir Ã  implÃ©menter la dÃ©sactivation des versions antÃ©rieures e.g: sudo a2dismod php5 / sudo a2enmod php8.1 / systemctl restart apache2 et voir a combiner avec la mise en fonction des versions installÃ© localement mais non actives
 # locate -i -e  "php.*"  puis sudo update-alternatives --config php et enfin sudo update-alternatives --set php /usr/bin/php8 si existant
 #https://stackoverflow.com/questions/42619312/switch-php-versions-on-commandline-ubuntu-16-04
+
+exit 2
