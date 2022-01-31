@@ -170,7 +170,7 @@ else
 	read enableMariaDB
 	if [ "${enableMariaDB}" == "yes" ] || [ "${enableMariaDB}" == "y" ];
 	then
-		systemctl enable apache2
+		systemctl enable mariadb
 	fi
 fi
 
