@@ -187,5 +187,4 @@ if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
 	sudo ls /tmp/
 fi
 
-return $?
 exit 0
