@@ -1,9 +1,9 @@
 #!/bin/bash
-
+#
 # Reprise du Projet d'installation d'une solution cloud ownCloud
 # Testé sur Debian 11
 # En cours d'élaboration
-
+#
 #
 #Code permettant la mise en place d'une solution, test du script pas à pas
 #
