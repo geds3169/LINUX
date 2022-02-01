@@ -23,7 +23,7 @@ MYSQL_SERVICE="$(systemctl is-enabled mysqld.service)"
 FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
 #
-file="owncloud-complete-20220112.tar.bz2"
+file="owncloud-complete-latest.tar.bz2"
 mytitle="Installation de la solution cloud privé ownCloud"
 clear
 ######################################
@@ -33,6 +33,34 @@ if [ "$(whoami)" != "root" ]; then
 	echo "Les privilèges Root sont requis pour exécuter ce script, essayez de l'exécuter avec sudo..."
 	exit 2
 fi
+
+#####################################
+# Tools
+#####################################
+function tools(){
+echo "Installation d'outils réseau"
+echo ""
+echo -e "Net-tools: qui contient des outils: arp, ifconfig, netstat, rarp, nameif et route \ndnsutils: implémente un serveur de noms de domaine"
+sudo apt-get install net-tools -y >> test.log
+sudo apt-get  install dnsutils -y >> test.log
+sudo apt-get  install ifupdown2 -y >> test.log
+echo ""
+echo "Installation d'outil dédié à la recherche de fichiers"
+echo ""
+echo "locate: permet de rechercher un fichier: locate fichier.txt | less | more"
+echo "Pensez à passer la commande: updatedb avant la recherche "
+echo ""
+sudo apt-get  install locate -y >> test.log
+echo ""
+sudo updatedb
+echo ""
+# /usr/bin/find: '/run/user/1000/gvfs': Permission denied --> erreur normale
+echo -e "Il ne s'agit pas d'une erreur updatedb s'est terminé avec succés, \nmais n'a pas pu lire cet emplacement voir: \nhttps://dev.getsol.us/T5545"
+echo "Installation d'un outil de visualisation de l'arborescence,des répertoire, dossier ..."
+echo "visualiser une arborescence avec tree: tree -a  ou -f ou encore -dfp"
+echo ""
+sudo apt-get install tree -y >> test.log
+}
 
 ######################################
 # Titre
@@ -46,45 +74,16 @@ echo ""
 ######################################
 echo "Mise à jour du systeme et des packets"
 echo ""
-sudo apt update && apt upgrade -y
-sleep 5
-clear
-echo "Installation d'outils réseau"
-echo ""
-echo "net-tools: qui contient des outils: arp, ifconfig, netstat, rarp, nameif et route"
-echo "dnsutils: implémente un serveur de noms de domaines Internet: dig, nslookup, nsupdate"
-echo "ifupdown2: permet de configurer les interfaces réseau: iproute2, bridge-utils, ethtool ..."
-sleep 5
-echo ""
-sudo apt install net-tools -y
-sudo apt install dnsutils -y
-sudo apt install ifupdown2 -y
-sleep 5
-clear
-echo "Installation d'outil dédié à la recherche de fichiers"
-echo ""
-echo "locate: permet de rechercher un fichier: locate fichier.txt | less | more"
-echo "Pensez à passer la commande: updatedb avant la recherche "
-sleep 1
-echo ""
-sudo apt install locate -y
-echo ""
-sudo updatedb
-echo ""
-# /usr/bin/find: '/run/user/1000/gvfs': Permission denied --> erreur normale
-echo -e "Il ne s'agit pas d'une erreur updatedb s'est terminé avec succés, \nmais n'a pas pu lire cet emplacement voir: \nhttps://dev.getsol.us/T5545"
-sleep 5
-clear
-echo "Installation d'un outil de visualisation de l'arborescence,des répertoire, dossier ..."
-echo "visualiser une arborescence avec tree: tree -a  ou -f ou encore -dfp"
-sleep 5
-echo ""
-sudo apt install tree -y
-sleep 5
-clear
+sudo apt-get update && apt-get upgrade -y -qq >> test.log
+#clear
+
+# Appel de la fonction d'installation des outils
+tools | tee -a test.log
+
+sleep 10
+
 echo "Mise en place du serveur Web"
 echo ""
-sleep 5
 # Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]
 then
@@ -116,7 +115,7 @@ else
 	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
 	read installApache2
 	if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ]; then
-		sudo apt install apache2 -y
+		sudo apt-get install apache2 -y
 		sudo systemctl start apache2
 		sudo systemctl enable apache2
 	fi
@@ -184,7 +183,7 @@ else
 	if [ "${InstallDBserver}" == "yes" ] || [ "${InstallDBserver}" == "y" ]; then
 		echo "MySQL n'est plus supporté, MariaDB sera donc installé"
 		sleep 2
-		sudo apt install mariadb-server -y
+		sudo apt-get install mariadb-server -y
 		echo ""
 		echo "Démarrage du service"
 		sudo systemctl start mariadb
@@ -198,15 +197,13 @@ sleep 5
 clear
 echo "Création du répertoire de la solution Web"
 echo ""
-PATH="/tmp/$file"
+cd /tmp/
 # check si l'archive tar de la solution existe dans /tmp/
-if [ -f "$PATH" ]; then
+if [ -f "$file" ]; then
 	echo "L'archive $file est déja présente dans le répertoire courant et sera utilisé"
-	sleep 2
 else
 	echo "Téléchargement en cours de l'archive depuis le dépot officiel https://download.owncloud.org "
-	sudo wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-20211220.tar.bz2
-	sleep 2
+	sudo wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-latest.tar.bz2
 fi
 
 sleep 5
