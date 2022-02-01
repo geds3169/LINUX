@@ -200,7 +200,7 @@ echo "Création du répertoire de la solution Web"
 echo ""
 cd /tmp/
 # check si l'archive tar de la solution existe dans /tmp/
-if [ -f /tmp/$file ]; then
+if [ ! -f /tmp/$file ]; then
 	echo "L'archive $file est déja présente dans le répertoire courant et sera utilisé"
 	sleep 2
 else
