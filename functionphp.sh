@@ -3,15 +3,10 @@
 PHP_MIN="php7.4.*"
 PHP_MAX="php8.*"
 
-function php(){
-sleep 5
-clear
+#sleep 5
+#clear
 echo "Installation de PHP"
-echo ""
-sleep 5
 # Determine si PHP est installé sur le système, la version minimale requise
-PHP_MIN="php-7.4"
-PHP_MAX="PHP-8.*"
 if [[  "$(dpkg --get-selections | grep $PHP_MIN || grep $PHP_MAX)" =~ "install" ]]; then
   echo "$PHP est déjà présent sur le systeme"
   # check si la version minimale requise est installé et utilisé
@@ -37,5 +32,6 @@ if [[  "$(dpkg --get-selections | grep $PHP_MIN || grep $PHP_MAX)" =~ "install" 
       php -v && php -m
     fi
   fi
+else
+  echo "$PHP n'est pas présent sur le systeme"
 fi
-}
