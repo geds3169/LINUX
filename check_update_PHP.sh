@@ -7,7 +7,7 @@
 ###########################
 
 REQUIRED="7.4"
-
+$CURRENT_VERSION= "$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d ".")"
 MAJOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f1)"
 MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f2)"
 
@@ -27,10 +27,10 @@ if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
 	echo -e "\nPHP est déjà présent sur votre distribution, la version est  $CURRENT_VERSION"
 	
 	# Vérification des attendus de version PHP 
-	if [ $MAJOR_CURRENTVERS -ge $MAJOR_REQ ] && [ $MINOR_CURRENTVERS -ge $MINOR_REQ ]; then
+	if [ ($MAJOR_CURRENTVERS -ge $MAJOR_REQ ] && [ $MINOR_CURRENTVERS -ge $MINOR_REQ) || ($MAJOR_CURRENTVERS -gt $MAJOR_REQ) ] ; then
 		echo -e "\nLa version actuelle correspond aux attentes de la solution"
 	else
-		echo -e "\nLa version actuelle ne correspond pas aux attentes de la solution \nelle nécessite la version $REQUIRED "
+		echo -e "\nLa version actuelle ne correspond pas aux attentes de la solution \nelle nécessite la version minimum la version $REQUIRED "
 		# Vérification de l'existance de version supérieure PHP sur la distribution
 		if [[ -d /etc/php && "$(echo find /etc/php -mindepth 1 -maxdepth 1 -type d | wc -l)" -gt 1 ]]; then
 			echo -e "\nVoici a présent les versions de PHP disponible localement sur votre distribution:\n"
@@ -60,11 +60,13 @@ if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
 			read q
 			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 				echo "La version la plus récente est :"
-				$AVAILABLE
+				echo "$AVAILABLE""
 				echo "Souhaitez-vous installer la nouvelle version [y/n] ?"
 				read q
 				if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-					sudo apt-get install php$AVAILABLE -y -q >> PHP.log
+					echo "Renseignez le numéro de la version souhaité :"
+					read vers
+					sudo apt-get install php$vers -y -q >> PHP.log
 					echo -e "\nLe paquet a été installé, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
 				fi
 			fi
