@@ -7,9 +7,10 @@
 ###########################
 
 REQUIRED="7.4"
-CURRENT_VERSION= "$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d ".")"
+
 MAJOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f1)"
 MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f2)"
+CURRENT_VERSION= "$MAJOR_CURRENTVERS"."$MINOR_CURRENTVERS"
 
 MAJOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f1)"
 MINOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f2)"
@@ -23,7 +24,7 @@ clear
 ############################
 
 # Vérification de la présence de PHP sur la distribution
-if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
+if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 	echo -e "\nPHP est déjà présent sur votre distribution, la version est $CURRENT_VERSION"
 	
 	# Vérification des attendus de version PHP 
