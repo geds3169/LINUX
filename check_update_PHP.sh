@@ -7,7 +7,7 @@
 ###########################
 
 REQUIRED="7.4"
-$CURRENT_VERSION= "$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d ".")"
+CURRENT_VERSION= "$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d ".")"
 MAJOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f1)"
 MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f2)"
 
@@ -24,10 +24,10 @@ clear
 
 # Vérification de la présence de PHP sur la distribution
 if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
-	echo -e "\nPHP est déjà présent sur votre distribution, la version est  $CURRENT_VERSION"
+	echo -e "\nPHP est déjà présent sur votre distribution, la version est $CURRENT_VERSION"
 	
 	# Vérification des attendus de version PHP 
-	if [ ($MAJOR_CURRENTVERS -ge $MAJOR_REQ ] && [ $MINOR_CURRENTVERS -ge $MINOR_REQ) || ($MAJOR_CURRENTVERS -gt $MAJOR_REQ) ] ; then
+	if [ $MAJOR_CURRENTVERS -ge $MAJOR_REQ ] && [ $MINOR_CURRENTVERS -ge $MINOR_REQ ] || [ $MAJOR_CURRENTVERS -gt $MAJOR_REQ ] ; then
 		echo -e "\nLa version actuelle correspond aux attentes de la solution"
 	else
 		echo -e "\nLa version actuelle ne correspond pas aux attentes de la solution \nelle nécessite la version minimum la version $REQUIRED "
@@ -60,7 +60,7 @@ if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
 			read q
 			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 				echo "La version la plus récente est :"
-				echo "$AVAILABLE""
+				echo "$AVAILABLE"
 				echo "Souhaitez-vous installer la nouvelle version [y/n] ?"
 				read q
 				if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
