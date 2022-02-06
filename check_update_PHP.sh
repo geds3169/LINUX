@@ -10,7 +10,6 @@ CURRENT_VERSION="$(php -v | grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\
 MINI_VERSION="7.4"
 PACKAGE_NAME="php"
 
-List_PHP_V="$(cd /etc/php && dir)"
 clear
 
 echo -e "! L' installation du paquet bc est absolument nécessaire, \nafin de peremettre la comparaison des versions !\n"
@@ -60,28 +59,29 @@ if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
 	fi
 	
 	# check des versions disponible localement
-	echo -e "\nVoici a présent les version de PHP disponible localement sur votre distribution:\n"
-	List_PHP_V
-	echo -e "\nVoulez-vous changer de version [y/n] ?"
-	read q
-	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-		echo -e "\nRenseignez le numéro de version souhaitez (retourné précédemment): "
-		read new_php_version
-		echo -e "\nDésactivation de PHP $CURRENT_VERSION"
-		sudo /usr/bin/a2dismod $CURRENT_VERSION
-		echo -e "\nActivation de la version $new_php_version"
-		sudo /usr/bin/a2enmod $new_php_version
-		echo -e "\nLe redémarrage du serveur Apche2 est nécessaire, voulez-vous procéder [y/n] ?"
+	if [[ -d /etc/php ]]; then
+		echo -e "\nVoici a présent les version de PHP disponible localement sur votre distribution:\n"
+		dir
+		echo -e "\nVoulez-vous changer de version [y/n] ?"
 		read q
 		if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-			sudo systemctl restart apache2
+			echo -e "\nRenseignez le numéro de version souhaitez (retourné précédemment): "
+			read new_php_version
+			echo -e "\nDésactivation de PHP $CURRENT_VERSION"
+			sudo /usr/bin/a2dismod $CURRENT_VERSION
+			echo -e "\nActivation de la version $new_php_version"
+			sudo /usr/bin/a2enmod $new_php_version
+			echo -e "\nLe redémarrage du serveur Apche2 est nécessaire, voulez-vous procéder [y/n] ?"
+			read q
+			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+				sudo systemctl restart apache2
+			else
+				echo -e "\nPensez à redémarrer le serveur afin de ne pas avoir d'erreur de version PHP \n lorsque vous terminerez la configuration de la solution."
+			fi
 		else
-			echo -e "\nPensez à redémarrer le serveur afin de ne pas avoir d'erreur de version PHP \n lorsque vous terminerez la configuration de la solution."
+			echo "La version de PHP n'a pas été vous utilisé la version modifié $CURRENT_VERSION \nL'installation va poursuivre  mais le succès de l'installation n'est pas garanti\n"
 		fi
-	else
-		echo "La version de PHP n'a pas été vous utilisé la version modifié $CURRENT_VERSION \nL'installation va poursuivre  mais le succès de l'installation n'est pas garanti\n"
 	fi
-	
 else
 	echo -e "\nPHP n'est pas présent sur votre distribution.\n"
 	echo -e "Souhaitez-vous installer PHP [y/n] ?"
