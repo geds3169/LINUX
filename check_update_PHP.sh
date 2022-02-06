@@ -38,7 +38,7 @@ fi
 #if  [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 #sudo apt-get install apt-show-versions - y -q >> tools.log
 #echo -e "\nLe paquet a été installé, le fichier tool.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
-fi
+#fi
 }
 
 
