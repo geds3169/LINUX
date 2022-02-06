@@ -304,7 +304,7 @@ then
 		read DelInstall
 		if [ "${DelInstall}" == "yes" ] || [ "${DelInstall}" == "y" ]; then
 			sudo rm -r $dir/*
-			sudo tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+			sudo tar xvf owncloud-complete-latest.tar.bz2 --strip-components=1 -C $dir
 			echo "Tâche effectué"
 			sudo ls $dir
 		fi
@@ -313,7 +313,7 @@ then
 		echo "Voulez vous décompresser l'archive dans le répertoire $dir [y/n] ?"
 		read Install
 		if [ "${Install}" == "yes" ] || [ "${Install}" == "y" ]; then
-			sudo tar xvf owncloud-complete-20211220.tar.bz2 --strip-components=1 -C $dir
+			sudo tar xvf owncloud-complete-latest.tar.bz2 --strip-components=1 -C $dir
 			echo "Tâche effectué"
 			sudo ls $dir
 		else
@@ -337,7 +337,7 @@ clear
 echo "Voulez-vous nettoyez le fichier téléchargés [y/n] ?"
 read Clean
 if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
-	rm -R /tmp/owncloud-complete-*
+	rm -R /tmp/owncloud-complete-latest.tar.bz2
 	sudo ls /tmp/
 fi
 }
