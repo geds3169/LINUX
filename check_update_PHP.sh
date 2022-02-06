@@ -14,6 +14,8 @@ MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | c
 MAJOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f1)"
 MINOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f2)"
 
+AVAILABLE="$(apt-cache policy php | cut -d " " -f6 | cut -f2-3 -d ":" | grep "." | cut -f1 -d "+" )"
+
 clear
 
 ############################
@@ -55,10 +57,12 @@ if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
 		else
 			echo -e "\nIl n'existe pas d'autre version PHP en local\n"
 			echo "Souhaitez-vous vérifier s'il existe une version plus récente sur les dépôts Debian [y/n] ?"
+			read q
 			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 				echo "La version la plus récente est :"
 				$AVAILABLE
 				echo "Souhaitez-vous installer la nouvelle version [y/n] ?"
+				read q
 				if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 					sudo apt-get install php$AVAILABLE -y -q >> PHP.log
 					echo -e "\nLe paquet a été installé, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
