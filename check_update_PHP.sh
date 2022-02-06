@@ -62,11 +62,10 @@ if [[  "$(dpkg --get-selections | grep "php*")" =~ "install" ]]; then
 				if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 					sudo apt-get install php$AVAILABLE -y -q >> PHP.log
 					echo -e "\nLe paquet a été installé, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
+				fi
 			fi
 		fi		
 	fi
-		
-	
 else
 	echo -e "\nPHP n'est pas présent sur votre distribution.\n"
 	echo -e "Souhaitez-vous installer PHP [y/n] ?"
