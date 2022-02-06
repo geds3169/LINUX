@@ -76,39 +76,38 @@ else
         echo "Souhaitez-vous procéder à son installation [y/n] ? "
         read q
         if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-                sudo apt-get install $tools1 -y >> tools.log
-		echo -e "$tools1 a été installé, il contient des outils tel que:\n arp, ifconfig, netstat, rarp, nameif et route"
-		echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
+            sudo apt-get install $tools1 -y >> tools.log
+			echo -e "$tools1 a été installé, il contient des outils tel que:\n arp, ifconfig, netstat, rarp, nameif et route"
+			echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
         fi
 fi
 
 
 if [[ "$(dpkg --get-selections | grep $tools2)" =~ "install" ]]; then
-                echo "$tools2 est déjà présent"
+	echo "$tools2 est déjà présent"
 else
-        echo "$tools2 n'est pas installé"
-        echo "Souhaitez-vous procéder à son installation [y/n] ? "
-        read q
-        if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-                sudo apt-get install $tools1 -y >> tools.log
-                echo -e "$tools1 a été installé, il contient des outils permettant d'implémenter un serveur de nom de domaine."
-                echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
-        fi
-
+    echo "$tools2 n'est pas installé"
+    echo "Souhaitez-vous procéder à son installation [y/n] ? "
+    read q
+    if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+            sudo apt-get install $tools2 -y >> tools.log
+            echo -e "$tools2 a été installé, il contient des outils permettant d'implémenter un serveur de nom de domaine."
+            echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
+    fi
 fi
 
 echo -e "Outils réseau\n"
 if [[ "$(dpkg --get-selections | grep $tools3)" =~ "install" ]]; then
-                echo "$tools3 est déjà présent"
+	echo "$tools3 est déjà présent"
 else
-        echo "$tools3 n'est pas installé"
-        echo "Souhaitez-vous procéder à son installation [y/n] ? "
-        read q
-        if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-                sudo apt-get install $tools3 -y >> tools.log
+    echo "$tools3 n'est pas installé"
+    echo "Souhaitez-vous procéder à son installation [y/n] ? "
+    read q
+    if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+        sudo apt-get install $tools3 -y >> tools.log
 		echo -e "$tools3 a été installé, il contient des outils de gestion des interfaces réseau"
 		echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
-        fi
+    fi
 fi
 
 
@@ -134,7 +133,7 @@ else
 	echo "Souhaitez-vous procéder à son installation [y/n] ? "
 	read q
         if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-                sudo apt-get install $tools4 -y >> tools.log
+                sudo apt-get install $tools5 -y >> tools.log
 		echo -e "$tools5 a été installé, il permet la visualisation de l'arborescence, des répertoire, dossier ...\n"
 		echo -e "La commande est : tree -a ou tree -f ou encore tree -dfp"
 		echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
