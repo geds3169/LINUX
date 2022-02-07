@@ -269,7 +269,7 @@ MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | c
 CURRENT_VERSION= "$MAJOR_CURRENTVERS"."$MINOR_CURRENTVERS"
 MAJOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f1)"
 MINOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f2)"
-AVAILABLE="$(apt-cache policy php | cut -d " " -f6 | cut -f2-3 -d ":" | grep "." | cut -f1 -d "+" )"
+AVAILABLE="$(apt-owbcache policy php | cut -d " " -f6 | cut -f2-3 -d ":" | grep "." | cut -f1 -d "+" )"
 clear
 # Vérification de la présence de PHP sur la distribution
 if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
@@ -597,7 +597,7 @@ if [ -f ${dir}/data/.htaccess ]
 fi
 }
 
-funtion ConfigVhost(){
+function ConfigVhost(){
 # Configuration du virtual host (apache2)
 ##########################################
 echo -e "\nConfiguration du VirtualHost\n"
