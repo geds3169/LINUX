@@ -145,31 +145,33 @@ echo -e "\nInstallation des outils terminé le fichier tools.log comportant les 
 function database(){
 # Récupération des information destinées à la base de données de la solution
 #####################################################################################
-echo "Collecte d'informations en vue de la création de la base de données de la solution\t"
+echo "Collecte d'informations en vue de la création de la base de données de la solution\n"
 
 echo "\n! Les mots de passes ne s'afficheront pas !"
 echo "\nVérifiez au préalable que votre verrouillage numérique soit fonctionnel (cas de VM)"
 
-echo -e "\nVeuillez confirmer le nom d'utilisateur Root (en minuscule)"
+echo -e "\nVeuillez confirmer le nom d'utilisateur Root (en minuscule) : "
 read root_name
 #Hidden password
-echo "Renseignez le mot de passe associé au compte Root"
+echo "Renseignez le mot de passe associé au compte Root : "
 stty -echo
 read root_passwd
 stty echo
-echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
+echo -e "\n! Vous allez à présent entrer les information d'utilisateur (Administrateur de la solution). !"
+echo -e "\n! Le compte doit être un utilisateur autre que Root, par sécurité !\n"
+echo -e "\nEntrez un nom d'utilisateur (Admin de la solution) : "
 read user_name
-echo "Entrez le mot de passe associé au compte d'administration de la solution"
+echo "Entrez le mot de passe associé au compte utilisateur (Admin de la solution) : "
 stty -echo
 read user_passwd
 stty echo
-echo "Entrez le nom souhaité pour la base de donnée (e.g: ownclouddb)"
+echo -e "\nEntrez le nom souhaité pour la base de donnée (e.g: ownclouddb)"
 read database_name
-echo "Ajout de l'utilisateur $user_name au groupe d'administration du serveur Web"
+echo -e "\nAjout de l'utilisateur $user_name au groupe d'administration du serveur Web"
 id -u $user_name &>/dev/null || useradd $user_name
 /usr/sbin/adduser www-data $user_name
 
-echo -e "Création de la base de donnée $database_name"
+echo -e "\nCréation de la base de donnée $database_name"
 echo -e "\nSi l'utilisateur $user_name n'existe pas il sera alors créé avec le mot de passe associé"
 set -e
 mysql -u $root_name -p$root_passwd << EOF
@@ -181,14 +183,14 @@ FLUSH PRIVILEGES;
 EOF
 
 sleep 0.5
-echo "Opération effectué"
+echo -e "\nOpération effectué"
 mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
 }
 
 function owncloud(){
 # Install / Mkdir / Make / Download / Secure / Rules
 ####################################################
-echo -e "Installation de la solution ownCloud\t"
+echo -e "Installation de la solution ownCloud\n"
 Install_Apache2
 sleep 2
 clear
@@ -216,7 +218,7 @@ SecureDirOwnCloud
 function Install_Apache2(){
 # Installation / Démarrage / activation du service  Apache2
 ###########################################################
-echo -e "\nMise en place du serveur Web\t"
+echo -e "\nMise en place du serveur Web\n"
 # Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]; then
 		echo "Apache2 est installé"
@@ -303,7 +305,7 @@ if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 				fi
 			fi
 			# Installation des dépendances PHP nécessaire à la solution
-			echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\t"
+			echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\n"
 			echo -e "\nCertaines dépendances PHP sont nécessaires, souhaitez-vous les installer [y/n] ?"
 			read q
 			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
@@ -336,7 +338,7 @@ if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 					sudo apt-get install php$vers -y -q >> PHP.log
 					echo -e "\nLe paquet a été installé, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
 					# Installation des dépendances PHP nécessaire à la solution
-					echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\t"
+					echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\n"
 					echo -e "\nCertaines dépendances PHP sont nécessaires, souhaitez-vous les installer [y/n] ?"
 					read q
 					if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
@@ -367,7 +369,7 @@ else
 		echo "La mise à jour de PHP a été faite, un fichier nommé PHP.log a été créé/mis à jour \nil se trouve dans le répertoire courant"
 	fi
 	# Installation des dépendances PHP nécessaire à la solution
-	echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\t"
+	echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\n"
 	echo -e "\nCertaines dépendances PHP sont nécessaires, souhaitez-vous les installer [y/n] ?"
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
@@ -390,18 +392,18 @@ fi
 function InstallMariaDB(){
 # Installation / Activation du service / Démarrage Serveur MySQL
 ################################################################
-echo "Mise en place du serveur de bas de base de données"
+echo -e "Mise en place du serveur de bas de base de données\n"
 echo ""
 sleep 5
 # Determine si le service Mariadb est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-")" =~ "install" ]]; then
-	echo "MariaDB est installé"
+	echo -e "\nMariaDB est installé"
 	# Determine si le serveur de base de données est fonctionnel.
 	if [ "${MARIADB_STATUS}" == "${FLAG_ACTIVE}" ]; then
-		echo "MariaDB est démarré"
+		echo -e "\nMariaDB est démarré"
 	else
-		echo "MariaDB n'est pas démarré"
-		echo "Voulez-vous démarrer MariaDB [y/n] ? "
+		echo -e "\nMariaDB n'est pas démarré"
+		echo -e "\nVoulez-vous démarrer MariaDB [y/n] ? "
 		read activeMariadb
 		if [ "${activeMariadb}" == "yes" ] || [ "${activeMariadb}" == "y" ]; then
 			sudo systemctl start mariadb
@@ -409,23 +411,23 @@ if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-")" =~ "install
 	fi
 	# Determine si le service est actif au démarrage.
 	if [ "${MARIADB_SERVICE}" == "${FLAG_ENABLED}" ]; then
-		echo "Le service MariaDB est activé"
+		echo -e "\nLe service MariaDB est activé"
 	else
-		echo "Le service MariaDB n'est pas activé"
-		echo "Voulez-vous activer le service MariaDB [y/n] ?"
+		echo -e "\nLe service MariaDB n'est pas activé"
+		echo -e "\nVoulez-vous activer le service MariaDB [y/n] ?"
 		read enableMariaDB
 		if [ "${enableMariaDB}" == "yes" ] || [ "${enableMariaDB}" == "y" ]; then
 			sudo systemctl enable mariadb
 		fi
 	fi
 elif [[ "$(dpkg --get-selections | grep mysqld)" =~ "install" ]]; then
-        echo "MySQL est installé"
+        echo -e "\nMySQL est installé"
         # Determine si le serveur de base de données est fonctionnel.
         if [ ! "${MYSQL_STATUS}" = "${FLAG_ACTIVE}" ]; then
-                echo "MySQL est démarré"
+                echo -e "\nMySQL est démarré"
         else
-                echo "MySQL n'est pas démarré"
-                echo "Voulez-vous démarrer MySQL [y/n] ? "
+                echo -e "\nMySQL n'est pas démarré"
+                echo -e "\nVoulez-vous démarrer MySQL [y/n] ? "
                 read activeMySQL
                 if [ "${activeMySQL}" == "yes" ] || [ "${activeMySQL}" == "y" ]; then
                         sudo systemctl start mysqld
@@ -433,10 +435,10 @@ elif [[ "$(dpkg --get-selections | grep mysqld)" =~ "install" ]]; then
         fi
         # Determine si le service est actif au démarrage.
         if [ "${MySQL_SERVICE}" == "${FLAG_ENABLED}" ]; then
-                echo "Le service MySQL est activé"
+                echo -e "\nLe service MySQL est activé"
         else
-                echo "Le service MySQL n'est pas activé"
-                echo "Voulez-vous activer le service MySQL [y/n] ?"
+                echo -e "\nLe service MySQL n'est pas activé"
+                echo -e "\nVoulez-vous activer le service MySQL [y/n] ?"
                 read enableMySQL
                 if [ "${enableMySQL}" == "yes" ] || [ "${enableMySQL}" == "y" ]; then 
                         sudo systemctl enable mysqld.service
@@ -446,13 +448,14 @@ elif [[ "$(dpkg --get-selections | grep mysqld)" =~ "install" ]]; then
 		###################################################
 		database # Appel de la fonction database
 else
-	echo "Aucune serveur de base de données n'est installé"
-	echo "Un serveur de base de données est requis, souhaitez-vous procéder [y/n] ?"
+	echo -e "\nAucune serveur de base de données n'est installé"
+	echo -e "\nUn serveur de base de données est requis, souhaitez-vous procéder [y/n] ?"
 	read InstallDBserver
 	if [ "${InstallDBserver}" == "yes" ] || [ "${InstallDBserver}" == "y" ]; then
-		echo "MySQL n'est plus supporté, MariaDB sera donc installé"
+		echo -e "\nMySQL n'est plus supporté, MariaDB sera donc installé"
 		sleep 2
-		sudo apt-get install mariadb-server -y
+		sudo apt-get install mariadb-server -y -q >> MariaDB.log
+		echo -e "Un fichier MariaDB.log a été créé, il se trouve dans le répertoire courant."
 		echo -e "\nDémarrage du service"
 		sudo systemctl start mariadb
 		echo -e "\nActivation du service"
@@ -467,7 +470,7 @@ fi
 function DownloadOwncloud(){
 # Téléchargement de l'archive de la solution
 ############################################
-echo -e "Téléchargement de l'archive de la solution\t"
+echo -e "Téléchargement de l'archive de la solution\n"
 cd /tmp/
 # check si l'archive tar de la solution existe dans /tmp/
 if [ -f "$file" ]; then
@@ -483,11 +486,11 @@ function InformationsWeb(){
 #####################################################################################
 sleep 5
 clear
-echo -e "Collecte d'informations (répertoires/comptes/nom du site...\t)"
+echo -e "Collecte d'informations (répertoires/comptes/nom du site...\n)"
 sleep 5
 echo -e "\nEntrez le nom du serveur/alias souhaité (sans le www) : "
 read srv_name
-echo -e "\nRenseigner à présent le chemin du répertoire d'installation de la solution :"
+echo -e "\nRenseigner à présent le chemin du répertoire d'installation de la solution.\n"
 echo "Celui-ci peut être dans /var/www/$srv_name ou /var/www/html/$srv_name"
 echo "Renseignez le chemin complet : "
 read dir
@@ -531,7 +534,7 @@ else
 		sudo mkdir $dir
 		echo -e "\nLe répertoire a été créé"
 		sudo ls $dir
-		echo-e "\nVoulez vous décompresser l'archive dans le répertoire $dir [y/n] ?"
+		echo -e "\nVoulez vous décompresser l'archive dans le répertoire $dir [y/n] ?"
 		read Install
 		if [ "${Install}" == "yes" ] || [ "${Install}" == "y" ]; then
 			sudo tar xvf owncloud-complete-latest.tar.bz2 --strip-components=1 -C $dir
@@ -561,7 +564,7 @@ htuser='www-data'
 htgroup='www-data'
 rootuser='root'
 clear
-echo -e "Sécurisation du répertoire et des fichiers de configuration\t"
+echo -e "Sécurisation du répertoire et des fichiers de configuration\n"
 echo -e "Modification des droits d'accès sur le répertoire\n"
 find ${dir}/ -type f -print0 | xargs -0 chmod 0640
 find ${dir}/ -type d -print0 | xargs -0 chmod 0750
@@ -591,6 +594,80 @@ if [ -f ${dir}/data/.htaccess ]
  then
   chmod 0644 ${dir}/data/.htaccess
   chown ${rootuser}:${htgroup} ${dir}/data/.htaccess
+fi
+}
+
+funtion ConfigVhost(){
+# Configuration du virtual host (apache2)
+##########################################
+echo -e "\nConfiguration du VirtualHost\n"
+sleep 0.5
+echo -e "\nEntrez le nom du serveur souhaité (sans le www) : "
+read srv_name
+echo ""
+echo -e "\nEntrez le nom de domaine : "
+read tld
+echo -e "\n######################"
+echo -e "\n!!! AVERTISSEMENT !!! "
+echo -e "\n######################"
+echo "Vous allez à présent entrez le port d'écoute (80 HTTP - 443 HTTPS ),"
+echo "si votre serveur doit être utilisé dans un environnement de production,"
+echo "il est recommandé d'utiliser un certificat signé par une autorité de certification,"
+echo "il n'est pas recommandé d'utiliser un certificat auto-signé."
+echo -e "\nDans le doute utilisez le port 80, renseignez-vous ensuite pour l'obtention d'un certificat et modification de la configuration du site dans apache2.\n"
+echo -e "\nRenseignez à présent le port d'écoute du service Apache2 (e.g: 80 ou 443) : "
+read port 
+echo -e "\nEntrer l'adresse  d'écoute du serveur web (e.g. : * or listen, or local IP, IP loopback) : "
+read listen
+echo -e "\nRenseignez l'adresse de contact de l'administrateur de la solution : "
+read mailto
+# Creation de la configuration
+echo "#### $srv_name.
+<VirtualHost $listen:$port>
+ServerAdmin $mailto
+ServerName $srv_name.$tld
+ServerAlias $srv_name.$tld
+DocumentRoot $dir
+DirectoryIndex index.php
+LogLevel warn
+ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
+CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
+<Directory $dir>
+Options Indexes FollowSymLinks MultiViews
+AllowOverride All
+Require all granted
+</Directory>
+</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
+
+# Test de configuration apache
+echo -e "Vérification de la configuration en cours...\n"
+sudo apachectl configtest
+echo ""
+/usr/sbin/apache2ctl -t
+echo ""
+/usr/sbin/apache2ctl -S
+echo ""
+sleep 1
+echo "activation de la configuration"
+echo ""
+if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
+	echo -e "\nLe fichier n'a pas pu être édité!"
+else
+	echo -e "\nLe fichier a été créé avec succés !\n"
+	echo -e "\nActivation de la configuration"
+	/usr/sbin/a2ensite $srv_name.conf
+	/usr/sbin/a2enmod rewrite
+	/usr/sbin/a2enmod headers
+	/usr/sbin/a2enmod env
+	/usr/sbin/a2enmod dir
+	/usr/sbin/a2enmod mime
+	/usr/sbin/a2dissite 000-default.conf
+	echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
+	read q
+	if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
+		systemctl restart apache2
+		echo -e "\nLe serveur Cloud est à présent opérationnel !"
+	fi
 fi
 }
 
