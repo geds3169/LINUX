@@ -37,27 +37,25 @@ mytitle="Installation d'une solution cloud privé"
 #
 clear
 
-######################################
+##########################################################################
+# FONCTIONS
+##########################################################################
+
+function update(){
 # Mise à jour systeme et packets
 ######################################
-function update(){
 echo "Souhaitez-vous procéder à la mise à jour du systeme et des packets [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-	echo -e "La mise à jour va débuter \n"
+	echo -e "\nLa mise à jour va débuter \n"
 	sudo apt-get update && apt-get upgrade -y -qq >> update.log
 	echo -e "\nMise à jour terminé, un fichier de log nommé update.log se trouve dans le répertoire courant.\n"
 fi
-
-sleep 2
-clear
 }
 
-#####################################
-# fonction Tools
-#####################################
 function tools(){
-
+# installation d'outils complémentaires
+#######################################
 #Réseau
 tools1="net-tools"
 tools2="dnsutils"
@@ -141,14 +139,12 @@ else
 fi
 
 echo -e "\nInstallation des outils terminé le fichier tools.log comportant les informations sur les outils, \nse trouve dans le repertoire courant se trouve dans le répertoire courant.\n"
-sleep 3
-clear
 }
 
-########################
-# fonctions
-########################
+
 function database(){
+# Récupération des information destinées à la base de données de la solution
+#####################################################################################
 echo "Collecte d'informations en vue de la création de la base de données de la solution\t"
 
 echo "\n! Les mots de passes ne s'afficheront pas !"
@@ -186,20 +182,41 @@ EOF
 
 sleep 0.5
 echo "Opération effectué"
-
-SHOW DATABASES;
-SELECT user FROM mysql.user; 
-
-
 mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
 }
 
 function owncloud(){
+# Install / Mkdir / Make / Download / Secure / Rules
+####################################################
+echo -e "Installation de la solution ownCloud\t"
+Install_Apache2
+sleep 2
+clear
+Install_PHP
+sleep 2
+clear
+InstallMariaDB
+sleep 2
+clear
+DownloadOwncloud
+sleep 2
+clear
+InformationsWeb
+sleep 2
+clear
+MkdirDownlodUnzipOwncloud
+sleep 2
+clear
+CleanDownload
+sleep 2
+clear
+SecureDirOwnCloud
+}
 
-echo -e "Installation de la solution ownCloud\n"
-echo ""
-echo "\nMise en place du serveur Web"
-echo ""
+function Install_Apache2(){
+# Installation / Démarrage / activation du service  Apache2
+###########################################################
+echo -e "\nMise en place du serveur Web\t"
 # Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]; then
 		echo "Apache2 est installé"
@@ -235,11 +252,12 @@ else
 		sudo systemctl enable apache2
 	fi
 fi
+}
 
-#Installation de PHP
+function Install_PHP(){
+# Installation de PHP et des dépendances
+########################################
 # Variables
-sleep 5
-clear
 echo "Installation de PHP"
 echo ""
 sleep 5
@@ -250,7 +268,7 @@ CURRENT_VERSION= "$MAJOR_CURRENTVERS"."$MINOR_CURRENTVERS"
 MAJOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f1)"
 MINOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f2)"
 AVAILABLE="$(apt-cache policy php | cut -d " " -f6 | cut -f2-3 -d ":" | grep "." | cut -f1 -d "+" )"
-
+clear
 # Vérification de la présence de PHP sur la distribution
 if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 	echo -e "\nPHP est déjà présent sur votre distribution, la version est $CURRENT_VERSION"
@@ -368,10 +386,10 @@ else
 		echo "La solution ne peut fonctionner sans l'installation des dépendances"
 	fi
 fi
-
-
-sleep 5
-clear
+}
+function InstallMariaDB(){
+# Installation / Activation du service / Démarrage Serveur MySQL
+################################################################
 echo "Mise en place du serveur de bas de base de données"
 echo ""
 sleep 5
@@ -424,9 +442,9 @@ elif [[ "$(dpkg --get-selections | grep mysqld)" =~ "install" ]]; then
                         sudo systemctl enable mysqld.service
                 fi
         fi
-		# Création de la base de données
-		# Appel de la fonction database
-		database
+		# Creation de la base de donnée (pour la solution)
+		###################################################
+		database # Appel de la fonction database
 else
 	echo "Aucune serveur de base de données n'est installé"
 	echo "Un serveur de base de données est requis, souhaitez-vous procéder [y/n] ?"
@@ -435,89 +453,98 @@ else
 		echo "MySQL n'est plus supporté, MariaDB sera donc installé"
 		sleep 2
 		sudo apt-get install mariadb-server -y
-		echo ""
-		echo "Démarrage du service"
+		echo -e "\nDémarrage du service"
 		sudo systemctl start mariadb
-		echo ""
-		echo "Activation du service"
+		echo -e "\nActivation du service"
 		sudo systemctl enable mariadb
 	fi
-	# Création de la base de données
-	# Appel de la fonction database
-	database
+	# Creation de la base de donnée (pour la solution)
+	##################################################
+	database # Appel de la fonction database
 fi
+}
 
-sleep 5
-clear
-echo "Création du répertoire de la solution Web"
-echo ""
+function DownloadOwncloud(){
+# Téléchargement de l'archive de la solution
+############################################
+echo -e "Téléchargement de l'archive de la solution\t"
 cd /tmp/
 # check si l'archive tar de la solution existe dans /tmp/
 if [ -f "$file" ]; then
-	echo "L'archive $file est déja présente dans le répertoire courant et sera utilisé"
+	echo -e "\nL'archive $file est déja présente dans le répertoire courant et sera utilisé"
 else
-	echo "Téléchargement en cours de l'archive depuis le dépot officiel https://download.owncloud.org "
+	echo -e "\nTéléchargement en cours de l'archive depuis le dépot officiel https://download.owncloud.org "
 	sudo wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-latest.tar.bz2
 fi
+}
 
+function InformationsWeb(){
+# Collecte d'informations pour création du répertoire de la solution et Virtual host
+#####################################################################################
 sleep 5
 clear
-echo "Collecte d'informations (répertoires/comptes/nom du site...)"
+echo -e "Collecte d'informations (répertoires/comptes/nom du site...\t)"
 sleep 5
-echo ""
-echo ""
-echo "Entrez le nom du serveur/alias souhaité (sans le www) : "
+echo -e "\nEntrez le nom du serveur/alias souhaité (sans le www) : "
 read srv_name
-echo ""
-echo "Renseigner à présent le chemin du répertoire d'installation de la solution :"
+echo -e "\nRenseigner à présent le chemin du répertoire d'installation de la solution :"
 echo "Celui-ci peut être dans /var/www/$srv_name ou /var/www/html/$srv_name"
 echo "Renseignez le chemin complet : "
 read dir
+}
 
-sleep 5
-clear
+function MkdirDownlodUnzipOwncloud(){
+# Création du répertoire de la solution ownCloud
+################################################
 echo "Création du répertoire, installation de la solution, mise en place de la  configuration"
-echo ""
 sleep 5
 # Cherche si le répertoire et existant ou vide
 if [ -d "$dir" ]
 then
 	if [ "$(ls -A $dir)" ]; then
-		echo "$dir n'est pas vide"
-		echo "Voulez vous supprimer le contenu et décompresser l'archive dans le répertoire $dir [y/n] ?"
+		echo -e "\n$dir n'est pas vide"
+		echo -e "\nVoulez vous supprimer le contenu et décompresser l'archive dans le répertoire $dir [y/n] ?"
 		read DelInstall
 		if [ "${DelInstall}" == "yes" ] || [ "${DelInstall}" == "y" ]; then
 			sudo rm -r $dir/*
 			sudo tar xvf owncloud-complete-latest.tar.bz2 --strip-components=1 -C $dir
-			echo "Tâche effectué"
+			echo -e"\nTâche effectué"
 			sudo ls $dir
 		fi
 	else
-		echo "$dir existe cependant il est vide et peut donc être utilisé"
-		echo "Voulez vous décompresser l'archive dans le répertoire $dir [y/n] ?"
+		echo -e "\n$dir existe cependant il est vide et peut donc être utilisé"
+		echo -e "\nVoulez vous décompresser l'archive dans le répertoire $dir [y/n] ?"
 		read Install
 		if [ "${Install}" == "yes" ] || [ "${Install}" == "y" ]; then
 			sudo tar xvf owncloud-complete-latest.tar.bz2 --strip-components=1 -C $dir
-			echo "Tâche effectué"
+			echo -e "\nTâche effectué"
 			sudo ls $dir
 		else
-			echo "Le dossier $dir est resté dans son état d'origine et devra donc être utilisé"
+			echo -e "\nLe dossier $dir est resté dans son état d'origine et devra donc être utilisé"
 		fi
 	fi
 else
-	echo "Le répertoire $dir n'existe pas."
-	echo "Voulez vous créer le répertoire $dir [y/n] ?"
+	echo -e "\nLe répertoire $dir n'existe pas."
+	echo -e "\nVoulez vous créer le répertoire $dir [y/n] ?"
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 		sudo mkdir $dir
-		echo "Le répertoire a été créé"
+		echo -e "\nLe répertoire a été créé"
 		sudo ls $dir
+		echo-e "\nVoulez vous décompresser l'archive dans le répertoire $dir [y/n] ?"
+		read Install
+		if [ "${Install}" == "yes" ] || [ "${Install}" == "y" ]; then
+			sudo tar xvf owncloud-complete-latest.tar.bz2 --strip-components=1 -C $dir
+			echo -e "\nTâche effectué"
+			sudo ls $dir
+		fi
 	fi
 fi
+}
 
+function CleanDownload(){
 # Nettoyage des répertoire utilisés durant l'execution du script
-sleep 5
-clear
+################################################################
 echo "Voulez-vous nettoyez le fichier téléchargés [y/n] ?"
 read Clean
 if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
@@ -526,12 +553,51 @@ if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
 fi
 }
 
-#####################################
-# fonction menu
-####################################
-show_menu(){
+function_SecureDirOwnCloud(){
+# Sécurisation du répertoire et des fichiers de configuration
+#############################################################
+# Variables
+htuser='www-data'
+htgroup='www-data'
+rootuser='root'
+clear
+echo -e "Sécurisation du répertoire et des fichiers de configuration\t"
+echo -e "Modification des droits d'accès sur le répertoire\n"
+find ${dir}/ -type f -print0 | xargs -0 chmod 0640
+find ${dir}/ -type d -print0 | xargs -0 chmod 0750
+echo -e "\nModification des droits utilisateurs/groupes/propriétaire des répertoires et sous répertoire\n"
+chown -R ${rootuser}:${htgroup} ${dir}/
+chown -R ${htuser}:${htgroup} ${dir}/apps/
+#chown -R ${htuser}:${htgroup} ${dir}/assets/
+chown -R ${htuser}:${htgroup} ${dir}/config/
+chown -R ${htuser}:${htgroup} ${dir}/core/
+chown -R ${htuser}:${htgroup} ${dir}/lib/
+chown -R ${htuser}:${htgroup} ${dir}/ocs/
+chown -R ${htuser}:${htgroup} ${dir}/ocs-provider/
+chown -R ${htuser}:${htgroup} ${dir}/resources/
+chown -R ${htuser}:${htgroup} ${dir}/settings/
+#chown -R ${htuser}:${htgroup} ${dir}/data/
+#chown -R ${htuser}:${htgroup} ${dir}/themes/
+chown -R ${htuser}:${htgroup} ${dir}/updater/
+#chmod +x ${dir}/occ
+sleep 0.5
+echo -e "\nmodification des droits sur le fichier .htaccess s'il existe \nCelui-ci permet de renforcer la configuration du serveur web\n"
+if [ -f ${dir}/.htaccess ]
+ then
+  chmod 0644 ${dir}/.htaccess
+  chown ${rootuser}:${htgroup} ${dir}/.htaccess
+fi
+if [ -f ${dir}/data/.htaccess ]
+ then
+  chmod 0644 ${dir}/data/.htaccess
+  chown ${rootuser}:${htgroup} ${dir}/data/.htaccess
+fi
+}
 
-mytitle="Installation d'une solution cloud"
+show_menu(){
+# fonction menu
+###############
+mytitle="Installation d'une solution cloud Privé Open Source"
 echo -e "${title} ##################################### ${normal}\n"
 echo -e "${title} # ${mytitle} #${normal}\n"
 echo -e "${title} ##################################### ${normal}\n\v"
@@ -604,7 +670,5 @@ while [ $opt != '' ]
       esac
     fi
 done
-
-echo "Bye bye !"
 
 exit 0
