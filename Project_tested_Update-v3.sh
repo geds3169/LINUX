@@ -148,10 +148,101 @@ clear
 ########################
 # fonctions
 ########################
-function php(){
+function database(){
+echo "Collecte d'informations en vue de la création de la base de données de la solution\t"
 
+echo "\n! Les mots de passes ne s'afficheront pas !"
+echo "\nVérifiez au préalable que votre verrouillage numérique soit fonctionnel (cas de VM)"
+
+echo -e "\nVeuillez confirmer le nom d'utilisateur Root (en minuscule)"
+read root_name
+#Hidden password
+echo "Renseignez le mot de passe associé au compte Root"
+stty -echo
+read root_passwd
+stty echo
+echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
+read user_name
+echo "Entrez le mot de passe associé au compte d'administration de la solution"
+stty -echo
+read user_passwd
+stty echo
+echo "Entrez le nom souhaité pour la base de donnée (e.g: ownclouddb)"
+read database_name
+echo "Ajout de l'utilisateur $user_name au groupe d'administration du serveur Web"
+id -u $user_name &>/dev/null || useradd $user_name
+/usr/sbin/adduser www-data $user_name
+
+echo -e "Création de la base de donnée $database_name"
+echo -e "\nSi l'utilisateur $user_name n'existe pas il sera alors créé avec le mot de passe associé"
+set -e
+mysql -u $root_name -p$root_passwd << EOF
+CREATE USER IF NOT EXISTS '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
+CREATE DATABASE IF NOT EXISTS $database_name;
+GRANT ALL PRIVILEGES ON *.* TO '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
+GRANT ALL PRIVILEGES ON $database_name.* TO '$user_name'@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+sleep 0.5
+echo "Opération effectué"
+
+SHOW DATABASES;
+SELECT user FROM mysql.user; 
+
+
+mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
+}
+
+function owncloud(){
+
+echo -e "Installation de la solution ownCloud\n"
+echo ""
+echo "\nMise en place du serveur Web"
+echo ""
+# Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
+if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]; then
+		echo "Apache2 est installé"
+		# Determine si le seveur web est fonctionnel.
+		if [ "${APACHE2_STATUS}" == "${FLAG_ACTIVE}" ]; then
+			echo "Apache2 est démarré"
+		else
+			echo "Apache2 n'est pas démarré"
+			echo "Voulez-vous démarrer Apache2 [y/n] ? "
+			read activeApache2
+			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ]; then
+				sudo systemctl start apache2
+			fi
+		fi
+		# Determine si le service est actif au démarrage.
+		if [  "${APACHE2_SERVICE}" == "${FLAG_ENABLED}" ]; then
+			echo "Le service Apache2 est activé"
+		else
+			echo "Le service Apache2 n'est pas activé"
+			echo "Voulez-vous activer le service Apache2 [y/n] ? "
+			read enableApache2
+			if [ "${enableApache2}" == "yes" ] || [ "${enableApache2}" == "y" ]; then
+				sudo systemctl enable apache2
+			fi
+		fi
+else
+	echo "Apache 2 n'est pas installé"
+	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
+	read installApache2
+	if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ]; then
+		sudo apt-get install apache2 -y
+		sudo systemctl start apache2
+		sudo systemctl enable apache2
+	fi
+fi
+
+#Installation de PHP
 # Variables
-
+sleep 5
+clear
+echo "Installation de PHP"
+echo ""
+sleep 5
 REQUIRED="7.4"
 MAJOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f1)"
 MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f2)"
@@ -277,101 +368,7 @@ else
 		echo "La solution ne peut fonctionner sans l'installation des dépendances"
 	fi
 fi
-}
 
-function database(){
-echo "Collecte d'informations en vue de la création de la base de données de la solution\t"
-
-echo "\n! Les mots de passes ne s'afficheront pas !"
-echo "\nVérifiez au préalable que votre verrouillage numérique soit fonctionnel (cas de VM)"
-
-echo -e "\nVeuillez confirmer le nom d'utilisateur Root (en minuscule)"
-read root_name
-#Hidden password
-echo "Renseignez le mot de passe associé au compte Root"
-stty -echo
-read root_passwd
-stty echo
-echo "Entrez le nom de l'utilisateur qui sera amené à administrer la solution (autre que Root, question de sécurité)"
-read user_name
-echo "Entrez le mot de passe associé au compte d'administration de la solution"
-stty -echo
-read user_passwd
-stty echo
-echo "Entrez le nom souhaité pour la base de donnée (e.g: ownclouddb)"
-read database_name
-echo "Ajout de l'utilisateur $user_name au groupe d'administration du serveur Web"
-id -u $user_name &>/dev/null || useradd $user_name
-/usr/sbin/adduser www-data $user_name
-
-echo -e "Création de la base de donnée $database_name"
-echo -e "\nSi l'utilisateur $user_name n'existe pas il sera alors créé avec le mot de passe associé"
-set -e
-mysql -u $root_name -p$root_passwd << EOF
-CREATE USER IF NOT EXISTS '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
-CREATE DATABASE IF NOT EXISTS $database_name;
-GRANT ALL PRIVILEGES ON *.* TO '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
-GRANT ALL PRIVILEGES ON $database_name.* TO '$user_name'@'localhost';
-FLUSH PRIVILEGES;
-EOF
-
-sleep 0.5
-echo "Opération effectué"
-
-SHOW DATABASES;
-SELECT user FROM mysql.user; 
-
-
-mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
-}
-
-function owncloud(){
-
-echo -e "Installation de la solution ownCloud\n"
-echo ""
-echo "\nMise en place du serveur Web"
-echo ""
-# Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
-if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]; then
-		echo "Apache2 est installé"
-		# Determine si le seveur web est fonctionnel.
-		if [ "${APACHE2_STATUS}" == "${FLAG_ACTIVE}" ]; then
-			echo "Apache2 est démarré"
-		else
-			echo "Apache2 n'est pas démarré"
-			echo "Voulez-vous démarrer Apache2 [y/n] ? "
-			read activeApache2
-			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ]; then
-				sudo systemctl start apache2
-			fi
-		fi
-		# Determine si le service est actif au démarrage.
-		if [  "${APACHE2_SERVICE}" == "${FLAG_ENABLED}" ]; then
-			echo "Le service Apache2 est activé"
-		else
-			echo "Le service Apache2 n'est pas activé"
-			echo "Voulez-vous activer le service Apache2 [y/n] ? "
-			read enableApache2
-			if [ "${enableApache2}" == "yes" ] || [ "${enableApache2}" == "y" ]; then
-				sudo systemctl enable apache2
-				# Appel de la foncion PHP
-				php
-			fi
-		fi
-else
-	echo "Apache 2 n'est pas installé"
-	echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
-	read installApache2
-	if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ]; then
-		sudo apt-get install apache2 -y
-		sudo systemctl start apache2
-		sudo systemctl enable apache2
-
-		# Appel de la fonction PHP
-		php
-	fi
-
-fi
 
 sleep 5
 clear
