@@ -78,7 +78,7 @@ while [ $opt != '' ]
 	;;
         2) clear;
             option_picked "Installation de tree";
-            ./tree.sh; #appel du script
+            source ./tree.sh; #appel du script
             tree;
         ;;
         x)exit;
