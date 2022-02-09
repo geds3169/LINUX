@@ -28,7 +28,7 @@ CURRENTLOCATION="$(pwd)"
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 exec 2>>$CURRENTLOCATION/Error_Install_Update.log
 
-function Update&Upgrade(){
+function UpdateUpgrade(){
 
 echo -e "\nMise à jour des référentiels des paquets et leurs mises à jour\n"
 echo "Souhaitez-vous mettre à jour les référentiels des paquets ? [y/n] ?"
@@ -56,4 +56,4 @@ exit 0
 
 }
 
-Update&Upgrade
+UpdateUpgrade
