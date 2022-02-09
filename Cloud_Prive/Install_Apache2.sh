@@ -80,6 +80,7 @@ if [ "${ServerWeb}" == "yes" ] || [ "${ServerWeb}" == "y" ]; then
 			sudo apt-get install apache2 -y > $CURRENTLOCATION/Install_Apache2.log
 			sudo systemctl start apache2
 			sudo systemctl enable apache2
+			echo -e "\n Un fichier $CURRENTLOCATION/Install_Apache2.log a été créé.\n"
 		fi
 	fi
 else
