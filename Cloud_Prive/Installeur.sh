@@ -99,17 +99,17 @@ while [ $opt != '' ]
 	;;
         2) clear;
             option_picked "Installation d'outils";
-            tools; #appel de la function
+            ./show_SubMenuOutils.sh; #appel du script
             show_Installeur;
         ;;
         3) clear;
             option_picked "Installation de la solution ownCloud";
-            owncloud; #appel de la function
+            ./Install_owncloud.sh; #appel du script
             show_Installeur;
         ;;
         4) clear;
             option_picked "Installation de la solution Nextcloud";
-            nextcloud; #appel de la function
+            ./Install_nextcloud; #appel du script
             show_Installeur;
         ;;
         x)exit;
