@@ -73,13 +73,13 @@ while [ $opt != '' ]
       case $opt in
 	1) clear;
             option_picked "Installation de locate";
-            ./locate.sh; #appel du script
-            show_SubMenuOutilsIndexVisu;
+            source ./locate.sh; #appel du script
+            locate;
 	;;
         2) clear;
             option_picked "Installation de tree";
             ./tree.sh; #appel du script
-            show_SubMenuOutilsIndexVisu;
+            tree;
         ;;
         x)exit;
         ;;
@@ -87,7 +87,8 @@ while [ $opt != '' ]
         ;;
         *)clear;
             option_picked "Sélectionnez une option dans le menu";
-            ./show_SubMenuOutils.sh;
+            source ./show_SubMenuOutils.sh;
+	    show_SubMenuOutils;;
         ;;
       esac
     fi
