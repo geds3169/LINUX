@@ -636,22 +636,27 @@ read PATH_CERT
 echo -e "\nRenseignez l'emplacement et nom de la clé privé, \n exemple: /etc/ssl/private/exemple.com_private_key.key | (laissez vide pour du HTTP) :"
 PATH_PRIVATE_KEY
 
-##
 
+# Création configuration VirtualHost HTTP ou HTTPS
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
+# Création configuration VirtualHost HTTP
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 	echo -e "\nCréation de la configuration"
+	
+	# Test si une configuration est déjà présente
 	if [ -f /etc/apache2/available/$srv_name.conf ]; then
 		echo -e "\nUn fichier de configuration avec ce nom existe déjà"
 		echo -e "\nVoulez vous le supprimer [y/n] ?"
 		read q
+		
+		# Supprime la configuration en cours
 		if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 			rm /etc/apache2/available/$srv_name.conf
 			rm /etc/apache2/enabled/$srv_name.conf
 			/usr/sbin/a2dissite $srv_name.conf
 
-			# Creation de la configuration virtual host
+			# Édition du VirtualHost en HTTP
 			echo "#### $srv_name.
 
 			<VirtualHost $listen:$port>
@@ -670,56 +675,7 @@ if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 			</Directory>
 			</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
 			
-			# Test de configuration apache
-			echo -e "Vérification de la configuration en cours...\n"
-			sudo apachectl configtest
-			echo ""
-			/usr/sbin/apache2ctl -t
-			echo ""
-			/usr/sbin/apache2ctl -S
-			echo ""
-			echo "activation de la configuration"
-			echo ""
-			if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-				echo -e "\nLe fichier n'a pas pu être édité!"
-			else
-				echo -e "\nLe fichier a été créé avec succés !\n"
-				echo -e "\nActivation de la configuration"
-				/usr/sbin/a2ensite $srv_name.conf
-				/usr/sbin/a2enmod rewrite
-				/usr/sbin/a2enmod headers
-				/usr/sbin/a2enmod env
-				/usr/sbin/a2enmod dir
-				/usr/sbin/a2enmod mime
-				/usr/sbin/a2dissite 000-default.conf
-				echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
-				read q
-				if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
-					systemctl restart apache2
-					echo -e "\nLe serveur Cloud est à présent opérationnel !"
-				fi
-			fi
-		else
-			# Creation de la configuration virtual host
-			echo "#### $srv_name.
-
-			<VirtualHost $listen:$port>
-			ServerAdmin $mailto
-			ServerName $srv_name.$cname
-			ServerAlias $srv_name.$cname
-			DocumentRoot $dir
-			DirectoryIndex index.php
-			LogLevel warn
-			ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
-			CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-			<Directory $dir>
-			Options Indexes FollowSymLinks MultiViews
-			AllowOverride All
-			Require all granted
-			</Directory>
-			</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
-			
-			# Test de configuration apache
+			# Test de configuration HTTP, apache
 			echo -e "Vérification de la configuration en cours...\n"
 			sudo apachectl configtest
 			echo ""
@@ -750,134 +706,90 @@ if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 			fi
 		fi
 	fi
+# Création configuration VirtualHost HTTPS
 else
-	echo -e "\nSouhaitez-vous créer un site HTTPS (443) non sécurisé [y/n] ?"
+	echo -e "! La mise en place d'un site en HTTPS nécessite au préalable : \nun certificat SSL et clé associé et l'import de la paire de clé \nsur ce même serveur dans leur répertoire dédiés.\n"
+	sleep 2
+	echo -e "\nSouhaitez-vous créer un site HTTPS (443) sécurisé [y/n] ?"
 	read q
+	# Création configuration VirtualHost HTTPS
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-	
 		echo -e "\nCréation de la configuration"
+		
+		# Test si une configuration est déjà présente
 		if [ -f /etc/apache2/available/$srv_name.conf ]; then
 			echo -e "\nUn fichier de configuration avec ce nom existe déjà"
 			echo -e "\nVoulez vous le supprimer [y/n] ?"
 			read q
+			
+			# Supprime la configuration en cours
 			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 				rm /etc/apache2/available/$srv_name.conf
 				rm /etc/apache2/enabled/$srv_name.conf
 				/usr/sbin/a2dissite $srv_name.conf
 
-				# Creation de la configuration
+				# Édition du VirtualHost en HTTPS
 				echo "#### $srv_name.
 
-				<VirtualHost *:80>
-				RewriteEngine On
-				RewriteCond %{REQUEST_URI} !^/\.well\-known/acme\-challenge/
-				RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
-				</VirtualHost>
+				echo "#### $srv_name.
 
-				<IfModule mod ssl.c>
 				<VirtualHost $listen:$port>
+
 				ServerAdmin $mailto
-				ServerName $srv_name.$cname
+				ServerName $srv_name
+				ServerAlias $srv_name.$cname
+
+				DocumentRoot $dir
+
+				<Directory $dir>
+
+				Options Indexes FollowSymLinks MultiViews
+				AllowOverride All
+
+				Require all granted
+				#Order allow,deny
+				#allow from all
+
+				</Directory>
+
+				SSLEngine on
+				SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+				SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+				SSLHonorCipherOrder On
+
+				SSLCertificateFile $PATH_CERT
+				SSLCertificateKeyFile $PATH_PRIVATE_KEY
+				SSLCertificateChainFile 
+
+				ErrorLog ${APACHE_LOG_DIR}/error.log
+				CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+				</VirtualHost>
+					
+				<VirtualHost $listen:$port>
+
+				ServerAdmin $mailto
+				ServerName $srv_name
 				ServerAlias $srv_name.$cname
 				DocumentRoot $dir
-				SSLEngine on
-				SSLCertificateFile	$PATH_CERT
-				SSLCertificateKeyFile	PATH_PRIVATE_KEY
-				DirectoryIndex index.php
+
+				<Directory $dir>
+
+				Options Indexes FollowSymLinks MultiViews
+				AllowOverride All
+
+				Require all granted
+				#Order allow,deny
+				#allow from all
+
+				</Directory>
 				LogLevel warn
 				ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
 				CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-				# enable HTTP/2, if available
-				Protocols h2 http/1.1
-				# HTTP Strict Transport Security (mod_headers is required) (63072000 seconds)
-				Header always set Strict-Transport-Security "max-age=63072000"
-				# intermediate configuration
-				SSLProtocol	all -SSLv3 -TLSv1 -TLSv1.1
-				SSLCipherSuite	ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
-				SSLHonorCipherOrder	off
-				SSLSessionTickets	off
-				SSLUseStapling	On
-				SSLStaplingCache	"shmcb:logs/ssl_stapling(32768)"
-				<Directory $dir>
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-				Require all granted
-				</Directory>
-				</VirtualHost>
-				</IfModule mod ssl.c>" > /etc/apache2/sites-available/$srv_name.conf
-				
-				# Test de configuration apache
-				echo -e "Vérification de la configuration en cours...\n"
-				sudo apachectl configtest
-				echo ""
-				/usr/sbin/apache2ctl -t
-				echo ""
-				/usr/sbin/apache2ctl -S
-				echo ""
-				echo "activation de la configuration"
-				echo ""
-				if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-					echo -e "\nLe fichier n'a pas pu être édité!"
-				else
-					echo -e "\nLe fichier a été créé avec succés !\n"
-					echo -e "\nActivation de la configuration"
-					/usr/sbin/a2ensite $srv_name.conf
-					/usr/sbin/a2enmod rewrite
-					/usr/sbin/a2enmod headers
-					/usr/sbin/a2enmod env
-					/usr/sbin/a2enmod dir
-					/usr/sbin/a2enmod mime
-					/usr/sbin/a2dissite 000-default.conf
-					echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
-					read q
-					if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
-						systemctl restart apache2
-						echo -e "\nLe serveur Cloud est à présent opérationnel !"
-					fi
-				fi
-			else
-				# Creation de la configuration
-				echo "#### $srv_name.
 
-				<VirtualHost *:80>
-				RewriteEngine On
-				RewriteCond %{REQUEST_URI} !^/\.well\-known/acme\-challenge/
-				RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
-				</VirtualHost>
-
-				<IfModule mod ssl.c>
-				<VirtualHost $listen:$port>
-				ServerAdmin $mailto
-				ServerName $srv_name.$cname
-				ServerAlias $srv_name.$cname
-				DocumentRoot $dir
-				SSLEngine on
-				SSLCertificateFile	$PATH_CERT
-				SSLCertificateKeyFile	PATH_PRIVATE_KEY
-				DirectoryIndex index.php
-				LogLevel warn
-				ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
-				CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-				# enable HTTP/2, if available
-				Protocols h2 http/1.1
-				# HTTP Strict Transport Security (mod_headers is required) (63072000 seconds)
-				Header always set Strict-Transport-Security "max-age=63072000"
-				# intermediate configuration
-				SSLProtocol	all -SSLv3 -TLSv1 -TLSv1.1
-				SSLCipherSuite	ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
-				SSLHonorCipherOrder	off
-				SSLSessionTickets	off
-				SSLUseStapling	On
-				SSLStaplingCache	"shmcb:logs/ssl_stapling(32768)"
-				<Directory $dir>
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-				Require all granted
-				</Directory>
-				</VirtualHost>
-				</IfModule mod ssl.c>" > /etc/apache2/sites-available/$srv_name.conf
+				</VirtualHost> > /etc/apache2/sites-available/$srv_name.conf
 				
-				# Test de configuration apache
+				# Test de configuration HTTP, apache
 				echo -e "Vérification de la configuration en cours...\n"
 				sudo apachectl configtest
 				echo ""
@@ -908,7 +820,6 @@ else
 				fi
 			fi
 		fi
-	fi	
 fi
 }
 
