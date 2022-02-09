@@ -25,6 +25,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 exec 2>>$CURRENTLOCATION/Error_Install_Apache2.log
 
 
+function Install_Apache2(){
 ##########################
 # Variables de la fonction
 ##########################
@@ -41,7 +42,6 @@ clear
 ###########################################################
 # Installation / Démarrage / activation du service  Apache2
 ###########################################################
-function Install_Apache2(){
 
 echo "Souhaitez-vous installer le serveur Web Apache2 [y/n] ? "
 read ServerWeb
