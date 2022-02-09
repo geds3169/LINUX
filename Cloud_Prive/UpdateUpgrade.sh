@@ -38,6 +38,7 @@ if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
   	sudo apt-get update -y -qq >> $CURRENTLOCATION/update.log
 	echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/updade.log a été créé.\n"
 	echo -e "\nSouhaitez-vous procéder à la mise à jour des paquets ? [y/n] ?"; then
+	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 		sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
 		echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/upgrade.log a été créé.\n"
@@ -47,6 +48,7 @@ if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 	fi
 elif
 	echo -e "\nSouhaitez-vous procéder à la mise à jour des paquets ? [y/n] ?"; then
+	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 		sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
 		echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/upgrade.log a été créé.\n"
