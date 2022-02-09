@@ -37,21 +37,21 @@ if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 	echo -e "\nLa mise à jour des référentiels de paquets va débuter \n"
   	sudo apt-get update -y -qq >> $CURRENTLOCATION/update.log
 	echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/updade.log a été créé.\n"
-elif
+else
 	echo "Souhaitez-vous procéder à la mise à jour des paquets ? [y/n] ?"
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 		sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
 		echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/upgrade.log a été créé.\n"
 	fi
-else
-	echo "Vous avez annulé l'opération en cours [y/n] ? "
-	read action1
-	if [ "${action1}" == "yes" ] || [ "${action1}" == "y" ]; then
-		echo "Opération annulé, retour au menu principal"
-		./Installeur.sh
-	fi
 fi
 
+#Retour au Menu principal
+echo "Vous avez annulé l'opération en cours [y/n] ? "
+read action1
+if [ "${action1}" == "yes" ] || [ "${action1}" == "y" ]; then
+	echo "Opération annulé, retour au menu principal"
+	./Installeur.sh
+fi
 exit 0
 
 }
