@@ -73,13 +73,13 @@ while [ $opt != '' ]
       case $opt in
 	1) clear;
             option_picked "Outils de gestion réseau";
-            ./show_SubMenuOutilsReseau.sh; #appel du script
-            show_SubMenuOutils;
+            source ./show_SubMenuOutilsReseau.sh; #appel du script
+            show_SubMenuOutilsReseau; #appel de la fonction
 	;;
         2) clear;
             option_picked "Outils d'indexation et visualisation";
-            ./show_SubMenuOutilsIndexVisu.sh; #appel du script
-            show_SubMenuOutils;
+            source ./show_SubMenuOutilsIndexVisu.sh; #appel du script
+            show_SubMenuOutilsIndexVisu;
         ;;
         x)exit;
         ;;
