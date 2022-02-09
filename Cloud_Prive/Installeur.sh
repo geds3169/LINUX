@@ -34,8 +34,9 @@ exec 2>>$CURRENTLOCATION/Error_Install_Apache2.log
 ############################
 # Averstissement
 ############################
-echo "Ce script fait appel à des scripts contenuent dans ce même dossier"
-sleep 1
+clear
+echo -e "\nCe script fait appel à des scripts contenuent dans ce même dossier"
+sleep 3
 clear
 
 ############################
