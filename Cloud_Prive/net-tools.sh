@@ -43,10 +43,12 @@ else
     if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
     SubMenuTools
     else
-      net-tools
+      ./net-tools.sh
     fi
   fi
 fi
 
 exit 0
 }
+
+net-tools
