@@ -16,6 +16,15 @@ if [ "$(whoami)" != "root" ]; then
 	exit 2
 fi
 
+############################
+# Variables d'environnement
+############################
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+############################
+# Sorti du script
+############################
+exec 2>>./Project_tested_Update_error.log
 #########################
 # Variables
 #########################
