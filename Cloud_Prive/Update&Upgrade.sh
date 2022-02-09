@@ -34,30 +34,26 @@ echo -e "\nMise à jour des référentiels des paquets et leurs mises à jour\n"
 echo "Souhaitez-vous mettre à jour les référentiels des paquets ? [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-  echo -e "\nLa mise à jour des référentiels de paquets va débuter \n"
-  sudo apt-get update -y -qq >> $CURRENTLOCATION/update.log
-  echo -e "\nMise à jour terminé, un fichier de log nommé update.log se trouve dans le répertoire courant.\n"
+	echo -e "\nLa mise à jour des référentiels de paquets va débuter \n"
+  	sudo apt-get update -y -qq >> $CURRENTLOCATION/update.log
+	echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/updade.log a été créé.\n"
 elif
-	echo Souhaitez-vous procéder à la mise à jour des paquets ? [y/n] "
+	echo "Souhaitez-vous procéder à la mise à jour des paquets ? [y/n] ?"
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-	echo -e "\nLa mise à jour des paquets va débuter \n"
-	sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
-	echo -e "\nMise à jour terminé, un fichier de log nommé upgrade.log se trouve dans le répertoire courant.\n"
+		sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
+		echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/upgrade.log a été créé.\n"
+	fi
 else
 	echo "Vous avez annulé l'opération en cours [y/n] ? "
 	read action1
 	if [ "${action1}" == "yes" ] || [ "${action1}" == "y" ]; then
 		echo "Opération annulé, retour au menu principal"
-		Installeur.sh
-	else
-		echo "Vous souhaitez reprendre l'installation des mises à jour [y/n] ? "
-		read action2
-		if [ "${action2}" == "yes" ] || [ "${action2}" == "y" ]; then
-			Update&Upgrade
-		fi
+		./Installeur.sh
 	fi
 fi
 
 exit 0
 
 }
+
+Update&Upgrade
