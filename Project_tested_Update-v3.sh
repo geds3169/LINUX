@@ -21,10 +21,6 @@ fi
 ############################
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-############################
-# Sorti du script
-############################
-exec 2>>./Project_tested_Update_error.log
 #########################
 # Variables
 #########################
@@ -823,10 +819,12 @@ else
 fi
 }
 
-show_menu(){
+#####################################
 # fonction menu
-###############
-mytitle="Installation d'une solution cloud Privé Open Source"
+####################################
+show_menu(){
+
+mytitle="Installation d'une solution cloud"
 echo -e "${title} ##################################### ${normal}\n"
 echo -e "${title} # ${mytitle} #${normal}\n"
 echo -e "${title} ##################################### ${normal}\n\v"
