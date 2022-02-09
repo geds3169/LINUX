@@ -46,7 +46,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 #####################################
 # fonction menu
 ####################################
-show_menu(){
+show_Installeur(){
 
 mytitle="Installation d'une solution cloud"
 echo -e "${title} ##################################### ${normal}\n"
@@ -82,7 +82,7 @@ echo -e "${msgcolor}${message}${normal}\n"
 }
 
 clear
-show_menu
+show_Installeur
 while [ $opt != '' ]
     do
     if [ $opt = '' ]; then
@@ -92,22 +92,22 @@ while [ $opt != '' ]
 	1) clear;
             option_picked "Mise à jour du systeme et des logiciels";
             update | tee -a tools.log; #appel de la function
-            show_menu;
+            show_Installeur;
 	;;
         2) clear;
             ./option_picked "Tools";
             tools; #appel de la function
-            show_menu;
+            show_Installeur;
         ;;
         3) clear;
             option_picked "ownCloud";
             owncloud; #appel de la function
-            show_menu;
+            show_Installeur;
         ;;
         4) clear;
             option_picked "Nextcloud";
             nextcloud; #appel de la function
-            show_menu;
+            show_Installeur;
         ;;
         x)exit;
         ;;
@@ -115,7 +115,7 @@ while [ $opt != '' ]
         ;;
         *)clear;
             option_picked "Sélectionnez une option dans le menu";
-            show_menu;
+            show_Installeur;
         ;;
       esac
     fi
