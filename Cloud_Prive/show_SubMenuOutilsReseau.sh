@@ -94,6 +94,7 @@ while [ $opt != '' ]
         *)clear;
             option_picked "Sélectionnez une option dans le menu";
             ./show_SubMenuOutils.sh;
+	    show_SubMenuOutils;
         ;;
       esac
     fi
