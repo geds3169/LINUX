@@ -37,6 +37,8 @@ exec 2>>$CURRENTLOCATION/Error_Install_Apache2.log
 clear
 echo -e "\nCe script fait appel à des scripts contenuent dans ce même dossier"
 sleep 3
+echo -e "\nCe script vise une installation simplifié d'une solution de Cloud privé Open Source, \nMerci de prendre le temps de vous renseigner sur l'une ou l'autre des solutions, \navant de procéder à une mise en place."
+echo -e "\Ce script ne remplace pas le concours d'un professionnel, assurez-vous d'avoir les connaissances/compétences requises, pour la mises en oeuvre/maintien en condition/sécurisation."
 clear
 
 ############################
@@ -49,7 +51,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ####################################
 show_Installeur(){
 
-mytitle="Installation d'une solution cloud"
+mytitle="Installeur de solution cloud privé"
 echo -e "${title} ##################################### ${normal}\n"
 echo -e "${title} # ${mytitle} #${normal}\n"
 echo -e "${title} ##################################### ${normal}\n\v"
@@ -67,7 +69,7 @@ echo -e "${title} ##################################### ${normal}\n\v"
 
 echo -e "\n${menu}*********************************************${normal}\n"
 echo -e "${menu}**${number} 1)${menu} Mise à jour du systeme et des logiciels (Recommandé) ${normal}\n"
-echo -e "${menu}**${number} 2)${menu} Installation des outils (optionnels) ${normal}\n"
+echo -e "${menu}**${number} 2)${menu} Installation d'outils (optionnels) ${normal}\n"
 echo -e "${menu}**${number} 3)${menu} Installation de ownCloud ${normal}\n"
 echo -e "${menu}**${number} 4)${menu} Installation de Nextcloud ${normal}\n"
 echo -e "${menu}*********************************************${normal}\n"
@@ -91,22 +93,22 @@ while [ $opt != '' ]
     else
       case $opt in
 	1) clear;
-            option_picked "Mise à jour du systeme et des logiciels";
-            update | tee -a tools.log; #appel de la function
+            option_picked "Mise à jour des référenciels et des paquets";
+            ./Update&Upgrade.sh; #appel du script
             show_Installeur;
 	;;
         2) clear;
-            ./option_picked "Tools";
+            option_picked "Installation d'outils";
             tools; #appel de la function
             show_Installeur;
         ;;
         3) clear;
-            option_picked "ownCloud";
+            option_picked "Installation de la solution ownCloud";
             owncloud; #appel de la function
             show_Installeur;
         ;;
         4) clear;
-            option_picked "Nextcloud";
+            option_picked "Installation de la solution Nextcloud";
             nextcloud; #appel de la function
             show_Installeur;
         ;;
