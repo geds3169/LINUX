@@ -88,12 +88,14 @@ else
 	read action1
 	if [ "${action1}" == "yes" ] || [ "${action1}" == "y" ]; then
 		echo "Opération annulé, retour au menu principal"
-		./Installeur.sh
+		source ./Installeur.sh
+		show_Installeur;
 	else
 		echo "Vous souhaitez reprendre l'installation du serveur Web Apache2 [y/n] ? "
 		read action2
 		if [ "${action2}" == "yes" ] || [ "${action2}" == "y" ]; then
-			./Install_Apache2
+			source ./Install_Apache2;
+			Install_Apache2;
 		fi
 	fi
 fi
