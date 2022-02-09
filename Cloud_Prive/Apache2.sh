@@ -92,16 +92,15 @@ if [ "${ServerWeb}" == "yes" ] || [ "${ServerWeb}" == "y" ]; then
 		fi
 	fi
 else
-	echo "Vous avez annulé l'opération, souhaitez-vous retourner au menu principal [y/n] ? "
+	echo "Vous avez annulé l'opération en cours [y/n] ? "
 	read action1
 	if [ "${action1}" == "yes" ] || [ "${action1}" == "y" ]; then
 		echo "Opération annulé, retour au menu principal"
 		Installeur.sh
 	else
-		echo "Vous souhaiez reprendre l'installation du serveur Web Apache2 [y/n] ? "
+		echo "Vous souhaitez reprendre l'installation du serveur Web Apache2 [y/n] ? "
 		read action2
 		if [ "${action2}" == "yes" ] || [ "${action2}" == "y" ]; then
-			echo "Opération annulé, retour au menu principal"
 			Install_Apache2
 		fi
 	fi
