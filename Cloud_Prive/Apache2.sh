@@ -32,18 +32,9 @@ exec 2>>$CURRENTLOCATION/Error_Install_Apache2.log
 APACHE2_STATUS="$(systemctl is-active apache2.service)"
 APACHE2_SERVICE="$(systemctl is-enabled apache2.service)"
 #
-MARIADB_STATUS="$(systemctl is-active mariadb)"
-MARIADB_SERVICE="$(systemctl is-enabled mariadb.service)"
-#
-MYSQL_STATUS="$(systemctl is-active mysqld.service)"
-MYSQL_SERVICE="$(systemctl is-enabled mysqld.service)"
-#
 #START_SCRIPT_DEBUG="true"
 FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
-#
-file="owncloud-complete-latest.tar.bz2"
-mytitle="Installation d'une solution cloud privé"
 #
 clear
 
@@ -86,7 +77,7 @@ if [ "${ServerWeb}" == "yes" ] || [ "${ServerWeb}" == "y" ]; then
 		echo "Le serveur apache2 doit être installé, souhaitez-vous procéder [y/n] ? "
 		read installApache2
 		if [ "${installApache2}" == "yes" ] || [ "${installApache2}" == "y" ]; then
-			sudo apt-get install apache2 -y > ./Install_Apache2.log
+			sudo apt-get install apache2 -y > $CURRENTLOCATION/Install_Apache2.log
 			sudo systemctl start apache2
 			sudo systemctl enable apache2
 		fi
