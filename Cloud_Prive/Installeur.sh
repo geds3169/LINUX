@@ -23,12 +23,21 @@ if [ "$(whoami)" != "root" ]; then
 	echo "Les privilèges Root sont requis pour exécuter ce script, essayez de l'exécuter avec sudo..."
 	exit 2
 fi
+
+#########################
+# Variables du script
+#########################
+CURRENTLOCATION="$(pwd)"
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+exec 2>>$CURRENTLOCATION/Error_Install_Apache2.log
+
 ############################
 # Averstissement
 ############################
 echo "Ce script fait appel à des scripts contenuent dans ce même dossier"
 sleep 1
 clear
+
 ############################
 # Variables d'environnement
 ############################
@@ -51,7 +60,6 @@ echo -e "${title} ##################################### ${normal}\n\v"
 	validation=`echo "\033[32m"` #Green
 	bgred=`echo "\033[41m"`
 	fgred=`echo "\033[31m"`
-
 	# Optionnal colors
 	# `echo "\033[37m"` white
 	# `echo "\033[30m"` Black
