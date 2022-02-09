@@ -88,7 +88,7 @@ while [ $opt != '' ]
         *)clear;
             option_picked "Sélectionnez une option dans le menu";
             source ./Installeur.sh;
-	    show_Installeur
+	    show_Installeur;
         ;;
       esac
     fi
