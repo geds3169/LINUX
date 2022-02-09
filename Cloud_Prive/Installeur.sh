@@ -95,24 +95,23 @@ while [ $opt != '' ]
       case $opt in
 	1) clear;
             option_picked "Mise à jour des référenciels et des paquets";
-            ./Update&Upgrade.sh; #appel du script
-            show_Installeur;
+            source ./UpdateUpgrade.sh; #appel du script
+            UpdateUpgrade;
 	;;
         2) clear;
             option_picked "Installation d'outils";
-            ./show_SubMenuOutils.sh; #appel du script
+            source ./show_SubMenuOutils.sh; #appel du script
             show_SubMenuOutils.sh;
         ;;
         3) clear;
             option_picked "Installation de la solution ownCloud";
-            ./Install_owncloud.sh; #appel du script
+            source ./Install_owncloud.sh; #appel du script
             Install_owncloud.sh;
         ;;
         4) clear;
             option_picked "Installation de la solution Nextcloud";
-            ./Install_nextcloud; #appel du script
-            Install_owncloud.sh;
-        ;;
+            source ./Install_nextcloud.sh; #appel du script
+	;;
         x)exit;
         ;;
         \n)exit;
