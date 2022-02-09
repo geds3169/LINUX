@@ -41,7 +41,7 @@ else
     echo "Vous avez annulé l'opération en cours [y/n] ? "
     read q
     if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-    SubMenuTools
+    ./SubMenuTools
     else
       ./net-tools.sh
     fi
