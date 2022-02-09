@@ -66,7 +66,7 @@ echo -e "${msgcolor}${message}${normal}\n"
 }
 
 clear
-show_menu
+show_SubMenuOutils
 while [ $opt != '' ]
     do
     if [ $opt = '' ]; then
@@ -94,7 +94,7 @@ while [ $opt != '' ]
         ;;
         *)clear;
             option_picked "Sélectionnez une option dans le menu";
-            ./show_SubMenuOutils.sh;
+            ./Installeur.sh;
         ;;
       esac
     fi
