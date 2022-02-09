@@ -49,10 +49,8 @@ echo -e "${title} ##################################### ${normal}\n\v"
 	# `echo "\033[30m"` Black
 
 echo -e "\n${menu}*********************************************${normal}\n"
-echo -e "${menu}**${number} 1)${menu} Installation de net-tools \${normal}\n"
-echo -e "${menu}**${number} 2)${menu} Installation de dnsutils \n\t- dig : effectue des requêtes DNS de différentes façons ; \n\t- nslookup : ancienne façon de procéder ; \n\t- nsupdate : fait des mises à jour dynamiques (voir RFC2136). ${normal}\n"
-echo -e "${menu}**${number} 3)${menu} Installation de ownCloud ${normal}\n"
-echo -e "${menu}**${number} 4)${menu} Installation de Nextcloud ${normal}\n"
+echo -e "${menu}**${number} 1)${menu} Installation d'outils de gestion réseau \${normal}\n"
+echo -e "${menu}**${number} 2)${menu} Installation d'outils d'indexation et visualisation d'arborescence ${normal}\n"
 echo -e "${menu}*********************************************${normal}\n"
 echo -e "Sélectionnez une option pressez ${fgred}x pour quitter. ${normal}"
 read opt
@@ -74,19 +72,14 @@ while [ $opt != '' ]
     else
       case $opt in
 	1) clear;
-            option_picked "Installation de net-tools";
+            option_picked "Outils de gestion réseau";
             ./net-tools.sh; #appel du script
             show_SubMenuOutilsReseau;
 	;;
         2) clear;
-            option_picked "Installation de dnsutils";
+            option_picked "Outils d'indexation et visualisation";
             ./dnsutils.sh; #appel du script
             show_SubMenuOutils;
-        ;;
-        3) clear;
-            option_picked "ifupdown2";
-            ./ifupdown2.sh; #appel du script
-            show_SubMenuOutilsReseau;
         ;;
         x)exit;
         ;;
