@@ -36,9 +36,10 @@ exec 2>>$CURRENTLOCATION/Error_Install_Apache2.log
 ############################
 clear
 echo -e "\nCe script fait appel à des scripts contenuent dans ce même dossier"
-sleep 3
+sleep 2
 echo -e "\nCe script vise une installation simplifié d'une solution de Cloud privé Open Source, \nMerci de prendre le temps de vous renseigner sur l'une ou l'autre des solutions, \navant de procéder à une mise en place."
 echo -e "\Ce script ne remplace pas le concours d'un professionnel, assurez-vous d'avoir les connaissances/compétences requises, pour la mises en oeuvre/maintien en condition/sécurisation."
+sleep 2
 clear
 
 ############################
@@ -100,17 +101,17 @@ while [ $opt != '' ]
         2) clear;
             option_picked "Installation d'outils";
             ./show_SubMenuOutils.sh; #appel du script
-            show_Installeur;
+            show_SubMenuOutils.sh;
         ;;
         3) clear;
             option_picked "Installation de la solution ownCloud";
             ./Install_owncloud.sh; #appel du script
-            show_Installeur;
+            Install_owncloud.sh;
         ;;
         4) clear;
             option_picked "Installation de la solution Nextcloud";
             ./Install_nextcloud; #appel du script
-            show_Installeur;
+            Install_owncloud.sh;
         ;;
         x)exit;
         ;;
