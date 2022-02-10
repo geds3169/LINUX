@@ -31,42 +31,60 @@ exec 2>>$CURRENTLOCATION/Error_Install_Update.log
 function UpdateUpgrade(){
 
 echo -e "\nMise à jour des référentiels des paquets et leurs mises à jour\n"
-echo "Souhaitez-vous mettre à jour les référentiels des paquets ? [y/n] ?"
+echo "Souhaitez-vous mettre à jour les référentiels des paquets [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 	echo -e "\nLa mise à jour des référentiels de paquets va débuter \n"
   	sudo apt-get update -y -qq >> $CURRENTLOCATION/update.log
-	echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/updade.log a été créé.\n"
-	echo -e "\nSouhaitez-vous procéder à la mise à jour des paquets ? [y/n] ?"; then
+	echo -e "\nMise à jour terminé, un fichier $CURRENTLOCATION/updade.log a été créé.\n"
+	sleep 1
+	echo -e "\nSouhaitez-vous procéder à la mise à jour des paquets [y/n] ?"
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-		sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
-		echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/upgrade.log a été créé.\n"
-		echo -e "\nVous vous retourner à l'accueil [y/n] ? "
+		sudo apt-get upgrade -y -qq >> $CURRENTLOCATION/upgrade.log
+                echo -e "\nMise à jour terminé, un fichier $CURRENTLOCATION/upgrade.log à été créé.\n"
+		sleep 1
 	else
-		UpdateUpgrade
+		echo "Souhaitez vous revenir au menu principal ? [y/n]"
+        	read q
+        	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+			source ./Installeur.sh;
+		else
+			UpdateUpgrade;
+		fi
 	fi
-elif
-	echo -e "\nSouhaitez-vous procéder à la mise à jour des paquets ? [y/n] ?"; then
-	read q
-	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-		sudo apt-get update -y -qq >> $CURRENTLOCATION/upgrade.log
-		echo -e "\nMise à jour terminé, un fichier d$CURRENTLOCATION/upgrade.log a été créé.\n"
-		echo -e "\nVous vous retourner à l'accueil [y/n] ? "
-	else
-		UpdateUpgrade
-	fi
-else
-	echo -e "\nVous vous retourner à l'accueil [y/n] ? "
+	echo -e "\nVoulez vous retourner à l'accueil [y/n] ? "
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 		echo "Retour au menu principal"
 		source ./Installeur.sh;
-		how_Installeur;
 	else
-		UpdateUpgrade
+		UpdateUpgrade;
 	fi
-
+else
+	echo "Voulez vous procéder à la mise à jour des paquets [y/n] ?"
+	read q
+	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+		echo -e "\nLa mise à jour des paquets va débuter \n"
+		sudo apt-get upgrade -y -qq >> $CURRENTLOCATION/upgrade.log
+		echo -e "\nMise à jour terminé, un fichier $CURRENTLOCATION/upgrade.log à été créé.\n"
+		sleep 1
+		echo "Souhaitez vous revenir au menu principal ? [y/n]"
+        	read q
+        	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+			source ./Installeur.sh;
+		else
+			UpdateUpgrade;
+		fi
+	else
+		echo "Souhaitez vous revenir au menu principal ? [y/n]"
+        	read q
+        	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+			source ./Installeur.sh;
+		else
+			UpdateUpgrade;
+		fi
+	fi
 fi
 
 exit 0
