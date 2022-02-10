@@ -725,65 +725,13 @@ else
 				/usr/sbin/a2dissite $srv_name.conf
 
 				# Édition du VirtualHost en HTTPS
-				echo "#### $srv_name.
 
-				echo "#### $srv_name.
-
-				<VirtualHost $listen:$port>
-
-				ServerAdmin $mailto
-				ServerName $srv_name
-				ServerAlias $srv_name.$cname
-
-				DocumentRoot $dir
-
-				<Directory $dir>
-
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-
-				Require all granted
-				#Order allow,deny
-				#allow from all
-
-				</Directory>
-
-				SSLEngine on
-				SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
-				SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
-				SSLHonorCipherOrder On
-
-				SSLCertificateFile $PATH_CERT
-				SSLCertificateKeyFile $PATH_PRIVATE_KEY
-				SSLCertificateChainFile 
-
-				ErrorLog ${APACHE_LOG_DIR}/error.log
-				CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-				</VirtualHost>
-					
-				<VirtualHost $listen:$port>
-
-				ServerAdmin $mailto
-				ServerName $srv_name
-				ServerAlias $srv_name.$cname
-				DocumentRoot $dir
-
-				<Directory $dir>
-
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-
-				Require all granted
-				#Order allow,deny
-				#allow from all
-
-				</Directory>
-				LogLevel warn
-				ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
-				CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-
-				</VirtualHost> > /etc/apache2/sites-available/$srv_name.conf
+				#Ajouter la config VirtualHost HTTPS
+				#https://www.arubacloud.com/tutorial/how-to-enable-https-protocol-with-apache-2-on-ubuntu-20-04.aspx
+				##
+				##
+				##
+				##
 				
 				# Test de configuration HTTP, apache
 				echo -e "Vérification de la configuration en cours...\n"
