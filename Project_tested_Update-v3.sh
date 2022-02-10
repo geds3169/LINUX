@@ -218,6 +218,12 @@ CleanDownload
 sleep 2
 clear
 SecureDirOwnCloud
+clear
+QuestionsConfigVhost
+clear
+BuildConfigVHost
+clear
+show_menu
 }
 
 function Install_Apache2(){
@@ -590,19 +596,17 @@ chown -R ${htuser}:${htgroup} ${dir}/updater/
 #chmod +x ${dir}/occ
 sleep 0.5
 echo -e "\nmodification des droits sur le fichier .htaccess s'il existe \nCelui-ci permet de renforcer la configuration du serveur web\n"
-if [ -f ${dir}/.htaccess ]
- then
+if [ -f ${dir}/.htaccess ]; then
   chmod 0644 ${dir}/.htaccess
   chown ${rootuser}:${htgroup} ${dir}/.htaccess
 fi
-if [ -f ${dir}/data/.htaccess ]
- then
+if [ -f ${dir}/data/.htaccess ]; then
   chmod 0644 ${dir}/data/.htaccess
   chown ${rootuser}:${htgroup} ${dir}/data/.htaccess
 fi
 }
 
-function ConfigVhost(){
+function QuestionsConfigVhost(){
 # Configuration du virtual host HTTP (apache2)
 ##########################################
 echo -e "\nConfiguration du VirtualHost\n"
@@ -631,8 +635,9 @@ echo -e "\nRenseignez l'emplacement et nom du certificat, \nexemple: /etc/ssl/ce
 read PATH_CERT
 echo -e "\nRenseignez l'emplacement et nom de la clé privé, \n exemple: /etc/ssl/private/exemple.com_private_key.key | (laissez vide pour du HTTP) :"
 PATH_PRIVATE_KEY
+}
 
-
+function BuildConfigVHost(){
 # Création configuration VirtualHost HTTP ou HTTPS
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
