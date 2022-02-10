@@ -647,309 +647,392 @@ echo "\nRenseignez l'emplacement du certificat intermédiaire (certificate chain
 PATH_CERTIFICATE_CHAIN
 }
 
-
 function BuildConfigVHost(){
-function BuildConfigVHost(){
-# Création configuration VirtualHost HTTP ou HTTPS
 # Création configuration VirtualHost HTTP
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-	echo -e "\nVérification de la présence d'une configuration antérieure"
-	# Test si une configuration est déjà présente
-	if [ -f /etc/apache2/available/$srv_name.conf ]; then
-		echo -e "\nUn fichier de configuration avec ce nom existe déjà"
-		echo -e "\nVoulez vous la supprimer [y/n] ?"
-		read q
-		# Supprime la configuration existante
-		if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-			rm /etc/apache2/available/$srv_name.conf
-			rm /etc/apache2/enabled/$srv_name.conf
-			/usr/sbin/a2dissite $srv_name.conf
-			systemctl restart apache2
-			# Édition du VirtualHost en HTTP
-			echo "#### $srv_name.
-
-			<VirtualHost $listen:$port>
-			ServerAdmin $mailto
-			ServerName $srv_name.$cname
-			ServerAlias $srv_name.$cname
-			DocumentRoot $dir
-			DirectoryIndex index.php
-			LogLevel warn
-			ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
-			CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-			<Directory $dir>
-			Options Indexes FollowSymLinks MultiViews
-			AllowOverride All
-			Require all granted
-			</Directory>
-			</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
-			
-			# Test de configuration HTTP, apache
-			echo -e "Vérification de la configuration en cours...\n"
-			sudo apachectl configtest
-			echo ""
-			/usr/sbin/apache2ctl -t
-			echo ""
-			/usr/sbin/apache2ctl -S
-			echo ""
-			echo "activation de la configuration"
-			echo ""
-			if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-				echo -e "\nLe fichier n'a pas pu être édité!"
-			else
-				echo -e "\nLe fichier a été créé avec succés !\n"
-				echo -e "\nActivation de la configuration"
-				/usr/sbin/a2ensite $srv_name.conf
-				/usr/sbin/a2enmod rewrite
-				/usr/sbin/a2enmod headers
-				/usr/sbin/a2enmod env
-				/usr/sbin/a2enmod dir
-				/usr/sbin/a2enmod mime
-				/usr/sbin/a2dissite 000-default.conf
-				echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
-				read q
-				if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
-					systemctl restart apache2
-					echo -e "\nLe serveur Cloud est à présent opérationnel !"
-				else
-					echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
-					echo "commande : systemctl restart apache2"
-				fi
-			fi	
-		else
-			# Conserver mais désactive laconfiguration existante, créer une nouvelle configuration
-			echo "Voulez-vous créer une nouvelle configuration et désactiver l'ancienne [y/n] ?"
-			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-			/usr/sbin/a2dissite $srv_name.conf
-			systemctl restart apache2
-			# Édition du VirtualHost en HTTP
-			echo "#### $srv_name.
-
-			<VirtualHost $listen:$port>
-			
-			ServerAdmin $mailto
-			ServerName $srv_name
-			ServerAlias $srv_name.$cname
-			DocumentRoot $dir
-			DirectoryIndex index.php
-			LogLevel warn
-			ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
-			CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-			<Directory $dir>
-			Options Indexes FollowSymLinks MultiViews
-			AllowOverride All
-			Require all granted
-			
-			</Directory>
-			
-			</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
-			
-			# Test de configuration HTTP, apache
-			echo -e "Vérification de la configuration en cours...\n"
-			sudo apachectl configtest
-			echo ""
-			/usr/sbin/apache2ctl -t
-			echo ""
-			/usr/sbin/apache2ctl -S
-			echo ""
-			echo "activation de la configuration"
-			echo ""
-			if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-				echo -e "\nLe fichier n'a pas pu être édité!"
-			else
-				echo -e "\nLe fichier a été créé avec succés !\n"
-				echo -e "\nActivation de la configuration"
-				/usr/sbin/a2ensite $srv_name.conf
-				/usr/sbin/a2enmod rewrite
-				/usr/sbin/a2enmod headers
-				/usr/sbin/a2enmod env
-				/usr/sbin/a2enmod dir
-				/usr/sbin/a2enmod mime
-				/usr/sbin/a2dissite 000-default.conf
-				echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
-				read q
-				if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
-					systemctl restart apache2
-					echo -e "\nLe serveur Cloud est à présent opérationnel !"
-				else
-					echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
-					echo "commande : systemctl restart apache2"
-				fi
-			fi
-		fi
-	fi
-else
+	HTTP
+elif
 	# Création configuration VirtualHost HTTPS
-	echo -e "\nSouhaitez-vous créer un site HTTPS (443) non sécurisé [y/n] ?"
+	echo -e "\nSouhaitez-vous créer un site HTTPS (443) non sécurisé [y/n] ?"; then
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-		echo -e "\nVérification de la présence d'une configuration antérieure"
-		# Test si une configuration est déjà présente
-		if [ -f /etc/apache2/available/$srv_name.conf ]; then
-			echo -e "\nUn fichier de configuration avec ce nom existe déjà"
-			echo -e "\nVoulez vous la supprimer [y/n] ?"
+		HTTPS
+	fi
+else
+	echo -e "\nVous venez d'annuler l'action en cours, l'édition du fichier de configuration n'a pu être faite. \nDe ce fait la solution n'est pas entièrement paramétré, \nveuillez éditer un fichier de configuration HTTP ou HTTPS manuellement. \nActiver les modules Apache nécessaire dans le cas d'une configuration HTTPS. \nPensez à relancer le service Apache2 par la suite."
+	echo -e "\nretour au menu principal"
+		show_menu
+fi
+}
+
+function HTTP(){
+echo -e "\nVérification de la présence d'une configuration antérieure"
+if [ -f /etc/apache2/available/$srv_name.conf ]; then
+	echo -e "\nUn fichier de configuration avec ce nom existe déjà"
+	echo -e "\nVoulez vous la conserver [y/n] ?"
+	read q
+	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+	
+		# Sauvegarde de l'ancienne configuration HTTP et édition de la nouvelle
+		
+		sudo mv /etc/apache2/site-available/$srv_name.conf /etc/apache2/site-available/$srv_name.conf.old
+		echo "Renommage de l'ancienne configuration (ajout .old)"
+		echo "La configuration a été renommé !"
+		ls /etc/apache2/site-available/
+		echo "Désactivation de l'ancienne configuration"
+		/usr/sbin/a2dissite $srv_name.conf
+		/usr/sbin/a2dissite 000-default.conf
+		echo "Redémarrage du service Apache2"
+		systemctl restart apache2
+		clear
+		echo "Pour restaurer les paramêtres antérieur,"
+		echo -e "\neffectuez les commandes :"
+		echo "(sudo) /usr/sbin/a2dissite $srv_name.conf"
+		echo "(sudo)rm /etc/apache2/site-available/$srv_name.conf"
+		echo "(sudo) mv /etc/apache2/site-available/$srv_name.conf.old /etc/apache2/site-available/$srv_name.conf"
+		echo "(sudo) systemctl restart apache2"
+		sleep 3
+		echo -e "\nCréation de la nouvelle configuration"
+		
+		# Édition du VirtualHost en HTTP
+		
+		echo "#### $srv_name.
+
+		<VirtualHost $listen:$port>
+		ServerAdmin $mailto
+		ServerName $srv_name.$cname
+		ServerAlias $srv_name.$cname
+		DocumentRoot $dir
+		DirectoryIndex index.php
+		LogLevel warn
+		ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
+		CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
+		<Directory $dir>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Require all granted
+		</Directory>
+		</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
+		
+		# Test de configuration HTTP, apache
+		
+		echo -e "Vérification de la configuration en cours...\n"
+		sudo apachectl configtest
+		echo ""
+		/usr/sbin/apache2ctl -t
+		echo ""
+		/usr/sbin/apache2ctl -S
+		echo ""
+		echo "activation de la configuration"
+		echo ""
+		if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
+			echo -e "\nLe fichier n'a pas pu être édité!"
+		else
+			echo -e "\nLe fichier a été créé avec succés !\n"
+			echo -e "\nActivation de la configuration"
+			/usr/sbin/a2ensite $srv_name.conf
+			/usr/sbin/a2enmod rewrite
+			/usr/sbin/a2enmod headers
+			/usr/sbin/a2enmod env
+			/usr/sbin/a2enmod dir
+			/usr/sbin/a2enmod mime
+			/usr/sbin/a2dissite 000-default.conf
+			echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
 			read q
-			# Supprime la configuration existante
-			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-				rm /etc/apache2/available/$srv_name.conf
-				rm /etc/apache2/enabled/$srv_name.conf
-				/usr/sbin/a2dissite $srv_name.conf
+			if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
 				systemctl restart apache2
-				# Édition du VirtualHost en HTTPS
-				echo "#### $srv_name.
-
-				<VirtualHost $listen:$port>
-				ServerAdmin $mailto
-				ServerName $srv_name.$cname
-				ServerAlias $srv_name.$cname
-				DocumentRoot $dir
-				DirectoryIndex index.php
-				LogLevel warn
-				ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
-				CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
-				<Directory $dir>
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-				Require all granted
-				</Directory>
-				</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
-				
-				# Test de configuration HTTPS, apache
-				echo -e "Vérification de la configuration en cours...\n"
-				sudo apachectl configtest
-				echo ""
-				/usr/sbin/apache2ctl -t
-				echo ""
-				/usr/sbin/apache2ctl -S
-				echo ""
-				echo "activation de la configuration"
-				echo ""
-				if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-					echo -e "\nLe fichier n'a pas pu être édité!"
-				else
-					echo -e "\nLe fichier a été créé avec succés !\n"
-					echo -e "\nActivation de la configuration"
-					/usr/sbin/a2ensite $srv_name.conf
-					/usr/sbin/a2enmod rewrite
-					/usr/sbin/a2enmod headers
-					/usr/sbin/a2enmod env
-					/usr/sbin/a2enmod dir
-					/usr/sbin/a2enmod mime
-					/usr/sbin/a2dissite 000-default.conf
-					echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
-					read q
-					if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
-						systemctl restart apache2
-						echo -e "\nLe serveur Cloud est à présent opérationnel !"
-					else
-						echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
-						echo "commande : systemctl restart apache2"
-					fi
-				fi	
+				echo -e "\nLe serveur Cloud est à présent opérationnel !"
 			else
-				# Conserver mais désactive laconfiguration existante, créer une nouvelle configuration
-				echo "Voulez-vous créer une nouvelle configuration et désactiver l'ancienne [y/n] ?"
-				if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-				/usr/sbin/a2dissite $srv_name.conf
-				systemctl restart apache2
-				# Édition du VirtualHost en HTTPS
-				echo "#### $srv_name.       
-				
-				<IfModule mod_ssl.c>
-				<VirtualHost $listen:$port>
-
-				ServerAdmin $mailto
-				ServerName $srv_name
-				ServerAlias $srv_name.$cname
-
-				DocumentRoot $dir
-
-				<Directory $dir>
-
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-				Order allow,deny
-				allow from all
-
-				</Directory>
-
-				SSLEngine on
-				SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
-				SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
-				SSLHonorCipherOrder On
-
-				SSLCertificateFile $PATH_CERT
-				SSLCertificateKeyFile $PATH_PRIVATE_KEY
-				SSLCertificateChainFile $PATH_CERTIFICATE_CHAIN
-
-				ErrorLog ${APACHE_LOG_DIR}/error.log
-				CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-				</VirtualHost>
-							
-				<VirtualHost *:80>
-
-				ServerAdmin $mailto
-				ServerName $srv_name
-				ServerAlias $srv_name.$cname
-
-				DocumentRoot $dir
-
-				<Directory $dir>
-
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride All
-				Order allow,deny
-				allow from all
-
-				</Directory>
-
-				ErrorLog ${APACHE_LOG_DIR}/error.log
-				CustomLog ${APACHE_LOG_DIR}/access.log combined
-				
-				</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
-				
-				# Test de configuration HTTP, apache
-				echo -e "Vérification de la configuration en cours...\n"
-				sudo apachectl configtest
-				echo ""
-				/usr/sbin/apache2ctl -t
-				echo ""
-				/usr/sbin/apache2ctl -S
-				echo ""
-				echo "activation de la configuration"
-				echo ""
-				if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
-					echo -e "\nLe fichier n'a pas pu être édité!"
-				else
-					echo -e "\nLe fichier a été créé avec succés !\n"
-					echo -e "\nActivation de la configuration"
-					/usr/sbin/a2ensite $srv_name.conf
-					/usr/sbin/a2enmod rewrite
-					/usr/sbin/a2enmod headers
-					/usr/sbin/a2enmod env
-					/usr/sbin/a2enmod dir
-					/usr/sbin/a2enmod mime
-					/usr/sbin/a2enmod ssl
-					/usr/sbin/a2dissite 000-default.conf
-					echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
-					read q
-					if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
-						systemctl restart apache2
-						echo -e "\nLe serveur Cloud est à présent opérationnel !"
-					else
-						echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
-						echo "commande : systemctl restart apache2"
-					fi
-				fi
+				echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
+				echo "commande : systemctl restart apache2"
 			fi
+		fi	
+else
+	# Suppression de l'ancienne configuration HTTP et édition
+	
+	echo -e "\nSuppression de l'ancienne configuration $srv_name.conf"
+	sudo rm /etc/apache2/sites-available/$srv_name.conf
+	
+	echo -e "\nCréation de la nouvelle configuration"
+	# Édition du VirtualHost en HTTP
+	
+	echo "#### $srv_name.
+
+	<VirtualHost $listen:$port>
+	ServerAdmin $mailto
+	ServerName $srv_name.$cname
+	ServerAlias $srv_name.$cname
+	DocumentRoot $dir
+	DirectoryIndex index.php
+	LogLevel warn
+	ErrorLog ${APACHE_LOG_DIR}/$srv_name.log
+	CustomLog ${APACHE_LOG_DIR}/$srv_name.log combined
+	<Directory $dir>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride All
+	Require all granted
+	</Directory>
+	</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
+	
+	# Test de configuration HTTP, apache
+	echo -e "Vérification de la configuration en cours...\n"
+	sudo apachectl configtest
+	echo ""
+	/usr/sbin/apache2ctl -t
+	echo ""
+	/usr/sbin/apache2ctl -S
+	echo ""
+	echo "activation de la configuration"
+	echo ""
+	if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
+		echo -e "\nLe fichier n'a pas pu être édité!"
+	else
+		echo -e "\nLe fichier a été créé avec succés !\n"
+		echo -e "\nActivation de la configuration"
+		/usr/sbin/a2ensite $srv_name.conf
+		/usr/sbin/a2enmod rewrite
+		/usr/sbin/a2enmod headers
+		/usr/sbin/a2enmod env
+		/usr/sbin/a2enmod dir
+		/usr/sbin/a2enmod mime
+		/usr/sbin/a2dissite 000-default.conf
+		echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
+		read q
+		if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
+			systemctl restart apache2
+			echo -e "\nLe serveur Cloud est à présent opérationnel !"
+		else
+			echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
+			echo "commande : systemctl restart apache2"
 		fi
 	fi
 fi
 }
 
+function HTTPS(){
+echo -e "\nVérification de la présence d'une configuration antérieure"
+if [ -f /etc/apache2/available/$srv_name.conf ]; then
+	echo -e "\nUn fichier de configuration avec ce nom existe déjà"
+	echo -e "\nVoulez vous la conserver [y/n] ?"
+	read q
+	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
+	
+		# Sauvegarde de l'ancienne configuration HTTPS et édition de la nouvelle
+		
+		sudo mv /etc/apache2/site-available/$srv_name.conf /etc/apache2/site-available/$srv_name.conf.old
+		echo "Renommage de l'ancienne configuration (ajout .old)"
+		echo "La configuration a été renommé !"
+		ls /etc/apache2/site-available/
+		echo "Désactivation de l'ancienne configuration"
+		/usr/sbin/a2dissite default-ssl.conf
+		/usr/sbin/a2dissite $srv_name.conf
+		/usr/sbin/a2dissite 000-default.conf
+		echo "Redémarrage du service Apache2"
+		systemctl restart apache2
+		clear
+		echo "Pour restaurer les paramêtres antérieur,"
+		echo -e "\neffectuez les commandes :"
+		echo "(sudo) /usr/sbin/a2dissite $srv_name.conf"
+		echo "(sudo)rm /etc/apache2/site-available/$srv_name.conf"
+		echo "(sudo) mv /etc/apache2/site-available/$srv_name.conf.old /etc/apache2/site-available/$srv_name.conf"
+		echo "(sudo) systemctl restart apache2"
+		sleep 3
+		
+		# Édition du VirtualHost en HTTP
+		
+		echo -e "\nCréation de la nouvelle configuration"
+		
+
+		echo "#### $srv_name.       
+		
+		<VirtualHost $listen:$port>
+
+		ServerAdmin $mailto
+		ServerName $srv_name
+		ServerAlias $srv_name.$cname
+
+		DocumentRoot $dir
+
+		<Directory $dir>
+
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+
+		</Directory>
+
+		SSLEngine on
+		SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+		SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+		SSLHonorCipherOrder On
+
+		SSLCertificateFile $PATH_CERT
+		SSLCertificateKeyFile $PATH_PRIVATE_KEY
+		SSLCertificateChainFile $PATH_CERTIFICATE_CHAIN
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+		</VirtualHost>
+					
+		<VirtualHost *:80>
+
+		ServerAdmin $mailto
+		ServerName $srv_name
+		ServerAlias $srv_name.$cname
+
+		DocumentRoot $dir
+
+		<Directory $dir>
+
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+
+		</Directory>
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+		
+		</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
+		
+		# Test de configuration HTTPS, apache
+		
+		echo -e "Vérification de la configuration en cours...\n"
+		sudo apachectl configtest
+		echo ""
+		/usr/sbin/apache2ctl -t
+		echo ""
+		/usr/sbin/apache2ctl -S
+		echo ""
+		echo "activation de la configuration"
+		echo ""
+		if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
+			echo -e "\nLe fichier n'a pas pu être édité!"
+		else
+			echo -e "\nLe fichier a été créé avec succés !\n"
+			echo -e "\nActivation de la configuration"
+			/usr/sbin/a2ensite $srv_name.conf
+			/usr/sbin/a2enmod rewrite
+			/usr/sbin/a2enmod headers
+			/usr/sbin/a2enmod env
+			/usr/sbin/a2enmod dir
+			/usr/sbin/a2enmod mime
+			/usr/sbin/a2dissite default-ssl.conf
+			echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
+			read q
+			if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
+				systemctl restart apache2
+				echo -e "\nLe serveur Cloud est à présent opérationnel !"
+			else
+				echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
+				echo "commande : systemctl restart apache2"
+			fi
+		fi	
+else
+	# Suppression de l'ancienne configuration HTTP et édition
+	
+	echo -e "\nSuppression de l'ancienne configuration $srv_name.conf"
+	sudo rm /etc/apache2/sites-available/$srv_name.conf
+	
+	# Édition du VirtualHost en HTTP
+	
+	echo -e "\nCréation de la nouvelle configuration"
+	
+	echo "#### $srv_name.       
+	
+	<VirtualHost $listen:$port>
+
+	ServerAdmin $mailto
+	ServerName $srv_name
+	ServerAlias $srv_name.$cname
+
+	DocumentRoot $dir
+
+	<Directory $dir>
+
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride All
+	Order allow,deny
+	allow from all
+
+	</Directory>
+
+	SSLEngine on
+	SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+	SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+	SSLHonorCipherOrder On
+
+	SSLCertificateFile $PATH_CERT
+	SSLCertificateKeyFile $PATH_PRIVATE_KEY
+	SSLCertificateChainFile $PATH_CERTIFICATE_CHAIN
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	</VirtualHost>
+				
+	<VirtualHost *:80>
+
+	ServerAdmin $mailto
+	ServerName $srv_name
+	ServerAlias $srv_name.$cname
+
+	DocumentRoot $dir
+
+	<Directory $dir>
+
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride All
+	Order allow,deny
+	allow from all
+
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+	
+	</VirtualHost>" > /etc/apache2/sites-available/$srv_name.conf
+	
+	# Test de configuration HTTPS, apache
+	echo -e "Vérification de la configuration en cours...\n"
+	sudo apachectl configtest
+	echo ""
+	/usr/sbin/apache2ctl -t
+	echo ""
+	/usr/sbin/apache2ctl -S
+	echo ""
+	echo "activation de la configuration"
+	echo ""
+	if ! echo -e /etc/apache2/sites-available/$srv_name.conf; then
+		echo -e "\nLe fichier n'a pas pu être édité!"
+	else
+		echo -e "\nLe fichier a été créé avec succés !\n"
+		echo -e "\nActivation de la configuration"
+		/usr/sbin/a2ensite $srv_name.conf
+		/usr/sbin/a2enmod rewrite
+		/usr/sbin/a2enmod headers
+		/usr/sbin/a2enmod env
+		/usr/sbin/a2enmod dir
+		/usr/sbin/a2enmod mime
+		/usr/sbin/a2enmod ssl
+		/usr/sbin/a2dissite default-ssl.conf
+		echo -e "\nLe serveur apache2 doit être redémarrer, souhaitez-vous continuer [y/n]?"
+		read q
+		if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
+			systemctl restart apache2
+			echo -e "\nLe serveur Cloud est à présent opérationnel !"
+		else
+			echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
+			echo "commande : systemctl restart apache2"
+		fi
+	fi
+fi
+}
 
 #####################################
 # fonction menu
