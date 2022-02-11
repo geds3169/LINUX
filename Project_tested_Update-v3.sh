@@ -219,8 +219,6 @@ sleep 2
 clear
 SecureDirOwnCloud
 clear
-QuestionsConfigVhost
-clear
 BuildConfigVHost
 clear
 show_menu
@@ -606,7 +604,7 @@ if [ -f ${dir}/data/.htaccess ]; then
 fi
 }
 
-function QuestionsConfigVhost(){
+function BuildConfigVHos(){
 # Configuration du virtual host HTTP (apache2)
 ##########################################
 
@@ -614,16 +612,16 @@ echo "##########################################"
 echo "#         !!! AVERSTISSEMENT !!!         #"
 echo "##########################################"
 echo ""
-echo -e"\nSi vous souhaitez mettre en place un site HTTPS, importez au préalable le(s) certificat(s)/clé privé"
-echo "\n"
-sleep 2
-echo -e "\nInformation de configuration VirtualHost\n"
+echo -e" \nSi vous souhaitez mettre en place un site HTTPS, importez au préalable le(s) certificat(s)/clé privé"
+echo -e "\nRenseignez-vous pour l'obtention d'un certificat/clé et leurs installations sur le serveur.\n"
+sleep 3
+echo -e "\nReccueil des informations pour la configuration VirtualHost\n"
 sleep 0.5
 echo -e "\nVous allez à présent renseigner l'alias du site,"
-echo "il permet d'interroger le site via l'Alias (uniquement dans un réseau local),"
+echo -e "\nil permet d'interroger le site via l'Alias (uniquement dans un réseau local),"
 echo "sans pour autant faire succéder le nom de domaine mais également,"
 echo "de créer une configuration spécifique à son nom."
-echo "Pour plus de clarté (multiples configuration) ajoutez _SSL au nom du serveur souhaité pour les site en HTTPS"
+echo -e "\nPour plus de clarté (multiples configuration) ajoutez _SSL au nom du serveur souhaité pour les site en HTTPS\n"
 echo -e "\nEntrez le nom du serveur souhaité (sans le www) : "
 read srv_name
 echo ""
@@ -631,10 +629,6 @@ echo -e "\nVous allez à présent renseigner votre CNAME (e.g: www. ou exemple.c
 read cname
 echo -e "\nRenseignez l'adresse de contact de l'administrateur de la solution (e.g: admin@outlook.com) : "
 read mailto
-echo -e "\n######################"
-echo -e "\n!!! AVERTISSEMENT !!! "
-echo -e "\n######################"
-echo -e "Renseignez-vous pour l'obtention d'un certificat/clé et leurs installations sur le serveur.\n"
 echo -e "\nRenseignez à présent le port d'écoute du service Apache2 (e.g: 80 par defaut, 443 sécurisé) : "
 read port 
 echo -e "\nEntrer l'adresse  d'écoute du serveur web (e.g. : * or listen, or local IP, IP loopback) : "
@@ -645,9 +639,7 @@ echo -e "\nRenseignez l'emplacement et nom de la clé privé, \n exemple: /etc/s
 PATH_PRIVATE_KEY
 echo "\nRenseignez l'emplacement du certificat intermédiaire (certificate chain file) | (laissez vide pour du HTTP) :"
 PATH_CERTIFICATE_CHAIN
-}
 
-function BuildConfigVHost(){
 # Création configuration VirtualHost HTTP
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
