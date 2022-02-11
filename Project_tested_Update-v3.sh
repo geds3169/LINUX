@@ -21,33 +21,12 @@ fi
 ############################
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-#########################
-# Variables
-#########################
-APACHE2_STATUS="$(systemctl is-active apache2.service)"
-APACHE2_SERVICE="$(systemctl is-enabled apache2.service)"
-#
-MARIADB_STATUS="$(systemctl is-active mariadb)"
-MARIADB_SERVICE="$(systemctl is-enabled mariadb.service)"
-#
-MYSQL_STATUS="$(systemctl is-active mysqld.service)"
-MYSQL_SERVICE="$(systemctl is-enabled mysqld.service)"
-#
-#START_SCRIPT_DEBUG="true"
-FLAG_ACTIVE="active"
-FLAG_ENABLED="enabled"
-#
-file="owncloud-complete-latest.tar.bz2"
-mytitle="Installation d'une solution cloud privé"
-#
-clear
-
 ##########################################################################
 # FONCTIONS
 ##########################################################################
 
 function update(){
-# Mise à jour systeme et packets
+# Mise à jour repos. et packets
 ######################################
 echo "Souhaitez-vous procéder à la mise à jour du systeme et des packets [y/n] ?"
 read q
@@ -61,14 +40,17 @@ fi
 function tools(){
 # installation d'outils complémentaires
 #######################################
+#Variables
+#################
 #Réseau
 tools1="net-tools"
 tools2="dnsutils"
 tools3="ifupdown2"
-
 #Indexation/Recherche
 tools4="locate"
 tools5="tree"
+
+########################################################################################################################
 
 # Determine si le paquet est installé / installe
 echo -e "Outils réseau\n"
@@ -84,7 +66,6 @@ else
 			echo -e "\n Un fichier tools.log a été créé dans le répertoire courant.\n"
         fi
 fi
-
 
 if [[ "$(dpkg --get-selections | grep $tools2)" =~ "install" ]]; then
 	echo "$tools2 est déjà présent"
@@ -150,11 +131,13 @@ echo -e "\nInstallation des outils terminé le fichier tools.log comportant les 
 function database(){
 # Récupération des information destinées à la base de données de la solution
 #####################################################################################
-echo "Collecte d'informations en vue de la création de la base de données de la solution\n"
 
+clear
+echo "Collecte d'informations en vue de la création de la base de données de la solution\n"
+sleep 5
 echo "\n! Les mots de passes ne s'afficheront pas !"
 echo "\nVérifiez au préalable que votre verrouillage numérique soit fonctionnel (cas de VM)"
-
+sleep 2
 echo -e "\nVeuillez confirmer le nom d'utilisateur Root (en minuscule) : "
 read root_name
 #Hidden password
@@ -175,9 +158,9 @@ read database_name
 echo -e "\nAjout de l'utilisateur $user_name au groupe d'administration du serveur Web"
 id -u $user_name &>/dev/null || useradd $user_name
 /usr/sbin/adduser www-data $user_name
-
 echo -e "\nCréation de la base de donnée $database_name"
 echo -e "\nSi l'utilisateur $user_name n'existe pas il sera alors créé avec le mot de passe associé"
+
 set -e
 mysql -u $root_name -p$root_passwd << EOF
 CREATE USER IF NOT EXISTS '$user_name'@'localhost' IDENTIFIED BY '$user_passwd';
@@ -186,52 +169,37 @@ GRANT ALL PRIVILEGES ON *.* TO '$user_name'@'localhost' IDENTIFIED BY '$user_pas
 GRANT ALL PRIVILEGES ON $database_name.* TO '$user_name'@'localhost';
 FLUSH PRIVILEGES;
 EOF
-
 sleep 0.5
+
 echo -e "\nOpération effectué"
 mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | grep $database_name
+
 }
 
-function owncloud(){
-# Install / Mkdir / Make / Download / Secure / Rules
-####################################################
-echo -e "Installation de la solution ownCloud\n"
-Install_Apache2
-sleep 2
-clear
-Install_PHP
-sleep 2
-clear
-InstallMariaDB
-sleep 2
-clear
-DownloadOwncloud
-sleep 2
-clear
-InformationsWeb
-sleep 2
-clear
-MkdirDownlodUnzipOwncloud
-sleep 2
-clear
-CleanDownload
-sleep 2
-clear
-SecureDirOwnCloud
-clear
-InformationsWeb
-BuildConfigVHost
-clear
-show_menu
-}
 
 function Install_Apache2(){
 # Installation / Démarrage / activation du service  Apache2
 ###########################################################
+#Variables
+#################
+APACHE2_STATUS="$(sudo systemctl is-active apache2.service)"
+APACHE2_SERVICE="$(sudo systemctl is-enabled apache2.service)"
+VERSION="$(sudo apachectl -V | grep Server version | cut -d ":" -f2 | cut -d "/" -f2 | cut -d "/" -f )"
+clear
+
+########################################################################################################################
+
 echo -e "\nMise en place du serveur Web\n"
+sleep 5
 # Determine si le service apache est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "install" ]]; then
-		echo "Apache2 est installé"
+		echo "Apache2 est installé la version est : $VERSION"
+		echo -e "\nVoici les information sur le processus"
+		sudo pgrep -lf apache2
+		sleep 1
+		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
+		sudo netstat -anp | grep apache2
+		sleep 1
 		# Determine si le seveur web est fonctionnel.
 		if [ "${APACHE2_STATUS}" == "${FLAG_ACTIVE}" ]; then
 			echo "Apache2 est démarré"
@@ -262,29 +230,40 @@ else
 		sudo apt-get install apache2 -y
 		sudo systemctl start apache2
 		sudo systemctl enable apache2
-	fi
+		echo -e "\nApache2 est à présent installé/démarré la version est : $VERSION"
+		sleep 1
+		echo -e "\nVoici les information sur le processus"
+		sudo pgrep -lf apache2
+		sleep 1
+		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
+		sudo netstat -nluwpat | grep apache2
 fi
+
 }
 
 function Install_PHP(){
 # Installation de PHP et des dépendances
 ########################################
 # Variables
-echo "Installation de PHP"
-echo ""
-sleep 5
+############
 REQUIRED="7.4"
 MAJOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f1)"
 MINOR_CURRENTVERS="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d '.' -f2)"
-CURRENT_VERSION= "$MAJOR_CURRENTVERS"."$MINOR_CURRENTVERS"
+CURRENT_VERSION= "$MAJOR_CURRENTVERS"."$MINOR_CURRENTVERS)"
 MAJOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f1)"
 MINOR_REQ="$(echo "$REQUIRED" | cut -d " " -f 2 | cut -f1-2 -d"." | cut -d '.' -f2)"
 AVAILABLE="$(apt-owbcache policy php | cut -d " " -f6 | cut -f2-3 -d ":" | grep "." | cut -f1 -d "+" )"
+VERSION="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d ' ')"
 clear
+
+########################################################################################################################
+
+echo -e "\nInstallation de PHP"
+sleep 5
 # Vérification de la présence de PHP sur la distribution
 if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
-	echo -e "\nPHP est déjà présent sur votre distribution, la version est $CURRENT_VERSION"
-	
+	echo -e "\nPHP est déjà présent sur votre distribution, la version est $VERSION"
+	sleep 1
 	# Vérification des attendus de version PHP 
 	if [ $MAJOR_CURRENTVERS -ge $MAJOR_REQ ] && [ $MINOR_CURRENTVERS -ge $MINOR_REQ ] || [ $MAJOR_CURRENTVERS -gt $MAJOR_REQ ] ; then
 		echo -e "\nLa version actuelle correspond aux attentes de la solution"
@@ -395,19 +374,38 @@ else
 			echo -e "\n En passant la commande suivante: sudo systemctl restart apache2"
 		fi
 	else
-		echo "La solution ne peut fonctionner sans l'installation des dépendances"
+		echo "La solution ne peut fonctionner sans l'installation des dépendances !"
 	fi
 fi
+
 }
+
 function InstallMariaDB(){
 # Installation / Activation du service / Démarrage Serveur MySQL
 ################################################################
-echo -e "Mise en place du serveur de bases de données\n"
-echo ""
+#Variables
+############
+MARIADB_STATUS="$(sudo systemctl is-active mariadb)"
+MARIADB_SERVICE="$(sudo systemctl is-enabled mariadb.service)"
+MYSQL_STATUS="$(sudo systemctl is-active mysqld.service)"
+MYSQL_SERVICE="$(sudo systemctl is-enabled mysqld.service)"
+FLAG_ACTIVE="active"
+FLAG_ENABLED="enabled"
+VERSION="$(sudo mariadb --version| awk '{print $2,$3}' || sudo mysqld --version | cut -d "-" -f1-2)"
+
+########################################################################################################################
+
+echo -e "\nMise en place du serveur de bases de données\n"
 sleep 5
 # Determine si le service Mariadb est installé et s'il fonctionne, si le service est actif au démarrage
 if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-")" =~ "install" ]]; then
-	echo -e "\nMariaDB est installé"
+	echo -e "\nMariaDB est installé, la version est $VERSION"
+	echo -e "\nVoici les information sur le processus"
+	sudo pgrep -lf "mariadb" | head -1 | awk '{print $_}'
+	sleep 1
+	echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
+	sudo netstat -anp mysqld || sudo netstat -anp mariadb
+	sleep 1
 	# Determine si le serveur de base de données est fonctionnel.
 	if [ "${MARIADB_STATUS}" == "${FLAG_ACTIVE}" ]; then
 		echo -e "\nMariaDB est démarré"
@@ -470,6 +468,13 @@ else
 		sudo systemctl start mariadb
 		echo -e "\nActivation du service"
 		sudo systemctl enable mariadb
+		echo -e "\nMariaDB est à présent installé et démarré, la version est $VERSION"
+		echo -e "\nVoici les information sur le processus"
+		sudo pgrep -lf "mariadb" | head -1 | awk '{print $_}'
+		sleep 1
+		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
+		sudo netstat -anp mysqld || sudo netstat -anp mariadb
+		sleep 1
 	fi
 	# Creation de la base de donnée (pour la solution)
 	##################################################
@@ -480,7 +485,14 @@ fi
 function DownloadOwncloud(){
 # Téléchargement de l'archive de la solution
 ############################################
+#Variables
+#############
+file="owncloud-complete-latest.tar.bz2"
+
+#####################################################################################
+
 echo -e "Téléchargement de l'archive de la solution\n"
+sleep 2
 cd /tmp/
 # check si l'archive tar de la solution existe dans /tmp/
 if [ -f "$file" ]; then
@@ -522,14 +534,15 @@ echo -e "\nRenseignez l'adresse de contact de l'administrateur de la solution (e
 read mailto
 echo -e "\nRenseignez à présent le port d'écoute du service Apache2, \n(e.g: 80 par defaut, 443 sécurisé) : "
 read port 
-echo -e "\nEntrer l'adresse  d'écoute du serveur web, \n (e.g. : * or listen, or local IP, IP loopback) : "
+echo -e "\nEntrer l'adresse  d'écoute du serveur web, \n(e.g. : * or listen, or local IP, IP loopback) : "
 read listen
 echo -e "\nRenseignez l'emplacement et nom du certificat, \nexemple: /etc/ssl/certs/_.exemple.com_ssl_certificate.pem (ou .cert) | (laissez vide pour du HTTP) :"
 read PATH_CERT
 echo -e "\nRenseignez l'emplacement et nom de la clé privé, \nexemple: /etc/ssl/private/exemple.com_private_key.key | (laissez vide pour du HTTP) :"
-PATH_PRIVATE_KEY
+read PATH_PRIVATE_KEY
 echo "\nRenseignez l'emplacement du certificat intermédiaire, \n(certificate chain file) | (laissez vide pour du HTTP) :"
-PATH_CERTIFICATE_CHAIN
+read PATH_CERTIFICATE_CHAIN
+
 }
 
 function MkdirDownlodUnzipOwncloud(){
@@ -537,10 +550,13 @@ function MkdirDownlodUnzipOwncloud(){
 ################################################
 echo "Création du répertoire, installation de la solution, mise en place de la  configuration"
 sleep 5
+
+#####################################################################################
+
 # Cherche si le répertoire et existant ou vide
 if [ -d "$dir" ]
 then
-	if [ "$(ls -A $dir)" ]; then
+	if [ "$(ls -a $dir)" ]; then
 		echo -e "\n$dir n'est pas vide"
 		echo -e "\nVoulez vous supprimer le contenu et décompresser l'archive dans le répertoire $dir [y/n] ?"
 		read DelInstall
@@ -579,6 +595,7 @@ else
 		fi
 	fi
 fi
+
 }
 
 function CleanDownload(){
@@ -600,6 +617,9 @@ htuser='www-data'
 htgroup='www-data'
 rootuser='root'
 clear
+
+#####################################################################################
+
 echo -e "Sécurisation du répertoire et des fichiers de configuration\n"
 echo -e "Modification des droits d'accès sur le répertoire\n"
 find ${dir}/ -type f -print0 | xargs -0 chmod 0640
@@ -633,6 +653,7 @@ fi
 
 function BuildConfigVHost(){
 # Création configuration VirtualHost HTTP
+#############################################################
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
@@ -652,6 +673,8 @@ fi
 }
 
 function HTTP(){
+# Création de la configuration du virtual host en http
+#############################################################
 echo -e "\nVérification de la présence d'une configuration antérieure"
 if [ -f /etc/apache2/available/$srv_name.conf ]; then
 	echo -e "\nUn fichier de configuration avec ce nom existe déjà"
@@ -797,6 +820,8 @@ fi
 }
 
 function HTTPS(){
+# Création de la configuration du virtual host en https
+#############################################################
 echo -e "\nVérification de la présence d'une configuration antérieure"
 if [ -f /etc/apache2/available/$srv_name.conf ]; then
 	echo -e "\nUn fichier de configuration avec ce nom existe déjà"
@@ -920,7 +945,7 @@ if [ -f /etc/apache2/available/$srv_name.conf ]; then
 		fi
 	fi
 else
-	# Suppression de l'ancienne configuration HTTP et édition
+	# Suppression de l'ancienne configuration HTTPS et édition
 	
 	echo -e "\nSuppression de l'ancienne configuration $srv_name.conf"
 	sudo rm /etc/apache2/sites-available/$srv_name.conf
@@ -1020,27 +1045,63 @@ else
 fi
 }
 
+function owncloud(){
+# Install / Mkdir / Make / Download / Secure / Rules
+####################################################
+echo -e "Installation de la solution ownCloud\n"
+Install_Apache2
+sleep 2
+clear
+Install_PHP
+sleep 2
+clear
+InstallMariaDB
+sleep 2
+clear
+DownloadOwncloud
+sleep 2
+clear
+InformationsWeb
+sleep 2
+clear
+MkdirDownlodUnzipOwncloud
+sleep 2
+clear
+CleanDownload
+sleep 2
+clear
+SecureDirOwnCloud
+clear
+InformationsWeb
+BuildConfigVHost
+clear
+show_menu
+}
+
 #####################################
 # fonction menu
 ####################################
 show_menu(){
 
+# Variables
+mytitle="Installation d'une solution cloud privé"
+
+title=`echo "\033[35m"` #Purple
+normal=`echo "\033[m"`
+menu=`echo "\033[36m"` #Cyan
+number=`echo "\033[33m"` #Yellow
+validation=`echo "\033[32m"` #Green
+bgred=`echo "\033[41m"`
+fgred=`echo "\033[31m"`
+
+# Optionnal colors
+# `echo "\033[37m"` white
+# `echo "\033[30m"` Black
+
 mytitle="Installation d'une solution cloud"
 echo -e "${title} ##################################### ${normal}\n"
 echo -e "${title} # ${mytitle} #${normal}\n"
 echo -e "${title} ##################################### ${normal}\n\v"
-
-	title=`echo "\033[35m"` #Purple
-	normal=`echo "\033[m"`
-	menu=`echo "\033[36m"` #Cyan
-	number=`echo "\033[33m"` #Yellow
-	validation=`echo "\033[32m"` #Green
-	bgred=`echo "\033[41m"`
-	fgred=`echo "\033[31m"`
-
-	# Optionnal colors
-	# `echo "\033[37m"` white
-	# `echo "\033[30m"` Black
 
 echo -e "\n${menu}*********************************************${normal}\n"
 echo -e "${menu}**${number} 1)${menu} Mise à jour du systeme et des logiciels (Recommandé) ${normal}\n"
