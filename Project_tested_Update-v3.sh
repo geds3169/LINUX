@@ -237,6 +237,7 @@ else
 		sleep 1
 		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
 		sudo netstat -nluwpat | grep apache2
+	fi
 fi
 
 }
