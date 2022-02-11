@@ -135,9 +135,10 @@ function database(){
 clear
 echo "Collecte d'informations en vue de la création de la base de données de la solution\n"
 sleep 5
-echo "\n! Les mots de passes ne s'afficheront pas !"
-echo "\nVérifiez au préalable que votre verrouillage numérique soit fonctionnel (cas de VM)"
+echo -e "\n! Les mots de passes ne s'afficheront pas !"
+echo -e "\nVérifiez au préalable que votre verrouillage numérique soit fonctionnel (cas de VM)"
 sleep 2
+clear
 echo -e "\nVeuillez confirmer le nom d'utilisateur Root (en minuscule) : "
 read root_name
 #Hidden password
@@ -147,6 +148,8 @@ read root_passwd
 stty echo
 echo -e "\n! Vous allez à présent entrer les information d'utilisateur (Administrateur de la solution). !"
 echo -e "\n! Le compte doit être un utilisateur autre que Root, par sécurité !\n"
+sleep 1
+clear
 echo -e "\nEntrez un nom d'utilisateur (Admin de la solution) : "
 read user_name
 echo "Entrez le mot de passe associé au compte utilisateur (Admin de la solution) : "
@@ -184,6 +187,8 @@ function Install_Apache2(){
 #################
 APACHE2_STATUS="$(sudo systemctl is-active apache2.service)"
 APACHE2_SERVICE="$(sudo systemctl is-enabled apache2.service)"
+FLAG_ACTIVE="active"
+FLAG_ENABLED="enabled"
 VERSION="$(sudo apachectl -V | grep Server version | cut -d ":" -f2 | cut -d "/" -f2 | cut -d "/" -f )"
 clear
 
@@ -196,10 +201,10 @@ if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "instal
 		echo "Apache2 est installé la version est : $VERSION"
 		echo -e "\nVoici les information sur le processus"
 		sudo pgrep -lf apache2
-		sleep 1
+		sleep 3
 		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
 		sudo netstat -anp | grep apache2
-		sleep 1
+		sleep 3
 		# Determine si le seveur web est fonctionnel.
 		if [ "${APACHE2_STATUS}" == "${FLAG_ACTIVE}" ]; then
 			echo "Apache2 est démarré"
@@ -209,6 +214,7 @@ if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "instal
 			read activeApache2
 			if [ "${activeApache2}" == "yes" ] || [ "${activeApache2}" == "y" ]; then
 				sudo systemctl start apache2
+			sleep 2
 			fi
 		fi
 		# Determine si le service est actif au démarrage.
@@ -220,6 +226,7 @@ if [[ "$(dpkg --get-selections | grep apache2 | grep -v "apache2-" )" =~ "instal
 			read enableApache2
 			if [ "${enableApache2}" == "yes" ] || [ "${enableApache2}" == "y" ]; then
 				sudo systemctl enable apache2
+				sleep 2
 			fi
 		fi
 else
@@ -237,6 +244,7 @@ else
 		sleep 1
 		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
 		sudo netstat -nluwpat | grep apache2
+		sleep 5
 	fi
 fi
 
@@ -264,7 +272,7 @@ sleep 5
 # Vérification de la présence de PHP sur la distribution
 if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 	echo -e "\nPHP est déjà présent sur votre distribution, la version est $VERSION"
-	sleep 1
+	sleep 3
 	# Vérification des attendus de version PHP 
 	if [ $MAJOR_CURRENTVERS -ge $MAJOR_REQ ] && [ $MINOR_CURRENTVERS -ge $MINOR_REQ ] || [ $MAJOR_CURRENTVERS -gt $MAJOR_REQ ] ; then
 		echo -e "\nLa version actuelle correspond aux attentes de la solution"
@@ -299,8 +307,8 @@ if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 			echo -e "\nCertaines dépendances PHP sont nécessaires, souhaitez-vous les installer [y/n] ?"
 			read q
 			if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-				apt install php libapache2-mod-php$new_php_version php$new_php_version-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y
-				apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
+				sudo apt-get install php libapache2-mod-php$new_php_version php$new_php_version-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y -qq >> PHP.log
+				sudo apt-get install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y -qq >> PHP.log
 				echo -e "\nLes paquets ont été installés, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
 				echo -e "\nLe redémarrage du serveur Apche2 est nécessaire, voulez-vous procéder [y/n] ?"
 				read q
@@ -325,7 +333,7 @@ if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 				if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 					echo "Renseignez le numéro de la version souhaité :"
 					read vers
-					sudo apt-get install php$vers -y -q >> PHP.log
+					sudo apt-get install php$vers -y -qq >> PHP.log
 					echo -e "\nLe paquet a été installé, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
 					# Installation des dépendances PHP nécessaire à la solution
 					echo -e "\nInstallation des dépendances requises pour la mise en place de la solution\n"
@@ -342,9 +350,11 @@ if [[  "$(dpkg --get-selections | grep "php")" =~ "install" ]]; then
 						else
 							echo -e "\nPensez à redémarrer le serveur afin de ne pas avoir d'erreur de version PHP \n lorsque vous terminerez la configuration de la solution."
 							echo -e "\n En passant la commande suivante: sudo systemctl restart apache2"
+							sleep 2
 						fi
 					else
 						echo "La solution ne peut fonctionner sans l'installation des dépendances"
+						sleep 2
 					fi
 				fi
 			fi
@@ -363,8 +373,8 @@ else
 	echo -e "\nCertaines dépendances PHP sont nécessaires, souhaitez-vous les installer [y/n] ?"
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-		apt install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y
-		apt install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y
+		sudo apt-get install php libapache2-mod-php php-{mysql,intl,curl,json,gd,xml,mbstring,zip,imagick,common,curl,imap,ssh2,xml,apcu,redis,ldap} -y -qq >> PHP.log
+		sudo apt-get install openssl redis-server wget ssh bzip2 rsync curl jq inetutils-ping coreutils imagemagick -y -qq >> PHP.log
 		echo -e "\nLes paquets ont été installés, le fichier PHP.log a été mis à jour, \nil se trouve dans le répertoire courant\n"
 		echo -e "\nLe redémarrage du serveur Apche2 est nécessaire, voulez-vous procéder [y/n] ?"
 		read q
@@ -373,9 +383,11 @@ else
 		else
 			echo -e "\nPensez à redémarrer le serveur afin de ne pas avoir d'erreur de version PHP \n lorsque vous terminerez la configuration de la solution."
 			echo -e "\n En passant la commande suivante: sudo systemctl restart apache2"
+			sleep 2
 		fi
 	else
 		echo "La solution ne peut fonctionner sans l'installation des dépendances !"
+		sleep 2
 	fi
 fi
 
@@ -393,7 +405,7 @@ MYSQL_SERVICE="$(sudo systemctl is-enabled mysqld.service)"
 FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
 VERSION="$(sudo mariadb --version| awk '{print $2,$3}' || sudo mysqld --version | cut -d "-" -f1-2)"
-
+clear
 ########################################################################################################################
 
 echo -e "\nMise en place du serveur de bases de données\n"
@@ -406,7 +418,7 @@ if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-")" =~ "install
 	sleep 1
 	echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
 	sudo netstat -anp mysqld || sudo netstat -anp mariadb
-	sleep 1
+	sleep 3
 	# Determine si le serveur de base de données est fonctionnel.
 	if [ "${MARIADB_STATUS}" == "${FLAG_ACTIVE}" ]; then
 		echo -e "\nMariaDB est démarré"
@@ -416,6 +428,7 @@ if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-")" =~ "install
 		read activeMariadb
 		if [ "${activeMariadb}" == "yes" ] || [ "${activeMariadb}" == "y" ]; then
 			sudo systemctl start mariadb
+			sleep 2
 		fi
 	fi
 	# Determine si le service est actif au démarrage.
@@ -427,31 +440,35 @@ if [[ "$(dpkg --get-selections | grep mariadb | grep -v "mariadb-")" =~ "install
 		read enableMariaDB
 		if [ "${enableMariaDB}" == "yes" ] || [ "${enableMariaDB}" == "y" ]; then
 			sudo systemctl enable mariadb
+			sleep 2
 		fi
 	fi
 elif [[ "$(dpkg --get-selections | grep mysqld)" =~ "install" ]]; then
         echo -e "\nMySQL est installé"
         # Determine si le serveur de base de données est fonctionnel.
         if [ ! "${MYSQL_STATUS}" = "${FLAG_ACTIVE}" ]; then
-                echo -e "\nMySQL est démarré"
+			echo -e "\nMySQL est démarré"
         else
-                echo -e "\nMySQL n'est pas démarré"
-                echo -e "\nVoulez-vous démarrer MySQL [y/n] ? "
-                read activeMySQL
-                if [ "${activeMySQL}" == "yes" ] || [ "${activeMySQL}" == "y" ]; then
-                        sudo systemctl start mysqld
-                fi
+            echo -e "\nMySQL n'est pas démarré"
+            echo -e "\nVoulez-vous démarrer MySQL [y/n] ? "
+            read activeMySQL
+            if [ "${activeMySQL}" == "yes" ] || [ "${activeMySQL}" == "y" ]; then
+				sudo systemctl start mysqld
+				sleep 2
+            fi
         fi
         # Determine si le service est actif au démarrage.
         if [ "${MySQL_SERVICE}" == "${FLAG_ENABLED}" ]; then
-                echo -e "\nLe service MySQL est activé"
+			echo -e "\nLe service MySQL est activé"
+			sleep 2
         else
-                echo -e "\nLe service MySQL n'est pas activé"
-                echo -e "\nVoulez-vous activer le service MySQL [y/n] ?"
-                read enableMySQL
-                if [ "${enableMySQL}" == "yes" ] || [ "${enableMySQL}" == "y" ]; then 
-                        sudo systemctl enable mysqld.service
-                fi
+			echo -e "\nLe service MySQL n'est pas activé"
+            echo -e "\nVoulez-vous activer le service MySQL [y/n] ?"
+            read enableMySQL
+            if [ "${enableMySQL}" == "yes" ] || [ "${enableMySQL}" == "y" ]; then
+			sudo systemctl enable mysqld.service
+			sleep 2
+            fi
         fi
 		# Creation de la base de donnée (pour la solution)
 		###################################################
@@ -463,7 +480,7 @@ else
 	if [ "${InstallDBserver}" == "yes" ] || [ "${InstallDBserver}" == "y" ]; then
 		echo -e "\nMySQL n'est plus supporté, MariaDB sera donc installé"
 		sleep 2
-		sudo apt-get install mariadb-server -y -q >> MariaDB.log
+		sudo apt-get install mariadb-server -y -qq >> MariaDB.log
 		echo -e "Un fichier MariaDB.log a été créé, il se trouve dans le répertoire courant."
 		echo -e "\nDémarrage du service"
 		sudo systemctl start mariadb
@@ -472,10 +489,10 @@ else
 		echo -e "\nMariaDB est à présent installé et démarré, la version est $VERSION"
 		echo -e "\nVoici les information sur le processus"
 		sudo pgrep -lf "mariadb" | head -1 | awk '{print $_}'
-		sleep 1
+		sleep 2
 		echo -e "\nInformation complémentaires (nécessite l'installation préalable  de l'outil net-tools):"
 		sudo netstat -anp mysqld || sudo netstat -anp mariadb
-		sleep 1
+		sleep 2
 	fi
 	# Creation de la base de donnée (pour la solution)
 	##################################################
@@ -501,6 +518,8 @@ if [ -f "$file" ]; then
 else
 	echo -e "\nTéléchargement en cours de l'archive depuis le dépot officiel https://download.owncloud.org "
 	sudo wget -P /tmp/ https://download.owncloud.org/community/owncloud-complete-latest.tar.bz2
+	echo "La ressource à été téléchargé, elle est prête a être traité"
+	sleep 2
 fi
 }
 
@@ -509,20 +528,21 @@ function InformationsWeb(){
 #####################################################################################
 sleep 5
 clear
-echo -e "Collecte d'informations répertoires/comptes/nom du site...\n"
+echo -e "\nReccueil des informations pour l' installation/configuration\n"
+echo -e "\n\tCollecte d'informations répertoires: \n\tcomptes/nom du site pour la configuration VirtualHost...\n"
 echo "##########################################"
 echo "#         !!! AVERSTISSEMENT !!!         #"
 echo "##########################################"
 echo ""
 echo -e" \nSi vous souhaitez mettre en place un site HTTPS, \nimportez au préalable le(s) certificat(s)/clé privé"
 echo -e "\nRenseignez-vous pour l'obtention d'un \ncertificat/clé et leurs installations sur le serveur.\n"
-sleep 3
-echo -e "\nReccueil des informations pour la configuration VirtualHost\n"
+sleep 5
 echo -e "\nVous allez à présent renseigner l'alias du site,"
 echo -e "\nil permet d'interroger le site via l'Alias (uniquement dans un réseau local), \nsans pour autant faire succéder le nom de domaine mais également,"
 echo -e" exemple http://owncloud\n"
 echo -e "\nPour plus de clarté (multiples configuration) ajoutez _SSL au nom du serveur souhaité pour les site en HTTPS\n"
-sleep 3
+sleep 5
+clear
 echo -e "\nEntrez le nom du serveur/alias souhaité (sans le www) : "
 read srv_name
 echo -e "\nVous allez à présent renseigner votre CNAME \n(e.g: www. ou exemple.com) :"
@@ -541,7 +561,7 @@ echo -e "\nRenseignez l'emplacement et nom du certificat, \nexemple: /etc/ssl/ce
 read PATH_CERT
 echo -e "\nRenseignez l'emplacement et nom de la clé privé, \nexemple: /etc/ssl/private/exemple.com_private_key.key | (laissez vide pour du HTTP) :"
 read PATH_PRIVATE_KEY
-echo "\nRenseignez l'emplacement du certificat intermédiaire, \n(certificate chain file) | (laissez vide pour du HTTP) :"
+echo -e "\nRenseignez l'emplacement du certificat intermédiaire, \n(certificate chain file) | (laissez vide pour du HTTP) :"
 read PATH_CERTIFICATE_CHAIN
 
 }
@@ -610,7 +630,7 @@ if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
 fi
 }
 
-function_SecureDirOwnCloud(){
+function SecureDirOwnCloud(){
 # Sécurisation du répertoire et des fichiers de configuration
 #############################################################
 # Variables
