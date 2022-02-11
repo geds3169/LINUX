@@ -219,7 +219,7 @@ sleep 2
 clear
 SecureDirOwnCloud
 clear
-QuestionConfigVhost
+InformationsWeb
 BuildConfigVHost
 clear
 show_menu
@@ -631,7 +631,7 @@ if [ -f ${dir}/data/.htaccess ]; then
 fi
 }
 
-function BuildConfigVHos(){
+function BuildConfigVHost(){
 # Création configuration VirtualHost HTTP
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
