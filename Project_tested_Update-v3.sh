@@ -496,14 +496,40 @@ function InformationsWeb(){
 #####################################################################################
 sleep 5
 clear
-echo -e "Collecte d'informations (répertoires/comptes/nom du site...\n)"
-sleep 5
+echo -e "Collecte d'informations répertoires/comptes/nom du site...\n"
+echo "##########################################"
+echo "#         !!! AVERSTISSEMENT !!!         #"
+echo "##########################################"
+echo ""
+echo -e" \nSi vous souhaitez mettre en place un site HTTPS, \nimportez au préalable le(s) certificat(s)/clé privé"
+echo -e "\nRenseignez-vous pour l'obtention d'un \ncertificat/clé et leurs installations sur le serveur.\n"
+sleep 3
+echo -e "\nReccueil des informations pour la configuration VirtualHost\n"
+echo -e "\nVous allez à présent renseigner l'alias du site,"
+echo -e "\nil permet d'interroger le site via l'Alias (uniquement dans un réseau local), \nsans pour autant faire succéder le nom de domaine mais également,"
+echo -e" exemple http://owncloud\n"
+echo -e "\nPour plus de clarté (multiples configuration) ajoutez _SSL au nom du serveur souhaité pour les site en HTTPS\n"
+sleep 3
 echo -e "\nEntrez le nom du serveur/alias souhaité (sans le www) : "
 read srv_name
+echo -e "\nVous allez à présent renseigner votre CNAME \n(e.g: www. ou exemple.com) :"
+read cname
 echo -e "\nRenseigner à présent le chemin du répertoire d'installation de la solution.\n"
 echo "Celui-ci peut être dans /var/www/$srv_name ou /var/www/html/$srv_name"
 echo "Renseignez le chemin complet : "
 read dir
+echo -e "\nRenseignez l'adresse de contact de l'administrateur de la solution (e.g: admin@outlook.com) : "
+read mailto
+echo -e "\nRenseignez à présent le port d'écoute du service Apache2, \n(e.g: 80 par defaut, 443 sécurisé) : "
+read port 
+echo -e "\nEntrer l'adresse  d'écoute du serveur web, \n (e.g. : * or listen, or local IP, IP loopback) : "
+read listen
+echo -e "\nRenseignez l'emplacement et nom du certificat, \nexemple: /etc/ssl/certs/_.exemple.com_ssl_certificate.pem (ou .cert) | (laissez vide pour du HTTP) :"
+read PATH_CERT
+echo -e "\nRenseignez l'emplacement et nom de la clé privé, \nexemple: /etc/ssl/private/exemple.com_private_key.key | (laissez vide pour du HTTP) :"
+PATH_PRIVATE_KEY
+echo "\nRenseignez l'emplacement du certificat intermédiaire, \n(certificate chain file) | (laissez vide pour du HTTP) :"
+PATH_CERTIFICATE_CHAIN
 }
 
 function MkdirDownlodUnzipOwncloud(){
@@ -605,55 +631,18 @@ if [ -f ${dir}/data/.htaccess ]; then
 fi
 }
 
-function QuestionConfigVhost(){
-# Configuration du virtual host HTTP (apache2)
-##########################################
-
-echo "##########################################"
-echo "#         !!! AVERSTISSEMENT !!!         #"
-echo "##########################################"
-echo ""
-echo -e" \nSi vous souhaitez mettre en place un site HTTPS, importez au préalable le(s) certificat(s)/clé privé"
-echo -e "\nRenseignez-vous pour l'obtention d'un certificat/clé et leurs installations sur le serveur.\n"
-sleep 3
-echo -e "\nReccueil des informations pour la configuration VirtualHost\n"
-sleep 0.5
-echo -e "\nVous allez à présent renseigner l'alias du site,"
-echo -e "\nil permet d'interroger le site via l'Alias (uniquement dans un réseau local),"
-echo "sans pour autant faire succéder le nom de domaine mais également,"
-echo "de créer une configuration spécifique à son nom."
-echo -e "\nPour plus de clarté (multiples configuration) ajoutez _SSL au nom du serveur souhaité pour les site en HTTPS\n"
-echo -e "\nEntrez le nom du serveur souhaité (sans le www) : "
-read srv_name
-echo ""
-echo -e "\nVous allez à présent renseigner votre CNAME (e.g: www. ou exemple.com) :"
-read cname
-echo -e "\nRenseignez l'adresse de contact de l'administrateur de la solution (e.g: admin@outlook.com) : "
-read mailto
-echo -e "\nRenseignez à présent le port d'écoute du service Apache2 (e.g: 80 par defaut, 443 sécurisé) : "
-read port 
-echo -e "\nEntrer l'adresse  d'écoute du serveur web (e.g. : * or listen, or local IP, IP loopback) : "
-read listen
-echo -e "\nRenseignez l'emplacement et nom du certificat, \nexemple: /etc/ssl/certs/_.exemple.com_ssl_certificate.pem (ou .cert) | (laissez vide pour du HTTP) :"
-read PATH_CERT
-echo -e "\nRenseignez l'emplacement et nom de la clé privé, \n exemple: /etc/ssl/private/exemple.com_private_key.key | (laissez vide pour du HTTP) :"
-PATH_PRIVATE_KEY
-echo "\nRenseignez l'emplacement du certificat intermédiaire (certificate chain file) | (laissez vide pour du HTTP) :"
-PATH_CERTIFICATE_CHAIN
-}
-
 function BuildConfigVHos(){
 # Création configuration VirtualHost HTTP
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-	HTTP
+	HTTP;
 elif
 	# Création configuration VirtualHost HTTPS
 	echo -e "\nSouhaitez-vous créer un site HTTPS (443) non sécurisé [y/n] ?"; then
 	read q
 	if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
-		HTTPS
+		HTTPS;
 	fi
 else
 	echo -e "\nVous venez d'annuler l'action en cours, l'édition du fichier de configuration n'a pu être faite. \nDe ce fait la solution n'est pas entièrement paramétré, \nveuillez éditer un fichier de configuration HTTP ou HTTPS manuellement. \nActiver les modules Apache nécessaire dans le cas d'une configuration HTTPS. \nPensez à relancer le service Apache2 par la suite."
