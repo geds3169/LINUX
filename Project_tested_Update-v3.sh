@@ -219,6 +219,7 @@ sleep 2
 clear
 SecureDirOwnCloud
 clear
+QuestionConfigVhost
 BuildConfigVHost
 clear
 show_menu
@@ -401,7 +402,7 @@ fi
 function InstallMariaDB(){
 # Installation / Activation du service / Démarrage Serveur MySQL
 ################################################################
-echo -e "Mise en place du serveur de bas de base de données\n"
+echo -e "Mise en place du serveur de bases de données\n"
 echo ""
 sleep 5
 # Determine si le service Mariadb est installé et s'il fonctionne, si le service est actif au démarrage
@@ -604,7 +605,7 @@ if [ -f ${dir}/data/.htaccess ]; then
 fi
 }
 
-function BuildConfigVHos(){
+function QuestionConfigVhost(){
 # Configuration du virtual host HTTP (apache2)
 ##########################################
 
@@ -639,7 +640,9 @@ echo -e "\nRenseignez l'emplacement et nom de la clé privé, \n exemple: /etc/s
 PATH_PRIVATE_KEY
 echo "\nRenseignez l'emplacement du certificat intermédiaire (certificate chain file) | (laissez vide pour du HTTP) :"
 PATH_CERTIFICATE_CHAIN
+}
 
+function BuildConfigVHos(){
 # Création configuration VirtualHost HTTP
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
@@ -740,7 +743,8 @@ if [ -f /etc/apache2/available/$srv_name.conf ]; then
 				echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
 				echo "commande : systemctl restart apache2"
 			fi
-		fi	
+		fi
+	fi
 else
 	# Suppression de l'ancienne configuration HTTP et édition
 	
@@ -924,7 +928,8 @@ if [ -f /etc/apache2/available/$srv_name.conf ]; then
 				echo "Pensez à redémarrer le service Apache2 sans quoi la configuration ne sera pas prise en compte !"
 				echo "commande : systemctl restart apache2"
 			fi
-		fi	
+		fi
+	fi
 else
 	# Suppression de l'ancienne configuration HTTP et édition
 	
