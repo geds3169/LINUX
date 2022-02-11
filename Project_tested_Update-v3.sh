@@ -686,7 +686,7 @@ if [ -f /etc/apache2/available/$srv_name.conf ]; then
 		
 		sudo mv /etc/apache2/site-available/$srv_name.conf /etc/apache2/site-available/$srv_name.conf.old
 		echo "Renommage de l'ancienne configuration (ajout .old)"
-		echo "La configuration a été renommé !"
+		echo "La configuration a été renommé !"S
 		ls /etc/apache2/site-available/
 		echo "Désactivation de l'ancienne configuration"
 		/usr/sbin/a2dissite $srv_name.conf
