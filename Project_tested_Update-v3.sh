@@ -1,33 +1,83 @@
 #!/bin/bash
 #
-# Reprise du Projet d'installation d'une solution cloud ownCloud
-# Testé sur Debian 11
-# En cours d'élaboration
+#				Easy Cloud Installer
+
+#   GitHub: https://github.com/geds3169/EasyCloudInstaller
+#   Requiert: bash, mv, cp, rm, grep, pgrep, sed, wget, tar, 
+#
+#   En cours d'élaboration
+#  
+#   Ce script permet de simplifier l'installation d'un cloud privé
 #
 #
-#Code permettant la mise en place d'une solution, test du script pas à pas
+#   Niveau:
+#          Débutant (avancé) à confirmer
 #
-##########################################################################
-######################################
+#   Présrequis :
+#          nécessite des privilèges d'execution sudo ou root
+#          Un nom de domaine et un certificat pour avoirun cloud disponible sur Internet
+#
+#   Basé sur des solutions totalement ou partiellement Open Source:
+#          - ownCloud https://owncloud.com/
+#          - Nextcloud https://nextcloud.com/
+#
+#   Testé sur Debian 11
+#
+#
+#   Usage :
+#			cd Téléchargments
+#
+#			$ wget https://github.com/geds3169/EasyCloudInstaller/EasyCloudInstaller.sh
+#
+#           $ chmod +x EasyCloudInstaller.sh
+#
+#           $ ./EasyCloudInstaller.sh
+#
+#
+#   Il permet d'automatiser l'installation au sein de l'environnement.
+#
+#   Choisissez dans le menu la solution voulu, laissez-vous guider en répondant aux différentes questions
+#
+##################################################################################################################
+clear
+
+echo "
+  ______                   _____ _                 _   _____           _        _ _             
+ |  ____|				  / ____| |               | | |_   _|         | |      | | |            
+ | |__   __ _ ___ _   _  | |    | | ___  _   _  __| |   | |  _ __  ___| |_ __ _| | | ___ _ __   
+ |  __| / _  / __| | | | | |    | |/ _ \| | | |/ _  |   | | |  _ \/ __| __/ _  | | |/ _ \  __|  
+ | |___| (_| \__ \ |_| | | |____| | (_) | |_| | (_| |  _| |_| | | \__ \ || (_| | | |  __/ |     
+ |______\__,_|___/\__, |  \_____|_|\___/ \__,_|\__,_| |_____|_| |_|___/\__\__,_|_|_|\___|_|     
+                  __/ /                                                                          
+                 |___/                                                                         
+"
+sleep 3
+
+########################################################################################################################
 # Vérification des droits d'execution
-######################################
+########################################################################################################################
+
 if [ "$(whoami)" != "root" ]; then
 	echo "Les privilèges Root sont requis pour exécuter ce script, essayez de l'exécuter avec sudo..."
 	exit 2
 fi
 
-############################
+clear
+
+####################################################################################################################################################
 # Variables d'environnement
-############################
+####################################################################################################################################################
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-##########################################################################
-# FONCTIONS
-##########################################################################
 
-function update(){
+####################################################################################################################################################
+# FONCTIONS
+####################################################################################################################################################
+
 # Mise à jour repos. et packets
 ######################################
+function update(){
+
 echo "Souhaitez-vous procéder à la mise à jour du systeme et des packets [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
@@ -35,11 +85,14 @@ if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
 	sudo apt-get update && apt-get upgrade -y -qq >> update.log
 	echo -e "\nMise à jour terminé, un fichier de log nommé update.log se trouve dans le répertoire courant.\n"
 fi
+
 }
 
-function tools(){
+
 # installation d'outils complémentaires
 #######################################
+function tools(){
+
 #Variables
 #################
 #Réseau
@@ -50,7 +103,7 @@ tools3="ifupdown2"
 tools4="locate"
 tools5="tree"
 
-########################################################################################################################
+clear
 
 # Determine si le paquet est installé / installe
 echo -e "Outils réseau\n"
@@ -125,12 +178,13 @@ else
 fi
 
 echo -e "\nInstallation des outils terminé le fichier tools.log comportant les informations sur les outils, \nse trouve dans le repertoire courant se trouve dans le répertoire courant.\n"
+
 }
 
 
-function database(){
 # Récupération des information destinées à la base de données de la solution
 #####################################################################################
+function database(){
 
 clear
 echo "Collecte d'informations en vue de la création de la base de données de la solution\n"
@@ -180,9 +234,10 @@ mysql --batch --skip-column-names -e "SHOW DATABASES LIKE '$database_name'" | gr
 }
 
 
-function Install_Apache2(){
 # Installation / Démarrage / activation du service  Apache2
 ###########################################################
+function Install_Apache2(){
+
 #Variables
 #################
 APACHE2_STATUS="$(sudo systemctl is-active apache2.service)"
@@ -190,9 +245,9 @@ APACHE2_SERVICE="$(sudo systemctl is-enabled apache2.service)"
 FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
 VERSION="$(sudo apachectl -V | grep Server version | cut -d ":" -f2 | cut -d "/" -f2 | cut -d "/" -f )"
+
 clear
 
-########################################################################################################################
 
 echo -e "\nMise en place du serveur Web\n"
 sleep 5
@@ -250,9 +305,41 @@ fi
 
 }
 
-function Install_PHP(){
+# Création des règles de firewall locale (si présent)
+############################################################
+function Firewall_rules(){
+
+echo -e "\nMise en place des règle de pare-feu\n"
+sleep 5
+
+echo "Recherche de la présence du pare-feu Iptables sur le système"
+/usr/sbin/iptables status >/dev/null/ 2&1
+if [ $? = 0 ]; then
+	echo "Iptables est démarré, une régle va être créé pour le trafic entrant, port ${port}"
+	iptables -I INPUT -p tcp --dport $port -j ACCEPT
+else
+	echo "Iptables ne semble pas démarré ou installé"
+fi
+
+echo "Recherche de la présence du pare-feu UFW sur le système"
+if systemctl status ufw.service >/dev/null; then
+	echo "Le pare-feu UFW est démarré, une régle va être créé pour le trafic entrant, port ${port}"
+else
+	echo "Le pare-feu UFW ne semble pas démarré ou installé"
+fi
+
+sleep 1
+echo -e "\nLe script n'a pu déceler la présence d'un pare-feu, si aucun pare-feu n'est présent en amont, \nsi le serveur cloud est accessible depuis l'extérieur, vous êtes sujet à des risques."
+echo -e "\nSi un autre firewall est installé sur le système ou en amont, il sera nécessaire d'ouvrir les flux manuellement, \nvoire configurer un reverse proxy dans le cas d'hébergement multiples"
+sleep 3
+
+}
+
+
 # Installation de PHP et des dépendances
 ########################################
+function Install_PHP(){
+
 # Variables
 ############
 REQUIRED="7.4"
@@ -265,7 +352,6 @@ AVAILABLE="$(apt-owbcache policy php | cut -d " " -f6 | cut -f2-3 -d ":" | grep 
 VERSION="$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d "." | cut -d ' ')"
 clear
 
-########################################################################################################################
 
 echo -e "\nInstallation de PHP"
 sleep 5
@@ -393,9 +479,11 @@ fi
 
 }
 
-function InstallMariaDB(){
+
 # Installation / Activation du service / Démarrage Serveur MySQL
 ################################################################
+function InstallMariaDB(){
+
 #Variables
 ############
 MARIADB_STATUS="$(sudo systemctl is-active mariadb)"
@@ -405,8 +493,8 @@ MYSQL_SERVICE="$(sudo systemctl is-enabled mysqld.service)"
 FLAG_ACTIVE="active"
 FLAG_ENABLED="enabled"
 VERSION="$(sudo mariadb --version| awk '{print $2,$3}' || sudo mysqld --version | cut -d "-" -f1-2)"
+
 clear
-########################################################################################################################
 
 echo -e "\nMise en place du serveur de bases de données\n"
 sleep 5
@@ -498,16 +586,19 @@ else
 	##################################################
 	database # Appel de la fonction database
 fi
+
 }
 
-function DownloadOwncloud(){
+
 # Téléchargement de l'archive de la solution
 ############################################
+function DownloadOwncloud(){
+
 #Variables
 #############
 file="owncloud-complete-latest.tar.bz2"
 
-#####################################################################################
+clear
 
 echo -e "Téléchargement de l'archive de la solution\n"
 sleep 2
@@ -521,11 +612,14 @@ else
 	echo "La ressource à été téléchargé, elle est prête a être traité"
 	sleep 2
 fi
+
 }
 
-function InformationsWeb(){
+
 # Collecte d'informations pour création du répertoire de la solution et Virtual host
 #####################################################################################
+function InformationsWeb(){
+
 sleep 5
 clear
 echo -e "\nReccueil des informations pour l' installation/configuration\n"
@@ -566,13 +660,13 @@ read PATH_CERTIFICATE_CHAIN
 
 }
 
-function MkdirDownlodUnzipOwncloud(){
+
 # Création du répertoire de la solution ownCloud
 ################################################
+function MkdirDownlodUnzipOwncloud(){
+
 echo "Création du répertoire, installation de la solution, mise en place de la  configuration"
 sleep 5
-
-#####################################################################################
 
 # Cherche si le répertoire et existant ou vide
 if [ -d "$dir" ]
@@ -619,27 +713,32 @@ fi
 
 }
 
-function CleanDownload(){
+
 # Nettoyage des répertoire utilisés durant l'execution du script
 ################################################################
-echo "Voulez-vous nettoyez le fichier téléchargés [y/n] ?"
+function CleanDownload(){
+
+echo "Voulez-vous nettoyez les éléments téléchargés [y/n] ?"
 read Clean
 if [ "${Clean}" == "yes" ] || [ "${Clean}" == "y" ]; then
 	rm -R /tmp/owncloud-complete-latest.tar.bz2
 	sudo ls /tmp/
 fi
+
 }
 
-function SecureDirOwnCloud(){
+
 # Sécurisation du répertoire et des fichiers de configuration
 #############################################################
+function SecureDirOwnCloud(){
+
 # Variables
 htuser='www-data'
 htgroup='www-data'
 rootuser='root'
+
 clear
 
-#####################################################################################
 
 echo -e "Sécurisation du répertoire et des fichiers de configuration\n"
 echo -e "Modification des droits d'accès sur le répertoire\n"
@@ -670,11 +769,14 @@ if [ -f ${dir}/data/.htaccess ]; then
   chmod 0644 ${dir}/data/.htaccess
   chown ${rootuser}:${htgroup} ${dir}/data/.htaccess
 fi
+
 }
 
-function BuildConfigVHost(){
+
 # Création configuration VirtualHost HTTP
 #############################################################
+function BuildConfigVHost(){
+
 echo -e "\nSouhaitez-vous créer un site HTTP (80) non sécurisé [y/n] ?"
 read q
 if [ "${q}" == "yes" ] || [ "${q}" == "y" ]; then
@@ -691,11 +793,13 @@ else
 	echo -e "\nretour au menu principal"
 		show_menu
 fi
+
 }
 
-function HTTP(){
+
 # Création de la configuration du virtual host en http
 #############################################################
+function HTTP(){
 echo -e "\nVérification de la présence d'une configuration antérieure"
 if [ -f /etc/apache2/available/$srv_name.conf ]; then
 	echo -e "\nUn fichier de configuration avec ce nom existe déjà"
@@ -730,7 +834,7 @@ if [ -f /etc/apache2/available/$srv_name.conf ]; then
 
 		<VirtualHost $listen:$port>
 		ServerAdmin $mailto
-		ServerName $srv_name.$cname
+		ServerName $srv_name
 		ServerAlias $srv_name.$cname
 		DocumentRoot $dir
 		DirectoryIndex index.php
@@ -791,7 +895,7 @@ else
 
 	<VirtualHost $listen:$port>
 	ServerAdmin $mailto
-	ServerName $srv_name.$cname
+	ServerName $srv_name
 	ServerAlias $srv_name.$cname
 	DocumentRoot $dir
 	DirectoryIndex index.php
@@ -838,11 +942,14 @@ else
 		fi
 	fi
 fi
+
 }
 
-function HTTPS(){
+
 # Création de la configuration du virtual host en https
 #############################################################
+function HTTPS(){
+
 echo -e "\nVérification de la présence d'une configuration antérieure"
 if [ -f /etc/apache2/available/$srv_name.conf ]; then
 	echo -e "\nUn fichier de configuration avec ce nom existe déjà"
@@ -1064,14 +1171,23 @@ else
 		fi
 	fi
 fi
+
 }
 
-function owncloud(){
-# Install / Mkdir / Make / Download / Secure / Rules
+
+# ownCloud Install / Mkdir / Make / Download / Secure / Rules
 ####################################################
+function owncloud(){
+
 echo -e "Installation de la solution ownCloud\n"
+managehostfile
+sleep 2
+clear
 Install_Apache2
 sleep 2
+clear
+Firewall_rules
+sleep2
 clear
 Install_PHP
 sleep 2
@@ -1092,19 +1208,98 @@ CleanDownload
 sleep 2
 clear
 SecureDirOwnCloud
+sleep 2
 clear
 InformationsWeb
-BuildConfigVHost
+sleep 2
 clear
+BuildConfigVHost
+sleep 2
+clear
+show_browser
+sleep 2
 show_menu
+
 }
 
-#####################################
+
+# Add/change IP local / hostname/ domain name --> /etc/host
+############################################################
+function managehostfile(){.
+
+echo "Modification du nom du serveur"
+sleep 5
+#Variables
+############
+PATH="/etc/hosts"
+matches_in_hosts="$(grep -n $srv_name /etc/hosts | cut -f1 -d:)"
+clear
+
+
+echo "Sauvegarde de la configuration initiale en host.bak"
+cp /etc/hosts /etc/hosts.bak
+
+echo "Veuillez renseigner l'adresse IP statique defini sur ce serveur (sans le CIDR) : "
+read IP
+echo "Veuillez renseigner le nom de la machine (e.g : ownCloud) : "
+srv_name
+host_enty="${IP} ${srv_name}.${cname}"
+if [ ! -z "$matches_in_hosts" ]
+then
+    echo "Updating existing hosts entry."
+    # recherche l'occurence IP et  nom de machine.nom_de_domaine '
+    while read -r line_number; do
+        # Modification de la ligne par le nom de machine et domaine
+        sudo sed -i '' "${line_number}s/.*/${host_entry} /" /etc/hosts
+    done <<< "$matches_in_hosts"
+else
+    echo -e "La modification est effective, cependant un redémarrage de la machine peut être nécessaire"
+    echo "$host_entry" | sudo tee -a /etc/hosts > /dev/null
+fi
+}
+
+# fonction ouverture du navigateur
+###################################
+function show_browser(){
+# Ne fonctionne pas sans environnement graphique
+
+echo -e "\nSi vous disposez d'une interface graphique il est possible de procéder à la configuration du serveur cloud"
+
+echo -e "\n Souhaitez-vous accéder à l'interface de configuration finale [y/n]?"
+read q
+if [[ "${q}" == "yes" ]] || [[ "${q}" == "y" ]]; then
+	echo -e "\nLe navigateur va a présent s'ouvrir."
+	echo -e "\nRenseignez le nom d'utilisateur administrateur; "
+	echo -e "\n Renseignez le mot de passe associé; "
+	echo -e "\n Renseignez le chemin d'installation (e.g: /var/www/owncloud) "
+	echo -e "\n Renseignez le nom d'administrateur de la base de données"
+	echo -e "\n Renseignez le mot de passe associé; "
+	echo -e "\n Renseignez la nom de la base de donnée précédemment configuré"
+	echo -e "\n Laissez par defaut localhost"
+
+	sleep 5
+	xdg-open http://127.0.0.1
+	sleep 5
+else
+	echo "Veuillez vous rendre sur la page http://${srv_name}.${cname}"
+	sleep 1
+	echo -e "\nRenseignez le nom d'utilisateur administrateur; "
+	echo -e "\n Renseignez le mot de passe associé; "
+	echo -e "\n Renseignez le chemin d'installation (e.g: /var/www/owncloud) "
+	echo -e "\n Renseignez le nom d'administrateur de la base de données"
+	echo -e "\n Renseignez le mot de passe associé; "
+	echo -e "\n Renseignez la nom de la base de donnée précédemment configuré"
+	echo -e "\n Laissez par defaut localhost"
+	sleep 5
+fi
+}
+
 # fonction menu
 ####################################
-show_menu(){
+function show_menu(){
 
 # Variables
+############
 mytitle="Installation d'une solution cloud privé"
 
 title=`echo "\033[35m"` #Purple
@@ -1134,7 +1329,7 @@ echo -e "Sélectionnez une option pressez ${fgred}x pour quitter. ${normal}"
 read opt
 }
 
-option_picked(){
+function option_picked(){
 msgcolor=`echo "\033[01;31m"` # bold red
 normal=`echo "\033[00;00m"` # normal white
 message=${@:-"${normal}Error: No message passed"}
@@ -1181,5 +1376,5 @@ while [ $opt != '' ]
     fi
 done
 
-
 exit 0
+
